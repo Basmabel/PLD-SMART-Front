@@ -3,5 +3,6 @@ export default {
     lightBlue: "#b2cce9",
     blueMarine: "#9cb5dc",
     mauve: "#a76e85",
-    beige: "#d8bec4"
+    beige: "#d8bec4",
+    black: "#000"
 }
