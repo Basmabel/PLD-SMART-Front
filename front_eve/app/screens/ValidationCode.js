@@ -1,8 +1,7 @@
-import { StatusBar } from 'expo-status-bar';
 import{ StyleSheet, Dimensions, Text, View, Image,TouchableNativeFeedback,SafeAreaView, Button, Alert, Platform, TextInput, Pressable } from 'react-native';
 import {COLORS} from '../config/colors.js';
 
-export default function App() {
+export default function ValidationCode() {
   
   return (
     <SafeAreaView style={styles.container}>
