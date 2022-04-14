@@ -1,4 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
+import { registerRootComponent } from 'expo';
 import { StyleSheet, Text, View } from 'react-native';
 import LandingScreen from './app/screens/LandingScreen.js';
 import SignInScreen from './app/screens/SignInScreen.js';
@@ -8,7 +9,7 @@ import NavigatorBar from './app/screens/NavigatorBar.js';
 
 export default function App() {
   return (
-    //<HomePageScreen/>
+    //<SignInScreen/>
     <NavigatorBar/>
   );
 }
@@ -21,3 +22,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
