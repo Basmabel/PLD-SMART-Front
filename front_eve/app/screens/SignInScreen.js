@@ -13,7 +13,7 @@ import {
 import * as Animatable from "react-native-animatable";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Feather from "react-native-vector-icons/Feather";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from "react-native-paper";
 
 const SignInScreen = ({ navigation }) => {
@@ -29,18 +29,31 @@ const SignInScreen = ({ navigation }) => {
   });
 
   const loginData = async () => {
-    try {
+     fetch("http://169.254.3.246:3000/login", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email: data.email, password: data.password }),
+      }).then((response)=>response.json())
+      .then(async (json)=>{
+        
+        await AsyncStorage.setItem('key',JSON.stringify(json.id));
+        console.log(json.token)
+        await AsyncStorage.setItem('token',JSON.stringify(json.token));
+        navigation.navigate("NavigatorBar");
+        alert(json);
+      })
+      .catch((error)=>console.error(error))
+    /*try {
       const response = await fetch("https://eve-back.herokuapp.com/login", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: data.email, password: data.password }),
       });
-      const result = await response.text();
-      navigation.navigate("NavigatorBar");
-      alert(result);
+      const result = await response.json();
+     
     } catch (error) {
       console.error(error);
-    }
+    }*/
   };
 
   const { colors } = useTheme();

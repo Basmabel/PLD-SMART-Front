@@ -1,5 +1,6 @@
 import React, {useEffect} from "react";
 import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS} from '../config/colors.js';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Column } from 'native-base';
@@ -66,16 +67,54 @@ export default function HomePageScreen() {
    const [isLoading, setLoading] = React.useState(true);
    const [categories,setCategories] = React.useState(null)
    const [eventPerCat, setEventPerCat] = React.useState([]);
-  
+   const [retreive, setRetreive] = React.useState(false);
+   const [userId, setUserId] = React.useState("")
+   const [userToken, setUserToken] = React.useState("")
+   /*const getUserId = async() =>{
+      try {
+        if (value !== null) {
+          setUser(value)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+   }
+
+  const someHandler = async () =>{
+    await getUserId();
+    setRetreive(true);
+  }
+  */
   useEffect(() => {
-     
+
+    const retreiveData = async ()=>{
+      try {
+        const valueString = await AsyncStorage.getItem('key');
+        const value = JSON.parse(valueString);
+
+        const tokenString = await AsyncStorage.getItem('token');
+        const token = JSON.parse(tokenString);
+
+
+        setUserId(value)
+        setUserToken(token)
+        setRetreive(true)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
+    retreiveData();
+    if(retreive){
+      console.log(userId)
+      console.log(userToken)
       Promise.all([
         fetch('http://169.254.3.246:3000/getPopular'),
         fetch('http://169.254.3.246:3000/getUserInfo',{
           method: "POST",
-          headers: {'content-type': 'application/json',Authorization: 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDAzNDIwMiwiZXhwIjoxNjUwMDQ1MDAyfQ.kCl1LAMxumEdMVG1dBTpNM_2NSV3Loi4FYllvod4lXc'},
+          headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
-            "id":"18" 
+            "id":userId
           })}),
           fetch('http://169.254.3.246:3000/getCategories')
       ]).then(function (responses) {
@@ -94,7 +133,7 @@ export default function HomePageScreen() {
           }else if(index==2){
             setCategories(item)
            /* item.map((cat)=>{
-                fetch('https://eve-back.herokuapp.com/getEvents',
+                fetch('https://eve-back.herokuapp.com/getEventsByCategory',
                   {method: 'POST',
                     headers: { 'content-type': 'application/json' },
                     body: JSON.stringify({
@@ -110,8 +149,11 @@ export default function HomePageScreen() {
         // if there's an error, log it
         console.log(error);
       }).finally(()=> setLoading(false));
+    }
+      
+      
 
-    }, []);
+  }, [retreive]);
 
    /* const displayEvents=()=>{
       eventPerCat.map((item,index)=>{

@@ -7,7 +7,6 @@ import SignUpScreen from './app/screens/SignUpScreen.js';
 import HomePageScreen from './app/screens/HomePageScreen.js';
 import NavigatorBar from './app/screens/NavigatorBar.js';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import "react-native-gesture-handler";
 import { createStackNavigator } from "@react-navigation/stack";
 import SearchScreen from "./app/screens/SearchScreen.js";

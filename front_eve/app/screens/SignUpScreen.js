@@ -1,6 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {useState} from 'react';
-import DatePicker from 'react-native-datepicker'
 //import { useDimensions, useDeviceOrientation } from '@react-native-community/hooks';
 import { COLORS } from "../config/colors";
 import {
@@ -30,10 +29,8 @@ import Feather from "react-native-vector-icons/Feather";
 //import RNPickerSelect from 'react-native-picker-select';
 import {Picker} from '@react-native-picker/picker';
 import { useTheme } from "react-native-paper";
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-export default function SignUpScreen() {
+export default function SignUpScreen({ navigation }) {
   const [name, onChangeName] = React.useState("");
   const [surname, onChangeSurName] = React.useState("");
   const [email, onChangeEmail] = React.useState("");
@@ -61,6 +58,7 @@ export default function SignUpScreen() {
 
   const fetchSignUpVal = async () =>{
     try{
+         //const response = await  fetch('https://eve-back.herokuapp.com/signup',
          const response = await  fetch('https://eve-back.herokuapp.com/signup',
          {method: 'POST',
          headers: { 'content-type': 'application/json' },
@@ -81,8 +79,9 @@ export default function SignUpScreen() {
                                "description":description
              })
          });
-         const d = await response.text();
-         alert(d);
+         const resp= await response.text();
+         navigation.navigate("SignInScreen");
+         
    } catch (error) {
      console.error(error);
    }
@@ -110,7 +109,9 @@ const handlePasswordChange = (val) => {
     setData({
       ...data,
       secureTextEntry: !data.secureTextEntry,
+      isValidPassword: false
     });
+
   };
 }
 
