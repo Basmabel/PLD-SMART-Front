@@ -29,14 +29,15 @@ const SignInScreen = ({ navigation }) => {
   });
 
   const loginData = async () => {
+  
     try {
       const response = await fetch("https://eve-back.herokuapp.com/login", {
-        method: "GET",
+        method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email: email, password: password }),
+        body: JSON.stringify({ email: data.email, password: data.password }),
       });
-      const data = await response.text();
-      alert(data);
+      const result = await response.text();
+      alert(result);
     } catch (error) {
       console.error(error);
     }
@@ -205,9 +206,7 @@ const SignInScreen = ({ navigation }) => {
         <View style={styles.button}>
           <TouchableOpacity
             style={styles.signIn}
-            onPress={() => {
-              loginHandle(data.username, data.password);
-            }}
+            onPress={loginData}
           >
             <View style={styles.signIn}>
               <Text
