@@ -9,8 +9,11 @@ import NavigatorBar from './app/screens/NavigatorBar.js';
 
 export default function App() {
   return (
-    <SignInScreen/>
-    //<NavigatorBar/>
+    //<SignUpScreen/>
+    <NavigatorBar/>
+      //<LandingScreen/>
+
+      //<SignInScreen/>
   );
 }
 
