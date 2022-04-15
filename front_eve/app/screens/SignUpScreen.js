@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, {useState} from 'react';
+import DatePicker from 'react-native-datepicker'
 //import { useDimensions, useDeviceOrientation } from '@react-native-community/hooks';
 import {COLORS} from '../config/colors'
 import { StyleSheet,
@@ -23,8 +24,11 @@ import { Colors } from 'react-native/Libraries/NewAppScreen';
 import * as Animatable from "react-native-animatable";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Feather from "react-native-vector-icons/Feather";
-
+//import RNPickerSelect from 'react-native-picker-select';
+import {Picker} from '@react-native-picker/picker';
 import { useTheme } from "react-native-paper";
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 
 export default function SignUpScreen() {
@@ -45,10 +49,13 @@ export default function SignUpScreen() {
   const [description, onChangeDescription] = React.useState("");
   const [data, setData] = React.useState({
     password: "",
+    confirmedPassword: "",
     secureTextEntry: true,
     isValidPassword: true,
     isCompatiblePassword: true,
   });
+  const [date, setDate] = useState('09-10-2020');
+  const [selectedGender, setSelectedGender] = useState();
 
   const fetchSignUpVal = async () =>{
     try{
@@ -78,6 +85,8 @@ export default function SignUpScreen() {
      console.error(error);
    }
  }
+
+
 
  //(in)visible password
  const updateSecureTextEntry = () => {
@@ -161,7 +170,7 @@ const confirmPasswordChange = (val,pswd) => {
           Prénom
         </Text>
         <View style={styles.action}>
-          <Feather name="lock" color={COLORS.lightBlue} size={20} />
+        <FontAwesome name="user-o" color={COLORS.lightBlue} size={20} />
             <TextInput style={styles.textInput}
                   placeholder="Veuillez entrer votre prénom"
                   placeholderTextColor={COLORS.lightBlue}
@@ -178,7 +187,7 @@ const confirmPasswordChange = (val,pswd) => {
           Email
         </Text>
         <View style={styles.action}>
-          <Feather name="lock" color={COLORS.lightBlue} size={20} />
+        <FontAwesome name="envelope-o" color={COLORS.lightBlue} size={20} />
             <TextInput style={styles.textInput}
                   placeholder="Veuillez entrer votre email"
                   placeholderTextColor={COLORS.lightBlue}
@@ -237,7 +246,7 @@ const confirmPasswordChange = (val,pswd) => {
               />  
               
         </View>
-        {data.isCompatiblePassword ? (
+        {(data.isCompatiblePassword && data.confirmedPassword!="") ? (
           <Animatable.View animation="fadeInLeft" duration={500}>
             <Text style={styles.errorMsg}>
             Ces mots de passe ne correspondent pas.
@@ -254,8 +263,8 @@ const confirmPasswordChange = (val,pswd) => {
           Numéro de téléphone
         </Text>
         <View style={styles.action}>
-          <Feather name="lock" color={COLORS.lightBlue} size={20} />
-            <TextInput style={styles.textInput}
+        <FontAwesome name="mobile" color={COLORS.lightBlue} size={20} />
+            <TextInput keyboardType="numeric" style={styles.textInput}
                   placeholder="Veuillez entrer votre n° de téléphone"
                   placeholderTextColor={COLORS.lightBlue}
                   onChangeText={onChangePhone}
@@ -271,12 +280,20 @@ const confirmPasswordChange = (val,pswd) => {
           Genre
         </Text>
         <View style={styles.action}>
-          <Feather name="lock" color={COLORS.lightBlue} size={20} />
-            <TextInput style={styles.textInput}
-                  placeholder="Veuillez entrer votre genre"
-                  placeholderTextColor={COLORS.lightBlue}
-                  onChangeText={onChangeGender}
-              />  
+          <FontAwesome name="transgender" color={COLORS.lightBlue} size={20} />
+          <Picker style={styles.pickerStyle}
+            selectedValue={selectedGender}
+            onValueChange={(itemValue, itemIndex) =>
+              setSelectedGender(itemValue)
+            }
+            placeholder= "Veuiller entrer votre genre"
+            placeholderTextColor={COLORS.lightBlue}
+            >
+              
+            <Picker.Item label="Homme" value="Homme" />
+            <Picker.Item label="Femme" value="Femme" />
+            <Picker.Item label="Autre" value="Autre" />
+          </Picker>       
         </View>
 
         <Text style={[styles.text_footer,
@@ -288,8 +305,8 @@ const confirmPasswordChange = (val,pswd) => {
           N° de rue
         </Text>
         <View style={styles.action}>
-          <Feather name="lock" color={COLORS.lightBlue} size={20} />
-            <TextInput style={styles.textInput}
+          <Feather name="home" color={COLORS.lightBlue} size={20} />
+            <TextInput keyboardType="numeric" style={styles.textInput}
                   placeholder="Veuillez entrer votre n° de rue"
                   placeholderTextColor={COLORS.lightBlue}
                   onChangeText={onChangeStreetNumber}
@@ -305,7 +322,7 @@ const confirmPasswordChange = (val,pswd) => {
           Rue
         </Text>
         <View style={styles.action}>
-          <Feather name="lock" color={COLORS.lightBlue} size={20} />
+          <Feather name="home" color={COLORS.lightBlue} size={20} />
             <TextInput style={styles.textInput}
                   placeholder="Veuillez entrer votre rue"
                   placeholderTextColor={COLORS.lightBlue}
@@ -322,7 +339,7 @@ const confirmPasswordChange = (val,pswd) => {
           Région
         </Text>
         <View style={styles.action}>
-          <Feather name="lock" color={COLORS.lightBlue} size={20} />
+          <Feather name="home" color={COLORS.lightBlue} size={20} />
             <TextInput style={styles.textInput}
                   placeholder="Veuillez entrer votre région"
                   placeholderTextColor={COLORS.lightBlue}
@@ -339,7 +356,7 @@ const confirmPasswordChange = (val,pswd) => {
           Ville
         </Text>
         <View style={styles.action}>
-          <Feather name="lock" color={COLORS.lightBlue} size={20} />
+          <Feather name="home" color={COLORS.lightBlue} size={20} />
             <TextInput style={styles.textInput}
                   placeholder="Veuillez entrer votre ville"
                   placeholderTextColor={COLORS.lightBlue}
@@ -356,7 +373,7 @@ const confirmPasswordChange = (val,pswd) => {
           Adresse complément
         </Text>
         <View style={styles.action}>
-          <Feather name="lock" color={COLORS.lightBlue} size={20} />
+          <Feather name="home" color={COLORS.lightBlue} size={20} />
             <TextInput style={styles.textInput}
                   placeholder="Veuillez compléter votre adresse si besoin"
                   placeholderTextColor={COLORS.lightBlue}
@@ -373,9 +390,9 @@ const confirmPasswordChange = (val,pswd) => {
           Code Postale
         </Text>
         <View style={styles.action}>
-          <Feather name="lock" color={COLORS.lightBlue} size={20} />
+          <Feather name="home" color={COLORS.lightBlue} size={20} />
             <TextInput style={styles.textInput}
-                  placeholder="Veuillez compléter votre adresse si besoin"
+                  placeholder="Veuillez compléter votre code postale"
                   placeholderTextColor={COLORS.lightBlue}
                   onChangeText={onChangeZipCode}
               />  
@@ -390,14 +407,15 @@ const confirmPasswordChange = (val,pswd) => {
           Date de naissance
         </Text>
         <View style={styles.action}>
-          <Feather name="lock" color={COLORS.lightBlue} size={20} />
-            <TextInput style={styles.textInput}
-                  placeholder="Veuillez compléter votre adresse si besoin"
+          <Feather name="calendar" color={COLORS.lightBlue} size={20} />
+          <TextInput style={styles.textInput}
+                  placeholder="dd/mm/yyyy"
                   placeholderTextColor={COLORS.lightBlue}
                   onChangeText={onChangeBirthDate}
-              />  
+              /> 
         </View>
 
+          
 
         <View style={styles.button}>
           <TouchableOpacity style={styles.validate} onPress={fetchSignUpVal}>
@@ -412,7 +430,7 @@ const confirmPasswordChange = (val,pswd) => {
         </View>
 
         <TouchableOpacity>
-          <Text style={{ color: COLORS.beige, marginTop: 15, borderRadius: 10, }}>
+          <Text style={{ color: COLORS.beige, marginTop: 15, borderRadius: 10,  textDecorationLine : 'underline'}}>
             Vous avez déjà un compte?
           </Text>
         </TouchableOpacity>
@@ -425,6 +443,22 @@ const confirmPasswordChange = (val,pswd) => {
   );
 }
 
+/*
+<DatePicker
+          style={styles.textInput}
+          date={date} // Initial date from state
+          mode="date" // The enum of date, datetime and time
+          placeholder="Veuiller entrer votre date de naissance"
+          placeholderTextColor={COLORS.lightBlue}
+          format="DD-MM-YYYY"
+          minDate="01-01-2016"
+          confirmBtnText="Confirmer"
+          cancelBtnText="Annuler"
+          showIcon={null}
+          onDateChange={onChangeBirthDate}
+        />
+
+*/
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -496,6 +530,16 @@ const styles = StyleSheet.create({
   textSign: {
     fontSize: 18,
     fontWeight: "bold",
+  },
+  datePickerStyle: {
+    width: 200,
+    marginTop: 20,
+  },
+  pickerStyle: {
+    flex: 1,
+    marginTop: Platform.OS === "ios" ? 0 : -12,
+    paddingLeft: 10,
+    color: COLORS.lightBlue,
   },
 });
 
