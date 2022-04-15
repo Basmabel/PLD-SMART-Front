@@ -28,6 +28,20 @@ const SignInScreen = ({ navigation }) => {
     isValidPassword: true,
   });
 
+  const loginData = async () => {
+    try {
+      const response = await fetch("https://eve-back.herokuapp.com/login", {
+        method: "GET",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email: email, password: password }),
+      });
+      const data = await response.text();
+      alert(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const { colors } = useTheme();
 
   const textInputChange = (val) => {
@@ -315,63 +329,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
-/**
- * Define the state for a sign in operation 
- 
-this.state = {
-    email : '',
-    password: '',
-  };
- */
-
-/*const loginData = async () =>  
-{
-    try{
-        const response = await fetch('https://eve-back.herokuapp.com/signin')
-        {method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({"email":email, 
-                              "password":password, 
-            })
-        });
-        const data = await response.text();
-        alert(data);
-
-
-        }
-    }catch (error) {
-    console.error(error);
-  }
-}
-/*
-  fetch(url,
-    {
-      method: 'POST',
-      body: JSON.stringify({"email": this.state.email,
-                            "password": this.state.password})
-              
-    }).then(function (response) {
-          return response.json();
-    }).then(function (result) { 
-          // console.log(result);
-          if(!result.error)
-          {
-              that.setState({ 
-                status: result.error, // why result.error ? 
-                wholeResult: result,
-              });
-              Alert.alert("User register successfully \n userId: "+that.state.wholeResult.user.uid);
-              console.log(that.state.wholeResult.user.uid);
-          }else{
-              Alert.alert(result.error_msg);
-              console.log(result);
-          }
- 
- 
-    }).catch(function (error) {
-          console.log("-------- error ------- "+error);
-          alert("result:"+error)
-    });
-}
-*/
