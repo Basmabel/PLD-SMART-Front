@@ -8,14 +8,26 @@ import HomePageScreen from './app/screens/HomePageScreen.js';
 import NavigatorBar from './app/screens/NavigatorBar.js';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import "react-native-gesture-handler";
+import { createStackNavigator } from "@react-navigation/stack";
+import SearchScreen from "./app/screens/SearchScreen.js";
+import { TextField } from "native-base";
+
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
     //<SignUpScreen/>
-    <NavigatorBar/>
-      //<LandingScreen/>
-
-      //<SignInScreen/>
+    //<NavigatorBar/>
+    //<LandingScreen/>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="SignInScreen" component={SignInScreen} />
+        <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+        <Stack.Screen name="NavigatorBar" component={NavigatorBar} />
+      </Stack.Navigator>
+    </NavigationContainer>
+   // <SearchScreen />
   );
 }
 
@@ -35,9 +47,8 @@ const MyStack = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
-

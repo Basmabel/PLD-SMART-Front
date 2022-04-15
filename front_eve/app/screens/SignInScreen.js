@@ -29,7 +29,6 @@ const SignInScreen = ({ navigation }) => {
   });
 
   const loginData = async () => {
-  
     try {
       const response = await fetch("https://eve-back.herokuapp.com/login", {
         method: "POST",
@@ -37,6 +36,7 @@ const SignInScreen = ({ navigation }) => {
         body: JSON.stringify({ email: data.email, password: data.password }),
       });
       const result = await response.text();
+      navigation.navigate("NavigatorBar");
       alert(result);
     } catch (error) {
       console.error(error);
@@ -204,10 +204,7 @@ const SignInScreen = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
         <View style={styles.button}>
-          <TouchableOpacity
-            style={styles.signIn}
-            onPress={loginData}
-          >
+          <TouchableOpacity style={styles.signIn} onPress={loginData}>
             <View style={styles.signIn}>
               <Text
                 style={[

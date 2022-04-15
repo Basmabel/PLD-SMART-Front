@@ -32,34 +32,34 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
   ];*/
 
 const userInfo = {
-    "name" : "Coco",
-    "imgProfil": "https://picsum.photos/200/300"
-}
+  name: "Coco",
+  imgProfil: "https://picsum.photos/200/300",
+};
 
 const categorie = [
   {
-    "name": "party",
-    "imgUrl":"https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
+    name: "party",
+    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
   },
   {
-    "name": "party",
-    "imgUrl":"https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
+    name: "party",
+    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
   },
   {
-    "name": "party",
-    "imgUrl":"https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
+    name: "party",
+    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
   },
   {
-    "name": "party",
-    "imgUrl":"https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
+    name: "party",
+    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
   },
   {
-    "name": "party",
-    "imgUrl":"https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
-  }
-]
+    name: "party",
+    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
+  },
+];
 export default function HomePageScreen() {
-    const tabBarHeight = useBottomTabBarHeight()*2;
+  const tabBarHeight = useBottomTabBarHeight() * 2;
 
    const [popularEvents,setPopularEvents] = React.useState([]);
    const [userInfo, setUserInfo] = React.useState(null);
@@ -173,54 +173,53 @@ export default function HomePageScreen() {
     );
 }
 
-const windowHeight = Dimensions.get('window').height;
-
+const windowHeight = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({
-    container:{
-        flex: 1
-    },
-    header:{
-        paddingHorizontal: 20,
-        paddingTop: 20,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        backgroundColor: COLORS.beige
-    },
-    title_header:{
-        color: COLORS.greyBlue,
-        fontSize: 25,
-        fontWeight: 'bold'
-    },
-    infoView:{
-        flexDirection:'column',
-        alignItems: 'center'
-    },
-    profilImage:{
-        width:50,
-        height:50,
-        borderRadius: 25
-    },
-    locationView:{
-        flexDirection:'row',
-    },
-    text_header:{
-        fontSize: 20
-    },
-    body:{
-        flexDirection: 'column',
-        padding: 20,
-        backgroundColor: COLORS.beige,
-        height: '100%'
-    },
-    events: {
-        flexDirection:'column',
-        marginBottom: 20
-    },
-    categorieEvents:{
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom:15
-    }
+  container: {
+    flex: 1,
+  },
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: COLORS.beige,
+  },
+  title_header: {
+    color: COLORS.greyBlue,
+    fontSize: 25,
+    fontWeight: "bold",
+  },
+  infoView: {
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  profilImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  locationView: {
+    flexDirection: "row",
+  },
+  text_header: {
+    fontSize: 20,
+  },
+  body: {
+    flexDirection: "column",
+    padding: 20,
+    backgroundColor: COLORS.beige,
+    height: "100%",
+  },
+  events: {
+    flexDirection: "column",
+    marginBottom: 20,
+  },
+  categorieEvents: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 15,
+  },
 });
