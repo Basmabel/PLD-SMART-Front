@@ -1,67 +1,74 @@
-import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView} from 'react-native';
-import {COLORS} from '../config/colors.js';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Column } from 'native-base';
-import MyCarousel from '../components/MyCarousel';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-const Swiper = require('react-native-swiper');
-
+import {
+  StyleSheet,
+  Dimensions,
+  Text,
+  View,
+  Image,
+  SafeAreaView,
+  ScrollView,
+} from "react-native";
+import { COLORS } from "../config/colors.js";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Column } from "native-base";
+import MyCarousel from "../components/MyCarousel";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+const Swiper = require("react-native-swiper");
 
 const popEvents = [
-    {
-      name: "Aenean leo",
-      date: "5 march 2020",
-      place: "Charpennes",
-      imgUrl: "https://picsum.photos/id/11/200/300",
-      imgProfil: "https://picsum.photos/id/11/200/300"
-    },
-    {
-      name: "Aenean leo",
-      date: "5 march 2020",
-      place: "Charpennes",
-      imgUrl: "https://picsum.photos/id/11/200/300",
-      imgProfil: "https://picsum.photos/id/11/200/300"
-    },
-    {
-      name: "Aenean leo",
-      date: "5 march 2020",
-      place: "Charpennes",
-      imgUrl: "https://picsum.photos/id/11/200/300",
-      imgProfil: "https://picsum.photos/id/11/200/300"
-    }
-  ];
+  {
+    name: "Aenean leo",
+    date: "5 march 2020",
+    place: "Charpennes",
+    imgUrl: "https://picsum.photos/id/11/200/300",
+    imgProfil: "https://picsum.photos/id/11/200/300",
+  },
+  {
+    name: "Aenean leo",
+    date: "5 march 2020",
+    place: "Charpennes",
+    imgUrl: "https://picsum.photos/id/11/200/300",
+    imgProfil: "https://picsum.photos/id/11/200/300",
+  },
+  {
+    name: "Aenean leo",
+    date: "5 march 2020",
+    place: "Charpennes",
+    imgUrl: "https://picsum.photos/id/11/200/300",
+    imgProfil: "https://picsum.photos/id/11/200/300",
+  },
+];
 
 const userInfo = {
-    "name" : "Coco",
-    "imgProfil": "https://picsum.photos/200/300"
-}
+  name: "Coco",
+  imgProfil: "https://picsum.photos/200/300",
+};
 
 const categorie = [
   {
-    "name": "party",
-    "imgUrl":"https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
+    name: "party",
+    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
   },
   {
-    "name": "party",
-    "imgUrl":"https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
+    name: "party",
+    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
   },
   {
-    "name": "party",
-    "imgUrl":"https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
+    name: "party",
+    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
   },
   {
-    "name": "party",
-    "imgUrl":"https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
+    name: "party",
+    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
   },
   {
-    "name": "party",
-    "imgUrl":"https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
-  }
-]
+    name: "party",
+    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
+  },
+];
 export default function HomePageScreen() {
-    const tabBarHeight = useBottomTabBarHeight()*2;
+  const tabBarHeight = useBottomTabBarHeight() * 2;
 
-   /*const [popularEvents,setPopularEvents] = React.useState(null);
+  /*const [popularEvents,setPopularEvents] = React.useState(null);
 
   const getPopular = () =>{
     try{
@@ -76,7 +83,7 @@ export default function HomePageScreen() {
     }
   }*/
 
- /* const [categories,setCategories] = React.useState(null);
+  /* const [categories,setCategories] = React.useState(null);
 
   const getCategories = () =>{
       try{
@@ -128,98 +135,113 @@ export default function HomePageScreen() {
       }
   }*/
 
-
-    return(
-       <SafeAreaView style={StyleSheet.container}>
-           <View style={styles.header}>
-                <Text style={styles.title_header}>Hi {userInfo.name}!</Text>
-                <View style={styles.infoView}>
-                    <Image style={styles.profilImage} source={{uri: userInfo.imgProfil}}/>
-                    <View style={styles.locationView}>
-                            <Text style={styles.text_header}> Lyon </Text>
-                            <MaterialCommunityIcons name="map-marker" color={COLORS.black} size={24}/>
-                    </View>
-                </View>
-           </View>
-           <ScrollView style={{marginBottom:tabBarHeight}}>
-                <View style={styles.body}>
-                        <View style={styles.events}>
-                            <View style={styles.categorieEvents}>
-                                <Text style={styles.title_header}>Popular</Text>
-                                <MaterialCommunityIcons name="fire" color={COLORS.greyBlue} size={26}/>
-                            </View>  
-                            <MyCarousel data={popEvents} type={{"event":"oui"}}/>                  
-                        </View>
-                        <View style={styles.events}>
-                            <View style={styles.categorieEvents}>
-                                <Text style={styles.title_header}>Catégories</Text>
-                                <MaterialCommunityIcons name="bookmark" color={COLORS.greyBlue} size={26}/>
-                            </View>  
-                            <MyCarousel data={categorie} type={{"event":"non"}}/>                  
-                        </View>
-                        <View style={styles.events}>
-                            <View style={styles.categorieEvents}>
-                                <Text style={styles.title_header}>Popular</Text>
-                                <MaterialCommunityIcons name="fire" color={COLORS.greyBlue} size={26}/>
-                            </View>  
-                            <MyCarousel data={popEvents} type={{"event":"oui"}}/>                  
-                        </View>
-                </View>
-           </ScrollView>
-           
-           
-       </SafeAreaView>
-    );
+  return (
+    <SafeAreaView style={StyleSheet.container}>
+      <View style={styles.header}>
+        <Text style={styles.title_header}>Hi {userInfo.name}!</Text>
+        <View style={styles.infoView}>
+          <Image
+            style={styles.profilImage}
+            source={{ uri: userInfo.imgProfil }}
+          />
+          <View style={styles.locationView}>
+            <Text style={styles.text_header}> Lyon </Text>
+            <MaterialCommunityIcons
+              name="map-marker"
+              color={COLORS.black}
+              size={24}
+            />
+          </View>
+        </View>
+      </View>
+      <ScrollView style={{ marginBottom: "15%" }}>
+        <View style={styles.body}>
+          <View style={styles.events}>
+            <View style={styles.categorieEvents}>
+              <Text style={styles.title_header}>Popular</Text>
+              <MaterialCommunityIcons
+                name="fire"
+                color={COLORS.greyBlue}
+                size={26}
+              />
+            </View>
+            <MyCarousel data={popEvents} type={{ event: "oui" }} />
+          </View>
+          <View style={styles.events}>
+            <View style={styles.categorieEvents}>
+              <Text style={styles.title_header}>Catégories</Text>
+              <MaterialCommunityIcons
+                name="bookmark"
+                color={COLORS.greyBlue}
+                size={26}
+              />
+            </View>
+            <MyCarousel data={categorie} type={{ event: "non" }} />
+          </View>
+          <View style={styles.events}>
+            <View style={styles.categorieEvents}>
+              <Text style={styles.title_header}>Popular</Text>
+              <MaterialCommunityIcons
+                name="fire"
+                color={COLORS.greyBlue}
+                size={26}
+              />
+            </View>
+            <MyCarousel data={popEvents} type={{ event: "oui" }} />
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
 }
 
-const windowHeight = Dimensions.get('window').height;
-
+const windowHeight = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({
-    container:{
-        flex: 1
-    },
-    header:{
-        paddingHorizontal: 20,
-        paddingTop: 20,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        backgroundColor: COLORS.beige
-    },
-    title_header:{
-        color: COLORS.greyBlue,
-        fontSize: 25,
-        fontWeight: 'bold'
-    },
-    infoView:{
-        flexDirection:'column',
-        alignItems: 'center'
-    },
-    profilImage:{
-        width:50,
-        height:50,
-        borderRadius: 25
-    },
-    locationView:{
-        flexDirection:'row',
-    },
-    text_header:{
-        fontSize: 20
-    },
-    body:{
-        flexDirection: 'column',
-        padding: 20,
-        backgroundColor: COLORS.beige,
-        height: '100%'
-    },
-    events: {
-        flexDirection:'column',
-        marginBottom: 20
-    },
-    categorieEvents:{
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom:15
-    }
+  container: {
+    flex: 1,
+  },
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: COLORS.beige,
+  },
+  title_header: {
+    color: COLORS.greyBlue,
+    fontSize: 25,
+    fontWeight: "bold",
+  },
+  infoView: {
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  profilImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  locationView: {
+    flexDirection: "row",
+  },
+  text_header: {
+    fontSize: 20,
+  },
+  body: {
+    flexDirection: "column",
+    padding: 20,
+    backgroundColor: COLORS.beige,
+    height: "100%",
+  },
+  events: {
+    flexDirection: "column",
+    marginBottom: 20,
+  },
+  categorieEvents: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 15,
+  },
 });
