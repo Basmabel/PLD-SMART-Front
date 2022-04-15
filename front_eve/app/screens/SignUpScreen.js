@@ -24,33 +24,57 @@ import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 export default function SignUpScreen() {
   const handlePress = () => console.log("pressed");
-  //const {landscape} = useDeviceOrientation();
 
-  /*this.state = {
-    name: '', 
-    surname : '',
-    email: '',
-    password: '',
-    confirmedPassword: '',
-    phone: '',
-    city: '',
-    street: '',
-    street_number: '',
-    region: '',
-    zip_code: '',
-    address_complement: '',
-    gender: '',
-    birthDate: '',
-    description: ''
-  };*/
+ const [name, onChangeName] = React.useState("");
+ const [surname, onChangeSurName] = React.useState("");
+ const [email, onChangeEmail] = React.useState("");
+ const [password, onChangePassword] = React.useState("");
+ const [confirmedPassword, onChangeConfirmedPassword] = React.useState("");
+ const [phone, onChangePhone] = React.useState("");
+ const [city, onChangeCity] = React.useState("");
+ const [street, onChangeStreet] = React.useState("");
+ const [street_number, onChangeStreetNumber] = React.useState("");
+ const [region, onChangeRegion] = React.useState("");
+ const [zip_code, onChangeZipCode] = React.useState("");
+ const [address_complement, onChangeAddressComplement] = React.useState("");
+ const [gender, onChangeGender] = React.useState("");
+ const [birthDate, onChangeBirthDate] = React.useState("");
+ const [description, onChangeDescription] = React.useState("");
 
-  
+ const fetchSignUpVal = async () =>{
+   try{
+        const response = await  fetch('https://eve-back.herokuapp.com/signup',
+        {method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({"name": name,
+                              "surname":surname, 
+                              "email":email, 
+                              "city":city,
+                              "street":street,
+                              "streetNb":street_number,
+                              "region":region,
+                              "zipCode":zip_code,
+                              "addressComplement":address_complement,
+                              "password":password, 
+                              "phone":phone, 
+                              "address":address_complement, 
+                              "gender":gender,
+                              "birthDate":birthDate,
+                              "description":description
+            })
+        });
+        const data = await response.text();
+        alert(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
   return (
-    <ImageBackground 
-        source={require("../assets/images/background.jpg")}
-        blurRadius={5}
-        style={styles.background}
-    >
+        <ImageBackground 
+            source={require("../assets/images/background.jpg")}
+            blurRadius={5}
+            style={styles.background}
+        >
       
       
         <Text style={styles.title}>Inscription</Text> 
@@ -58,40 +82,40 @@ export default function SignUpScreen() {
         <View style={{ flexDirection: 'row'}}>
           <TextInput style={styles.txtinputRow}
               placeholder="Nom"
-              //onChangeText={(text) => this.setState({ name: text })}
+              onChangeText={onChangeName}
           />
 
           <TextInput style={styles.txtinputRow}
               placeholder="Prénom"
-              //onChangeText={(text) => this.setState({ surname: text })}
+              onChangeText={onChangeSurName}
           />  
         </View>
 
         <TextInput style={styles.txtinput}
             placeholder="Email"
-            //onChangeText={(text) => this.setState({ email: text })}
+            onChangeText={onChangeEmail}
         />
         
         <TextInput style={styles.txtinput}
             placeholder="Mot de passe"
             secureTextEntry={true}
-            //onChangeText={(text) => this.setState({ password: text })}
+            onChangeText={onChangePassword}
         />
 
         <TextInput style={styles.txtinput}
             placeholder="Confirmation mot de passe"
             secureTextEntry={true}
-            //onChangeText={(text) => this.setState({ confirmedPassword: text })}
+            onChangeText={onChangeConfirmedPassword}
         />
 
       <View style={{ flexDirection: 'row'}}>
         <TextInput style={styles.txtinputRow}
             placeholder="Numéro de téléphone"
-            //onChangeText={(text) => this.setState({ phone: text })}
+            onChangeText={onChangePhone}
         />
         <TextInput style={styles.txtinputRow}
             placeholder="Genre"
-            //onChangeText={(text) => this.setState({ gender: text })}
+            onChangeText={onChangeGender}
         />
       </View>
 
@@ -105,7 +129,7 @@ export default function SignUpScreen() {
                           }
             placeholder="N°"
             type="number"
-            //onChangeText={(text) => this.setState({ gender: text })}
+            onChangeText={onChangeStreetNumber}
         />
         <TextInput style={ {backgroundColor: '#fff',
                             height: 40,
@@ -115,18 +139,18 @@ export default function SignUpScreen() {
                             padding: 10}
                           }
             placeholder="Rue"
-            //onChangeText={(text) => this.setState({ gender: text })}
+            onChangeText={onChangeStreet}
         />
       </View>
 
       <View style={{ flexDirection: 'row'}}>
         <TextInput style={styles.txtinputRow}
               placeholder="Région"
-              //onChangeText={(text) => this.setState({ phone: text })}
+              onChangeText={onChangeRegion}
           />
         <TextInput style={styles.txtinputRow}
             placeholder="Ville"
-            //onChangeText={(text) => this.setState({ gender: text })}
+            onChangeText={onChangeCity}
         />
       </View>
 
@@ -141,7 +165,7 @@ export default function SignUpScreen() {
                             padding: 10}
                           }
           placeholder="Adresse complément"
-          //onChangeText={(text) => this.setState({ _complement: text })}
+          onChangeText={onChangeAddressComplement}
       />
         <TextInput style={ {backgroundColor: '#fff',
                             height: 40,
@@ -151,7 +175,7 @@ export default function SignUpScreen() {
                             padding: 10}
                           }
             placeholder="Code postale"
-            //onChangeText={(text) => this.setState({ gender: text })}
+            onChangeText={onChangeZipCode}
       />
       </View>
 
@@ -159,10 +183,10 @@ export default function SignUpScreen() {
 
         <TextInput style={styles.txtinput}
             placeholder="Date de naissance"
-            //onChangeText={(text) => this.setState({ birthDate: text })}
+            onChangeText={onChangeBirthDate}
         />
 
-        <Pressable  style={styles.button} onPress={() => Alert.alert('Inscription réussie')}>
+        <Pressable  style={styles.button} onPress={fetchSignUpVal}>
             <Text style={styles.txtButton}>Valider</Text>
         </Pressable>
 
@@ -172,6 +196,8 @@ export default function SignUpScreen() {
     
     </ImageBackground>
   );
+
+ 
 }
 
 const styles = StyleSheet.create({
@@ -231,46 +257,6 @@ const styles = StyleSheet.create({
 
 
 
-/*
-const fetchSignUpVal = async () =>{
-    fetch(url,
-                    {method: 'POST',
-                    body: JSON.stringify({"name": this.state.name, 
-                           "surname": this.state.surname,
-                           "email": this.state.email,
-                           "password": this.state.password,
-                            "confirmedPassword": this.state.confirmedPassword,
-                            "phone" : this.state.phone,
-                            "city" : this.state.city,
-                            "street" : this.state.street,
-                            "street_number" : this.state.street_number,
-                            "region" : this.state.region,
-                            "zip_code" : this.state.zip_code,
-                            "address_complement" : this.state.address_complement,
-                            "address" : this.state.address,
-                            "gender" : this.state.gender,
-                            "birthDate" : this.state.birthDate,
-                            "description" : this.state.description
-                        })
-                    }).then(function(response){
-                        return response.json();
-                    }).then(function(result){
-                        // console.log(result);
-                        if(!result.error){
-                            that.setState({ 
-                            status: result.error,
-                            wholeResult: result,
-                            });
-                        Alert.alert("User register successfully \n userId: "+that.state.wholeResult.user.uid);
-                        console.log(that.state.wholeResult.user.uid);
-                        }else{
-                            Alert.alert(result.error_msg);
-                            console.log(result);
-                        }
-                    }).catch(function (error) {
-                        console.log("-------- error ------- "+error);
-                        alert("result:"+error)
-                    });
-}
 
-*/
+
+
