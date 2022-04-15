@@ -6,7 +6,9 @@ import SignUpScreen from './app/screens/SignUpScreen.js';
 
 export default function App() {
   return (
-    <SignUpScreen/>
+      <SignInScreen/>
+
+      //<SignInScreen/>
   );
 }
 

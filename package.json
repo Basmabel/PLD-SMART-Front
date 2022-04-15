@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@react-native-community/hooks": "^2.8.1",
+    "material-icons": "^1.10.8",
+    "react-native-linear-gradient": "^2.5.6"
+  }
+}
