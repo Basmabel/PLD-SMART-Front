@@ -6,6 +6,8 @@ import SignInScreen from './app/screens/SignInScreen.js';
 import SignUpScreen from './app/screens/SignUpScreen.js';
 import HomePageScreen from './app/screens/HomePageScreen.js';
 import NavigatorBar from './app/screens/NavigatorBar.js';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 export default function App() {
   return (
@@ -17,6 +19,19 @@ export default function App() {
   );
 }
 
+/*const Stack = createNativeStackNavigator();
+
+const MyStack = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <SignInScreen name="Connexion" component={connexionScreen}/>
+        <SignUpScreen name="Inscription" component={inscriptionScreen}/>
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+*/
 const styles = StyleSheet.create({
   container: {
     flex: 1,
