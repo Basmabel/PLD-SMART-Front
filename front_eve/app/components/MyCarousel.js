@@ -12,7 +12,7 @@ const widthWind = Dimensions.get('window').width;
 const MyCarousel = ({data, type}) => {
   const isCarousel = React.useRef(null);
   const [index, setIndex] = React.useState(0);
-  console.log(type.event);
+
   var obj=null;
     
   if(type.event==="oui"){

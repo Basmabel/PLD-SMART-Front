@@ -10,10 +10,10 @@ import NavigatorBar from './app/screens/NavigatorBar.js';
 export default function App() {
   return (
     //<SignUpScreen/>
-    //<NavigatorBar/>
+    <NavigatorBar/>
       //<LandingScreen/>
 
-      <SignInScreen/>
+      //<SignInScreen/>
   );
 }
 

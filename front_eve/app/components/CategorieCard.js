@@ -53,11 +53,11 @@ const CategorieCard= ({ item, index }) => {
     <View style={styles.container} key={index}>
         <View style={styles.containerIcon}>
             <Image
-                source={{uri: item.imgUrl}}
+                source={{uri: item.img}}
                 style={styles.image}
             />
         </View>  
-        <Text style={styles.name}>{item.name}</Text>    
+        <Text style={styles.name}>{item.description}</Text>    
     </View>
   )
 

@@ -1,13 +1,13 @@
+import React, {useEffect} from "react";
 import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView} from 'react-native';
 import {COLORS} from '../config/colors.js';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Column } from 'native-base';
 import MyCarousel from '../components/MyCarousel';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-const Swiper = require('react-native-swiper');
 
 
-const popEvents = [
+/*const popEvents = [
     {
       name: "Aenean leo",
       date: "5 march 2020",
@@ -29,7 +29,7 @@ const popEvents = [
       imgUrl: "https://picsum.photos/id/11/200/300",
       imgProfil: "https://picsum.photos/id/11/200/300"
     }
-  ];
+  ];*/
 
 const userInfo = {
     "name" : "Coco",
@@ -61,80 +61,82 @@ const categorie = [
 export default function HomePageScreen() {
     const tabBarHeight = useBottomTabBarHeight()*2;
 
-   /*const [popularEvents,setPopularEvents] = React.useState(null);
-
-  const getPopular = () =>{
-    try{
-      const response = await  fetch('https://eve-back.herokuapp.com/getPopular',
-      {method: 'Get',
-        headers: { 'content-type': 'application/json' }
-      });
-      setPopularEvents(await response.json());
-      alert(popularEvents);
-    } catch (error) {
-      console.error(error);
-    }
-  }*/
-
- /* const [categories,setCategories] = React.useState(null);
-
-  const getCategories = () =>{
-      try{
-        const response = await  fetch('https://eve-back.herokuapp.com/getCategories',
-        {method: 'Get',
-          headers: { 'content-type': 'application/json' }
+   const [popularEvents,setPopularEvents] = React.useState([]);
+   const [userInfo, setUserInfo] = React.useState(null);
+   const [isLoading, setLoading] = React.useState(true);
+   const [categories,setCategories] = React.useState(null)
+   const [eventPerCat, setEventPerCat] = React.useState([]);
+  
+  useEffect(() => {
+     
+      Promise.all([
+        fetch('http://169.254.3.246:3000/getPopular'),
+        fetch('http://169.254.3.246:3000/getUserInfo',{
+          method: "POST",
+          headers: {'content-type': 'application/json',Authorization: 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDAzNDIwMiwiZXhwIjoxNjUwMDQ1MDAyfQ.kCl1LAMxumEdMVG1dBTpNM_2NSV3Loi4FYllvod4lXc'},
+          body: JSON.stringify({
+            "id":"18" 
+          })}),
+          fetch('http://169.254.3.246:3000/getCategories')
+      ]).then(function (responses) {
+        // Get a JSON object from each of the responses
+        return Promise.all(responses.map(function (response) {
+          return response.json();
+        }));
+      }).then(function (data) {
+        // Log the data to the console
+        // You would do something with both sets of data here
+        data.map((item,index)=>{
+          if(index==0){
+            setPopularEvents(item)
+          }else if(index==1){
+            setUserInfo(item)
+          }else if(index==2){
+            setCategories(item)
+           /* item.map((cat)=>{
+                fetch('https://eve-back.herokuapp.com/getEvents',
+                  {method: 'POST',
+                    headers: { 'content-type': 'application/json' },
+                    body: JSON.stringify({
+                      "id": cat.id 
+                    })
+                  }).then((response)=>response.json())
+                    .then((json)=>setEventPerCat(oldArray,[...oldArray,json]))
+                    .catch((error)=>console.error(error))
+            });*/
+          }
         });
-        setCategories(await response.json());
-    } catch (error) {
-        console.error(error);
-    }
-  }
+      }).catch(function (error) {
+        // if there's an error, log it
+        console.log(error);
+      }).finally(()=> setLoading(false));
 
-  const [eventPerCat, setEventPerCat] = React.useState([]);
+    }, []);
 
-  const getEventPerCategories = () =>{
-      categories.map((item)=>{
-        try{
-          const response = await  fetch('https://eve-back.herokuapp.com/getEvents?categorie='+item,
-          {method: 'Get',
-            headers: { 'content-type': 'application/json' }
-          });
-          var eventCat= await response.json();
-          return(
-            <View style={styles.events}>
-                            <View style={styles.categorieEvents}>
-                                <Text style={styles.title_header}>{item.name}</Text>
-                            </View>  
-                            <MyCarousel data={eventCat} type={{"event":"oui"}}/>                  
-            </View>
-          );
-        } catch (error) {
-            console.error(error);
-        }
+   /* const displayEvents=()=>{
+      eventPerCat.map((item,index)=>{
+        return(
+          <View style={styles.events}>
+                          <View style={styles.categorieEvents}>
+                              <Text style={styles.title_header}>{categories[index].description}</Text>
+                          </View>  
+                          <MyCarousel data={item} type={{"event":"oui"}}/>                  
+          </View>
+        );
       });
-  }*/
-
-  /*const [userInfo, setUserInfo] = React.useState(null);
-
-  const getUserInfo = () =>{
-      try{
-        const response = await  fetch('https://eve-back.herokuapp.com/getUserInfo?id=0',
-        {method: 'Get',
-          headers: { 'content-type': 'application/json' }
-        });
-        setUserInfo(await response.json());
-      } catch (error) {
-          console.error(error);
-      }
-  }*/
-
+    }*/
+    
 
     return(
+      
        <SafeAreaView style={StyleSheet.container}>
+
+         {isLoading ? (<Text>Loading...</Text>) :
+           ( <View>
            <View style={styles.header}>
-                <Text style={styles.title_header}>Hi {userInfo.name}!</Text>
+                <Text style={styles.title_header}>Hi {userInfo[0].name}!</Text>
                 <View style={styles.infoView}>
-                    <Image style={styles.profilImage} source={{uri: userInfo.imgProfil}}/>
+                    <Image style={styles.profilImage} source={{uri: userInfo[0].photo}}/>
                     <View style={styles.locationView}>
                             <Text style={styles.text_header}> Lyon </Text>
                             <MaterialCommunityIcons name="map-marker" color={COLORS.black} size={24}/>
@@ -148,26 +150,25 @@ export default function HomePageScreen() {
                                 <Text style={styles.title_header}>Popular</Text>
                                 <MaterialCommunityIcons name="fire" color={COLORS.greyBlue} size={26}/>
                             </View>  
-                            <MyCarousel data={popEvents} type={{"event":"oui"}}/>                  
+                            <MyCarousel data={popularEvents} type={{"event":"oui"}}/>             
                         </View>
                         <View style={styles.events}>
                             <View style={styles.categorieEvents}>
                                 <Text style={styles.title_header}>Catégories</Text>
                                 <MaterialCommunityIcons name="bookmark" color={COLORS.greyBlue} size={26}/>
                             </View>  
-                            <MyCarousel data={categorie} type={{"event":"non"}}/>                  
+                            <MyCarousel data={categories} type={{"event":"non"}}/>                  
                         </View>
                         <View style={styles.events}>
                             <View style={styles.categorieEvents}>
                                 <Text style={styles.title_header}>Popular</Text>
                                 <MaterialCommunityIcons name="fire" color={COLORS.greyBlue} size={26}/>
                             </View>  
-                            <MyCarousel data={popEvents} type={{"event":"oui"}}/>                  
+                            <MyCarousel data={popularEvents} type={{"event":"oui"}}/>                  
                         </View>
                 </View>
            </ScrollView>
-           
-           
+           </View>)}           
        </SafeAreaView>
     );
 }

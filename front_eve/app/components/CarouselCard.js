@@ -2,16 +2,28 @@ import React from 'react'
 import { View, Text, StyleSheet, Dimensions, Image } from "react-native"
 import { Colors } from 'react-native-paper';
 import {COLORS} from '../config/colors.js';
+import { format } from "date-fns";
 
 export const SLIDER_WIDTH = Dimensions.get('window').width
 export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.75)
 export const ITEM_HEIGHT = Math.round(ITEM_WIDTH * 0.75)
 
+
 const CarouselCard= ({ item, index }) => {
+  
+  var date = new Date(item.date_timestamp);
+  if(date.getMonth()>9 || date.getMonth()<2 || (date.getMonth()==9 && date.getDay()>20) || (date.getMonth()==2 && date.getDay()<=20) ){
+    date.setTime( date.getTime() + 60*60*1000+date.getTimezoneOffset()*60*1000);
+  }else{
+    date.setTime( date.getTime() + 2*60*60*1000+date.getTimezoneOffset()*60*1000);
+  }
+  
+  var formattedDate = date.getDate()+"/"+(date.getMonth()+1)+"/"+ date.getFullYear(); 
+  
   return (
     <View style={styles.container} key={index}>
       <Image
-        source={{ uri: item.imgUrl }}
+        source={{ uri: item.photo }}
         style={styles.image}
       />
        <View style={styles.body}>
@@ -19,7 +31,7 @@ const CarouselCard= ({ item, index }) => {
          <Image source={{uri: item.imgProfil}} style={styles.profil}/>
        </View>
       <View style={styles.body}>
-        <Text style={styles.date}>{item.date}</Text>
+        <Text style={styles.date}>{formattedDate}</Text>
         <Text style={styles.place}>{item.place}</Text>
         
       </View>
