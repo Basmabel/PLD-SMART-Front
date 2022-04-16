@@ -70,21 +70,7 @@ export default function HomePageScreen() {
    const [retreive, setRetreive] = React.useState(false);
    const [userId, setUserId] = React.useState("")
    const [userToken, setUserToken] = React.useState("")
-   /*const getUserId = async() =>{
-      try {
-        if (value !== null) {
-          setUser(value)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-   }
 
-  const someHandler = async () =>{
-    await getUserId();
-    setRetreive(true);
-  }
-  */
   useEffect(() => {
 
     const retreiveData = async ()=>{
@@ -105,9 +91,7 @@ export default function HomePageScreen() {
     }
     //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
     retreiveData();
-    if(retreive){
-      console.log(userId)
-      console.log(userToken)
+    if(retreive){      
       Promise.all([
         fetch('http://169.254.3.246:3000/getPopular'),
         fetch('http://169.254.3.246:3000/getUserInfo',{
@@ -116,7 +100,8 @@ export default function HomePageScreen() {
           body: JSON.stringify({
             "id":userId
           })}),
-          fetch('http://169.254.3.246:3000/getCategories')
+          fetch('http://169.254.3.246:3000/getCategories'),
+          fetch('http://169.254.3.246:3000/getEventsByCategory')
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
         return Promise.all(responses.map(function (response) {
@@ -132,18 +117,34 @@ export default function HomePageScreen() {
             setUserInfo(item)
           }else if(index==2){
             setCategories(item)
-           /* item.map((cat)=>{
-                fetch('https://eve-back.herokuapp.com/getEventsByCategory',
-                  {method: 'POST',
-                    headers: { 'content-type': 'application/json' },
-                    body: JSON.stringify({
-                      "id": cat.id 
-                    })
-                  }).then((response)=>response.json())
-                    .then((json)=>setEventPerCat(oldArray,[...oldArray,json]))
-                    .catch((error)=>console.error(error))
-            });*/
+          }else if(index==3){
+            var cat_id=item[0].category_id;
+            var nexEv =[];
+            var iter = 0;
+            var stockEvent = []
+            item.map((eve,i)=>{
+                if(cat_id===eve.category_id){
+                    nexEv = [...nexEv];
+                    nexEv[iter]=eve;
+                    iter++;
+                    //console.log(nexEv)
+                }
+                if(iter!=0 && cat_id!=eve.category_id){
+                  stockEvent=[...stockEvent,nexEv];
+                  iter=0;
+                  cat_id=eve.category_id;
+                  nexEv =[]
+                  //console.log(stockEvent)
+                }else if(cat_id===eve.category_id && i+1<item.length && cat_id!=item[i+1].category_id){
+                  stockEvent=[...stockEvent,nexEv];
+                  iter=0;
+                  cat_id=item[i+1].category_id;
+                  nexEv =[]
+                }
+            });
+            setEventPerCat(stockEvent);
           }
+            
         });
       }).catch(function (error) {
         // if there's an error, log it
@@ -155,18 +156,19 @@ export default function HomePageScreen() {
 
   }, [retreive]);
 
-   /* const displayEvents=()=>{
-      eventPerCat.map((item,index)=>{
-        return(
+   const DisplayEvents=()=>{
+      const listEvents = eventPerCat.map((item,index)=>
           <View style={styles.events}>
                           <View style={styles.categorieEvents}>
                               <Text style={styles.title_header}>{categories[index].description}</Text>
                           </View>  
                           <MyCarousel data={item} type={{"event":"oui"}}/>                  
           </View>
-        );
-      });
-    }*/
+      );
+      return(
+        <View>{listEvents}</View>
+      );
+    }
     
 
     return(
@@ -185,7 +187,7 @@ export default function HomePageScreen() {
                     </View>
                 </View>
            </View>
-           <ScrollView style={{marginBottom:tabBarHeight}}>
+           <ScrollView style={{marginBottom:tabBarHeight*2}}>
                 <View style={styles.body}>
                         <View style={styles.events}>
                             <View style={styles.categorieEvents}>
@@ -201,13 +203,7 @@ export default function HomePageScreen() {
                             </View>  
                             <MyCarousel data={categories} type={{"event":"non"}}/>                  
                         </View>
-                        <View style={styles.events}>
-                            <View style={styles.categorieEvents}>
-                                <Text style={styles.title_header}>Popular</Text>
-                                <MaterialCommunityIcons name="fire" color={COLORS.greyBlue} size={26}/>
-                            </View>  
-                            <MyCarousel data={popularEvents} type={{"event":"oui"}}/>                  
-                        </View>
+                        <DisplayEvents/>
                 </View>
            </ScrollView>
            </View>)}           
@@ -215,6 +211,16 @@ export default function HomePageScreen() {
     );
 }
 
+/*
+
+<View style={styles.events}>
+                            <View style={styles.categorieEvents}>
+                                <Text style={styles.title_header}>Popular</Text>
+                                <MaterialCommunityIcons name="fire" color={COLORS.greyBlue} size={26}/>
+                            </View>  
+                            <MyCarousel data={popularEvents} type={{"event":"oui"}}/>                  
+                        </View>
+*/
 const windowHeight = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({

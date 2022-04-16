@@ -28,32 +28,32 @@ const SignInScreen = ({ navigation }) => {
     isValidPassword: true,
   });
 
+  var status =0;
   const loginData = async () => {
      fetch("http://169.254.3.246:3000/login", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: data.email, password: data.password }),
-      }).then((response)=>response.json())
+      }).then((response)=>{
+          status = response.status;
+          if(status==400 || status==401){
+            return response.text()
+          }else{
+            return response.json();
+          }
+      })
       .then(async (json)=>{
-        
-        await AsyncStorage.setItem('key',JSON.stringify(json.id));
-        console.log(json.token)
-        await AsyncStorage.setItem('token',JSON.stringify(json.token));
-        navigation.navigate("NavigatorBar");
-        alert(json);
+        if(status==400 || status==401){
+          alert(json)
+        }else{
+          await AsyncStorage.setItem('key',JSON.stringify(json.id));
+          await AsyncStorage.setItem('token',JSON.stringify(json.token));
+          navigation.navigate("NavigatorBar")
+        }
       })
       .catch((error)=>console.error(error))
-    /*try {
-      const response = await fetch("https://eve-back.herokuapp.com/login", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email: data.email, password: data.password }),
-      });
-      const result = await response.json();
-     
-    } catch (error) {
-      console.error(error);
-    }*/
+   
+      //const response = await fetch("https://eve-back.herokuapp.com/login"
   };
 
   const { colors } = useTheme();

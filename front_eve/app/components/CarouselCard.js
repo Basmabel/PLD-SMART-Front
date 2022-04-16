@@ -23,12 +23,12 @@ const CarouselCard= ({ item, index }) => {
   return (
     <View style={styles.container} key={index}>
       <Image
-        source={{ uri: item.photo }}
+        source={{ uri: item.ImageEvent }}
         style={styles.image}
       />
        <View style={styles.body}>
          <Text style={styles.name}>{item.name}</Text>
-         <Image source={{uri: item.imgProfil}} style={styles.profil}/>
+         <Image source={{uri: item.ImageProfil}} style={styles.profil}/>
        </View>
       <View style={styles.body}>
         <Text style={styles.date}>{formattedDate}</Text>
