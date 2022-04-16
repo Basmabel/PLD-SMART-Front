@@ -26,11 +26,11 @@ const Tab = createBottomTabNavigator();
 export default function NavigatorBar() {
   return (
     <Tab.Navigator
-      screenOptions={{ tabBarStyle: { backgroundColor: COLORS.greyBlue } }}
+      screenOptions={{ tabBarStyle: { backgroundColor: COLORS.beige } }}
       tabBarOptions={{
-        activeTintColor: COLORS.white,
-        inactiveTintColor: "grey",
-        labelStyle: { paddingBottom: 10, fontSize: 10 },
+        activeTintColor: COLORS.mauve,
+        inactiveTintColor: COLORS.mauve,
+        labelStyle: {paddingBottom:5,fontSize: 12, fontWeight:'bold' },
         style: { padding: 10, height: 70 },
       }}
     >
@@ -38,14 +38,14 @@ export default function NavigatorBar() {
         name="Home"
         component={HomePageScreen}
         options={{
-          headerStyle: { backgroundColor: COLORS.greyBlue },
-          headerTitleStyle: { color: COLORS.white },
+          headerShown: false,
           component: { HomePageScreen },
           tabBarIcon: () => (
             <MaterialCommunityIcons
               name="home"
-              color={COLORS.white}
-              size={24}
+              color={COLORS.mauve}
+              size={25}
+              style={{paddingTop:5}}
             />
           ),
         }}

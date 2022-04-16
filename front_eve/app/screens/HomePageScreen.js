@@ -6,6 +6,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Column } from 'native-base';
 import MyCarousel from '../components/MyCarousel';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { Colors } from "react-native-paper";
 
 
 /*const popEvents = [
@@ -160,7 +161,7 @@ export default function HomePageScreen() {
       const listEvents = eventPerCat.map((item,index)=>
           <View style={styles.events}>
                           <View style={styles.categorieEvents}>
-                              <Text style={styles.title_header}>{categories[index].description}</Text>
+                              <Text style={[styles.title_header, styles.title_body]}>{categories[index].description}</Text>
                           </View>  
                           <MyCarousel data={item} type={{"event":"oui"}}/>                  
           </View>
@@ -178,28 +179,29 @@ export default function HomePageScreen() {
          {isLoading ? (<Text>Loading...</Text>) :
            ( <View>
            <View style={styles.header}>
-                <Text style={styles.title_header}>Hi {userInfo[0].name}!</Text>
+                <Text style={styles.title_header}>Home</Text>
                 <View style={styles.infoView}>
                     <Image style={styles.profilImage} source={{uri: userInfo[0].photo}}/>
-                    <View style={styles.locationView}>
-                            <Text style={styles.text_header}> Lyon </Text>
-                            <MaterialCommunityIcons name="map-marker" color={COLORS.black} size={24}/>
-                    </View>
                 </View>
            </View>
-           <ScrollView style={{marginBottom:tabBarHeight*2}}>
+           
+           <ScrollView style={{marginBottom:tabBarHeight}}>
+              <View style={styles.locationView}>
+                    <Text style={styles.text_header}> Lyon </Text>
+                    <MaterialCommunityIcons name="map-marker" color={COLORS.white} size={24}/>
+              </View>
                 <View style={styles.body}>
                         <View style={styles.events}>
                             <View style={styles.categorieEvents}>
-                                <Text style={styles.title_header}>Popular</Text>
-                                <MaterialCommunityIcons name="fire" color={COLORS.greyBlue} size={26}/>
+                                <Text style={[styles.title_header, styles.title_body]}>Popular</Text>
+                                <MaterialCommunityIcons name="fire" color={COLORS.white} size={26}/>
                             </View>  
                             <MyCarousel data={popularEvents} type={{"event":"oui"}}/>             
                         </View>
                         <View style={styles.events}>
                             <View style={styles.categorieEvents}>
-                                <Text style={styles.title_header}>Catégories</Text>
-                                <MaterialCommunityIcons name="bookmark" color={COLORS.greyBlue} size={26}/>
+                                <Text style={[styles.title_header, styles.title_body]}>Catégories</Text>
+                                <MaterialCommunityIcons name="bookmark" color={COLORS.white} size={26}/>
                             </View>  
                             <MyCarousel data={categories} type={{"event":"non"}}/>                  
                         </View>
@@ -229,11 +231,15 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingVertical: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: COLORS.beige,
+    shadowColor: "#000",
+    shadowOpacity: 0.9,
+    shadowRadius: 7,
+    borderRadius: 10
   },
   title_header: {
     color: COLORS.greyBlue,
@@ -245,21 +251,31 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   profilImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   locationView: {
+    width:'100%',
     flexDirection: "row",
+    justifyContent: "flex-end",
+    paddingTop:10,
+    paddingRight: 10,
+    backgroundColor: COLORS.greyBlue
   },
   text_header: {
     fontSize: 20,
+    color: COLORS.white
   },
   body: {
     flexDirection: "column",
     padding: 20,
-    backgroundColor: COLORS.beige,
+    paddingTop:5,
+    backgroundColor: COLORS.greyBlue,
     height: "100%",
+  },
+  title_body: {
+    color: COLORS.white,
   },
   events: {
     flexDirection: "column",

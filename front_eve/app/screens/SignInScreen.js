@@ -30,7 +30,8 @@ const SignInScreen = ({ navigation }) => {
 
   var status =0;
   const loginData = async () => {
-     fetch("http://169.254.3.246:3000/login", {
+    if(data.isValidUser && data.isValidPassword && data.password!="" && data.email!=""){
+      fetch("http://169.254.3.246:3000/login", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: data.email, password: data.password }),
@@ -52,6 +53,16 @@ const SignInScreen = ({ navigation }) => {
         }
       })
       .catch((error)=>console.error(error))
+    }else{
+      if(!data.isValidUser){
+        alert("Your email is not valid")
+      }else if(!data.isValidPassword){
+        alert("Your password is not valid")
+      }else if(data.email==="" || data.password===""){
+        alert("Please fill in every field")
+      }
+    }
+     
    
       //const response = await fetch("https://eve-back.herokuapp.com/login"
   };
@@ -143,7 +154,7 @@ const SignInScreen = ({ navigation }) => {
         <View style={styles.action}>
           <FontAwesome name="user-o" color={COLORS.lightBlue} size={20} />
           <TextInput
-            placeholder="Veuillez entrer votre email"
+            placeholder="Please enter your email"
             placeholderTextColor={COLORS.lightBlue}
             style={[
               styles.textInput,
@@ -164,7 +175,7 @@ const SignInScreen = ({ navigation }) => {
         {data.isValidUser ? null : (
           <Animatable.View animation="fadeInLeft" duration={500}>
             <Text style={styles.errorMsg}>
-              Cette adresse E-mail est invalide.
+              Invalid email.
             </Text>
           </Animatable.View>
         )}
@@ -178,12 +189,12 @@ const SignInScreen = ({ navigation }) => {
             },
           ]}
         >
-          Mot de passe
+          Password
         </Text>
         <View style={styles.action}>
           <Feather name="lock" color={COLORS.lightBlue} size={20} />
           <TextInput
-            placeholder="Veuillez entrer votre mot de passe"
+            placeholder="Please enter your password"
             placeholderTextColor={COLORS.lightBlue}
             secureTextEntry={data.secureTextEntry ? true : false}
             style={[
@@ -213,7 +224,7 @@ const SignInScreen = ({ navigation }) => {
 
         <TouchableOpacity>
           <Text style={{ color: COLORS.beige, marginTop: 15 }}>
-            Mot de passe oublié?
+            Forgot password?
           </Text>
         </TouchableOpacity>
         <View style={styles.button}>
@@ -227,7 +238,7 @@ const SignInScreen = ({ navigation }) => {
                   },
                 ]}
               >
-                Connexion
+                Login
               </Text>
             </View>
           </TouchableOpacity>
@@ -251,7 +262,7 @@ const SignInScreen = ({ navigation }) => {
                 },
               ]}
             >
-              Créer un compte
+              Signup
             </Text>
           </TouchableOpacity>
         </View>

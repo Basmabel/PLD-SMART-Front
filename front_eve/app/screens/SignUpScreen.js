@@ -52,42 +52,82 @@ export default function SignUpScreen({ navigation }) {
     secureTextEntry: true,
     isValidPassword: true,
     isCompatiblePassword: true,
+    check_textInputChange:false,
+    isValidUser: true
   });
   const [date, setDate] = useState('09-10-2020');
   const [selectedGender, setSelectedGender] = useState();
 
+  const valuesNotNul = () =>{
+    if(name!="" && surname!="" && phone!="" && birthDate!="" && email!="" && data.password!=""&& data.confirmedPassword!=""){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
   const fetchSignUpVal = async () =>{
-    try{
-         //const response = await  fetch('https://eve-back.herokuapp.com/signup',
-         const response = await  fetch('https://eve-back.herokuapp.com/signup',
-         {method: 'POST',
-         headers: { 'content-type': 'application/json' },
-         body: JSON.stringify({"name": name,
-                               "surname":surname, 
-                               "email":email, 
-                               "city":city,
-                               "street":street,
-                               "streetNb":street_number,
-                               "region":region,
-                               "zipCode":zip_code,
-                               "addressComplement":address_complement,
-                               "password":password, 
-                               "phone":phone, 
-                               "address":address_complement, 
-                               "gender":gender,
-                               "birthDate":birthDate,
-                               "description":description
-             })
-         });
-         const resp= await response.text();
-         navigation.navigate("SignInScreen");
-         
-   } catch (error) {
-     console.error(error);
-   }
+    if(data.isValidUser && data.isValidPassword && !data.isCompatiblePassword && valuesNotNul()){
+      try{
+        //const response = await  fetch('https://eve-back.herokuapp.com/signup',
+        const response = await  fetch('https://eve-back.herokuapp.com/signup',
+        {method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({"name": name,
+                              "surname":surname, 
+                              "email":email, 
+                              "city":city,
+                              "street":street,
+                              "streetNb":street_number,
+                              "region":region,
+                              "zipCode":zip_code,
+                              "addressComplement":address_complement,
+                              "password":data.password, 
+                              "phone":phone, 
+                              "address":address_complement, 
+                              "gender":gender,
+                              "birthDate":birthDate,
+                              "description":description
+                  })
+              });
+
+              const resp= await response.text();
+              navigation.navigate("SignInScreen");
+              
+        } catch (error) {
+          console.error(error);
+        }
+    }else{
+      if(!data.isValidUser){
+        alert("Your email is not valid");
+      }else if(!data.isValidPassword){
+        alert("Your password is not valid")
+      }else if(data.isCompatiblePassword){
+        alert("The two passwords do not match")
+      }else if(!valuesNotNul()){
+        alert("You didn't fill every mandatory field")
+      }
+    }
+    
  }
 
-
+ const textInputChange = (val) => {
+  if (val.includes("@") && val.includes(".")) {
+    setData({
+      ...data,
+      check_textInputChange: true,
+      isValidUser: true,
+    });
+    onChangeEmail(val);
+  } else {
+    setData({
+      ...data,
+      check_textInputChange: false,
+      isValidUser: false,
+    });
+    onChangePassword(val);
+  }
+};
 
  //(in)visible password
  const updateSecureTextEntry = () => {
@@ -97,7 +137,20 @@ export default function SignUpScreen({ navigation }) {
   });
 };
 
-//(in)valid password
+const handleValidUser = (val) => {
+  if (val.trim().length >= 4) {
+    setData({
+      ...data,
+      isValidUser: true,
+    });
+  } else {
+    setData({
+      ...data,
+      isValidUser: false,
+    });
+  }
+};
+
 const handlePasswordChange = (val) => {
   if (val.trim().length >= 8) {
     setData({
@@ -108,12 +161,11 @@ const handlePasswordChange = (val) => {
   } else {
     setData({
       ...data,
-      secureTextEntry: !data.secureTextEntry,
-      isValidPassword: false
+      password: val,
+      isValidPassword: false,
     });
-
-  };
-}
+  }
+};
 
 
   //(in)compatible passwords
@@ -131,6 +183,7 @@ const handlePasswordChange = (val) => {
         isCompatiblePassword: false,
       });
     }
+    console.log(data.isCompatiblePassword)
   };
 
   return (
@@ -146,14 +199,15 @@ const handlePasswordChange = (val) => {
           style={[styles.footer, { backgroundColor: COLORS.greyBlue }]}
         >
           <Text style={[styles.text_footer, { color: COLORS.lightBlue }]}>
-            Nom
+            Lastname *
           </Text>
+          
 
           <View style={styles.action}>
             <FontAwesome name="user-o" color={COLORS.lightBlue} size={20} />
             <TextInput
               style={[styles.textInput, { color: COLORS.lightBlue }]}
-              placeholder="Veuillez entrer votre nom"
+              placeholder="Please enter your lastname"
               placeholderTextColor={COLORS.lightBlue}
               onChangeText={onChangeName}
               //onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
@@ -166,12 +220,13 @@ const handlePasswordChange = (val) => {
                 marginTop: 35,
               },
             ]}>
-            Prénom
+            Name *
           </Text>
+          
           <View style={styles.action}>
           <FontAwesome name="user-o" color={COLORS.lightBlue} size={20} />
               <TextInput style={styles.textInput}
-                    placeholder="Veuillez entrer votre prénom"
+                    placeholder="Please enter your name"
                     placeholderTextColor={COLORS.lightBlue}
                     onChangeText={onChangeSurName}
                 />  
@@ -183,48 +238,73 @@ const handlePasswordChange = (val) => {
                 marginTop: 35,
               },
             ]}>
-            Email
+            Email *
           </Text>
+         
           <View style={styles.action}>
           <FontAwesome name="envelope-o" color={COLORS.lightBlue} size={20} />
               <TextInput style={styles.textInput}
                     placeholder="Veuillez entrer votre email"
                     placeholderTextColor={COLORS.lightBlue}
-                    onChangeText={onChangeEmail}
-                />  
-          </View>
-
-          <Text style={[styles.text_footer,
-              {
-                color: COLORS.lightBlue,
-                marginTop: 35,
-              },
-            ]}>
-            Mot de passe
-          </Text>
-          <View style={styles.action}>
-            <Feather name="lock" color={COLORS.lightBlue} size={20} />
-              <TextInput style={styles.textInput}
-                    placeholder="Veuillez entrer votre mot de passe"
-                    placeholderTextColor={COLORS.lightBlue}
-                    secureTextEntry={data.secureTextEntry ? true : false}
                     autoCapitalize="none"
-                    onChangeText={(val) => handlePasswordChange(val)}              />
-              <TouchableOpacity onPress={updateSecureTextEntry}>
-              {data.secureTextEntry ? (
-                <Feather name="eye-off" color={COLORS.lightBlue} size={20} />
-              ) : (
-                <Feather name="eye" color={COLORS.lightBlue} size={20} />
-              )}
-            </TouchableOpacity>
+                    onChangeText={(val) => textInputChange(val)}
+                    onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
+                />  
+                {data.check_textInputChange ? (
+                  <Animatable.View animation="bounceIn">
+                    <Feather name="check-circle" color="green" size={20} />
+                  </Animatable.View>
+                ) : null}
           </View>
-          {data.isValidPassword ? null : (
-            <Animatable.View animation="fadeInLeft" duration={500}>
-              <Text style={styles.errorMsg}>
-                Le mot de passe doit contenir au moins 8 caractères.
-              </Text>
-            </Animatable.View>
+          {data.isValidUser ? null : (
+                  <Animatable.View animation="fadeInLeft" duration={500}>
+                    <Text style={styles.errorMsg}>
+                      Invalid email
+                    </Text>
+                  </Animatable.View>
           )}
+        <Text
+          style={[
+            styles.text_footer,
+            {
+              color: COLORS.lightBlue,
+              marginTop: 35,
+            },
+          ]}
+        >
+          Password *
+        </Text>
+        
+        <View style={styles.action}>
+          <Feather name="lock" color={COLORS.lightBlue} size={20} />
+          <TextInput
+            placeholder="Please enter your password"
+            placeholderTextColor={COLORS.lightBlue}
+            secureTextEntry={data.secureTextEntry ? true : false}
+            style={[
+              styles.textInput,
+              {
+                color: COLORS.lightBlue,
+              },
+            ]}
+            autoCapitalize="none"
+            onChangeText={(val) => handlePasswordChange(val)}
+          />
+          <TouchableOpacity onPress={updateSecureTextEntry}>
+            {data.secureTextEntry ? (
+              <Feather name="eye-off" color={COLORS.lightBlue} size={20} />
+            ) : (
+              <Feather name="eye" color={COLORS.lightBlue} size={20} />
+            )}
+          </TouchableOpacity>
+        </View>
+        {data.isValidPassword ? null : (
+          <Animatable.View animation="fadeInLeft" duration={500}>
+            <Text style={styles.errorMsg}>
+              Password must be 8 characters long.
+            </Text>
+          </Animatable.View>
+        )}
 
           <Text style={[styles.text_footer,
               {
@@ -232,12 +312,13 @@ const handlePasswordChange = (val) => {
                 marginTop: 35,
               },
             ]}>
-            Confirmation Mot de passe
+            Password Confirmation *
           </Text>
+          
           <View style={styles.action}>
             <Feather name="lock" color={COLORS.lightBlue} size={20} />
               <TextInput style={styles.textInput}
-                    placeholder="Veuillez entrer à nouveau votre mot de passe"
+                    placeholder="Please enter your password again"
                     placeholderTextColor={COLORS.lightBlue}
                     secureTextEntry={data.secureTextEntry ? true : false}
                     autoCapitalize="none"
@@ -248,7 +329,7 @@ const handlePasswordChange = (val) => {
           {(data.isCompatiblePassword && data.confirmedPassword!="") ? (
             <Animatable.View animation="fadeInLeft" duration={500}>
               <Text style={styles.errorMsg}>
-              Ces mots de passe ne correspondent pas.
+              These passwords do not match.
               </Text>
             </Animatable.View>
           ) : null}
@@ -259,12 +340,13 @@ const handlePasswordChange = (val) => {
                 marginTop: 35,
               },
             ]}>
-            Numéro de téléphone
+            Phone number *
           </Text>
+          
           <View style={styles.action}>
           <FontAwesome name="mobile" color={COLORS.lightBlue} size={20} />
               <TextInput keyboardType="numeric" style={styles.textInput}
-                    placeholder="Veuillez entrer votre n° de téléphone"
+                    placeholder="Please enter your phone number"
                     placeholderTextColor={COLORS.lightBlue}
                     onChangeText={onChangePhone}
                 />  
@@ -276,7 +358,7 @@ const handlePasswordChange = (val) => {
                 marginTop: 35,
               },
             ]}>
-            Genre
+            Gender
           </Text>
           <View style={styles.action}>
             <FontAwesome name="transgender" color={COLORS.lightBlue} size={20} />
@@ -285,7 +367,7 @@ const handlePasswordChange = (val) => {
               onValueChange={(itemValue, itemIndex) =>
                 setSelectedGender(itemValue)
               }
-              placeholder= "Veuiller entrer votre genre"
+              placeholder= "Please enter your gender"
               placeholderTextColor={COLORS.lightBlue}
               >
                 
@@ -301,12 +383,12 @@ const handlePasswordChange = (val) => {
                 marginTop: 35,
               },
             ]}>
-            N° de rue
+            Street number
           </Text>
           <View style={styles.action}>
             <Feather name="home" color={COLORS.lightBlue} size={20} />
               <TextInput keyboardType="numeric" style={styles.textInput}
-                    placeholder="Veuillez entrer votre n° de rue"
+                    placeholder="Pleaser enter your street number"
                     placeholderTextColor={COLORS.lightBlue}
                     onChangeText={onChangeStreetNumber}
                 />  
@@ -318,12 +400,12 @@ const handlePasswordChange = (val) => {
                 marginTop: 35,
               },
             ]}>
-            Rue
+            Street
           </Text>
           <View style={styles.action}>
             <Feather name="home" color={COLORS.lightBlue} size={20} />
               <TextInput style={styles.textInput}
-                    placeholder="Veuillez entrer votre rue"
+                    placeholder="Please enter your street"
                     placeholderTextColor={COLORS.lightBlue}
                     onChangeText={onChangeStreet}
                 />  
@@ -340,7 +422,7 @@ const handlePasswordChange = (val) => {
           <View style={styles.action}>
             <Feather name="home" color={COLORS.lightBlue} size={20} />
               <TextInput style={styles.textInput}
-                    placeholder="Veuillez entrer votre région"
+                    placeholder="Please enter your région"
                     placeholderTextColor={COLORS.lightBlue}
                     onChangeText={onChangeRegion}
                 />  
@@ -352,12 +434,12 @@ const handlePasswordChange = (val) => {
                 marginTop: 35,
               },
             ]}>
-            Ville
+            City
           </Text>
           <View style={styles.action}>
             <Feather name="home" color={COLORS.lightBlue} size={20} />
               <TextInput style={styles.textInput}
-                    placeholder="Veuillez entrer votre ville"
+                    placeholder="Please enter your city"
                     placeholderTextColor={COLORS.lightBlue}
                     onChangeText={onChangeCity}
                 />  
@@ -369,12 +451,12 @@ const handlePasswordChange = (val) => {
                 marginTop: 35,
               },
             ]}>
-            Adresse complément
+            Adress' Complements
           </Text>
           <View style={styles.action}>
             <Feather name="home" color={COLORS.lightBlue} size={20} />
               <TextInput style={styles.textInput}
-                    placeholder="Veuillez compléter votre adresse si besoin"
+                    placeholder="Please enter your adress' complements if needed"
                     placeholderTextColor={COLORS.lightBlue}
                     onChangeText={onChangeAddressComplement}
                 />  
@@ -386,12 +468,12 @@ const handlePasswordChange = (val) => {
                 marginTop: 35,
               },
             ]}>
-            Code Postale
+            Zip code
           </Text>
           <View style={styles.action}>
             <Feather name="home" color={COLORS.lightBlue} size={20} />
               <TextInput style={styles.textInput}
-                    placeholder="Veuillez compléter votre code postale"
+                    placeholder="Please enter your zip code"
                     placeholderTextColor={COLORS.lightBlue}
                     onChangeText={onChangeZipCode}
                 />  
@@ -403,8 +485,9 @@ const handlePasswordChange = (val) => {
                 marginTop: 35,
               },
             ]}>
-            Date de naissance
+            Birthdate *
           </Text>
+          
           <View style={styles.action}>
             <Feather name="calendar" color={COLORS.lightBlue} size={20} />
             <TextInput style={styles.textInput}
@@ -418,7 +501,7 @@ const handlePasswordChange = (val) => {
             <TouchableOpacity style={styles.validate} onPress={fetchSignUpVal}>
               <View style={styles.validate}>
                 <Text style={[styles.textSign, { color: COLORS.greyBlue }]}>
-                  Valider
+                  Confirm
                 </Text>
               </View>
             </TouchableOpacity>
