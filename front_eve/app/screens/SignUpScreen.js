@@ -191,7 +191,7 @@ const handlePasswordChange = (val) => {
       <View style={styles.container}>
         <StatusBar backgroundColor={COLORS.beige} barStyle="light-content" />
         <View style={styles.header}>
-          <Text style={styles.text_header}>Inscription</Text>
+          <Text style={styles.text_header}>Signup</Text>
         </View>
 
         <Animatable.View

@@ -159,7 +159,7 @@ export default function HomePageScreen() {
 
    const DisplayEvents=()=>{
       const listEvents = eventPerCat.map((item,index)=>
-          <View style={styles.events}>
+          <View style={styles.events} key={item.category_id}>
                           <View style={styles.categorieEvents}>
                               <Text style={[styles.title_header, styles.title_body]}>{categories[index].description}</Text>
                           </View>  
@@ -184,30 +184,32 @@ export default function HomePageScreen() {
                     <Image style={styles.profilImage} source={{uri: userInfo[0].photo}}/>
                 </View>
            </View>
-           
-           <ScrollView style={{marginBottom:tabBarHeight}}>
-              <View style={styles.locationView}>
-                    <Text style={styles.text_header}> Lyon </Text>
-                    <MaterialCommunityIcons name="map-marker" color={COLORS.white} size={24}/>
-              </View>
-                <View style={styles.body}>
-                        <View style={styles.events}>
-                            <View style={styles.categorieEvents}>
-                                <Text style={[styles.title_header, styles.title_body]}>Popular</Text>
-                                <MaterialCommunityIcons name="fire" color={COLORS.white} size={26}/>
-                            </View>  
-                            <MyCarousel data={popularEvents} type={{"event":"oui"}}/>             
-                        </View>
-                        <View style={styles.events}>
-                            <View style={styles.categorieEvents}>
-                                <Text style={[styles.title_header, styles.title_body]}>Catégories</Text>
-                                <MaterialCommunityIcons name="bookmark" color={COLORS.white} size={26}/>
-                            </View>  
-                            <MyCarousel data={categories} type={{"event":"non"}}/>                  
-                        </View>
-                        <DisplayEvents/>
+           <View style={styles.body}>
+            <ScrollView style={[{marginBottom:tabBarHeight}]}>
+                <View style={styles.locationView}>
+                      <Text style={styles.text_header}> Lyon </Text>
+                      <MaterialCommunityIcons name="map-marker" color={COLORS.white} size={24}/>
                 </View>
-           </ScrollView>
+                  <View style={styles.contentContainer}>
+                          <View style={styles.events}>
+                              <View style={styles.categorieEvents}>
+                                  <Text style={[styles.title_header, styles.title_body]}>Popular</Text>
+                                  <MaterialCommunityIcons name="fire" color={COLORS.white} size={26}/>
+                              </View>  
+                              <MyCarousel data={popularEvents} type={{"event":"oui"}}/>             
+                          </View>
+                          <View style={styles.events}>
+                              <View style={styles.categorieEvents}>
+                                  <Text style={[styles.title_header, styles.title_body]}>Catégories</Text>
+                                  <MaterialCommunityIcons name="bookmark" color={COLORS.white} size={26}/>
+                              </View>  
+                              <MyCarousel data={categories} type={{"event":"non"}}/>                  
+                          </View>
+                          <DisplayEvents/>
+                  </View>
+            </ScrollView>
+           </View>
+           
            </View>)}           
        </SafeAreaView>
     );
@@ -239,7 +241,8 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOpacity: 0.9,
     shadowRadius: 7,
-    borderRadius: 10
+    borderRadius: 10,
+   // flex:1
   },
   title_header: {
     color: COLORS.greyBlue,
@@ -260,18 +263,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     paddingTop:10,
-    paddingRight: 10,
-    backgroundColor: COLORS.greyBlue
+    paddingRight: 10
   },
   text_header: {
     fontSize: 20,
     color: COLORS.white
   },
   body: {
-    flexDirection: "column",
-    padding: 20,
-    paddingTop:5,
     backgroundColor: COLORS.greyBlue,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    
+  },
+  contentContainer:{
+    flexDirection: "column",
+    paddingTop:5,
     height: "100%",
   },
   title_body: {

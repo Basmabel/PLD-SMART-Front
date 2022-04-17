@@ -130,7 +130,7 @@ const SignInScreen = ({ navigation }) => {
     <View style={styles.container}>
       <StatusBar backgroundColor={COLORS.beige} barStyle="light-content" />
       <View style={styles.header}>
-        <Text style={styles.text_header}>Bienvenue!</Text>
+        <Text style={styles.text_header}>Welcome!</Text>
       </View>
       <Animatable.View
         animation="fadeInUpBig"
