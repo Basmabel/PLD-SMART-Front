@@ -4,7 +4,7 @@ import {COLORS} from '../config/colors.js';
 
 export const SLIDER_W = Dimensions.get('window').width
 export const ITEM_W = Math.round(SLIDER_W * 0.3)
-export const ITEM_H= Math.round(ITEM_W*1.2)
+export const ITEM_H= Math.round(ITEM_W*0.3)
 
 const CategorieCard= ({ item, index }) => {
   var colorBack="";
@@ -18,7 +18,7 @@ const CategorieCard= ({ item, index }) => {
 
   const styles = StyleSheet.create({
     container: {
-      width: ITEM_W,
+      backgroundColor: colorBack,
       height: ITEM_H,
       shadowColor: "#000",
       shadowOffset: {
@@ -27,13 +27,15 @@ const CategorieCard= ({ item, index }) => {
       },
       shadowOpacity: 0.29,
       shadowRadius: 4.65,
-      alignItems: 'center'
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderRadius: 10,
+      padding: 5,
+      marginHorizontal:5
     },
     containerIcon:{
-      backgroundColor: colorBack,
-      borderRadius: 10,
-      width: ITEM_W,
-      height:ITEM_W,
+      width: ITEM_H,
+      height:ITEM_H,
       justifyContent: 'center',
       alignItems: 'center'
     },
@@ -42,10 +44,10 @@ const CategorieCard= ({ item, index }) => {
       height: "75%",
     },
     name:{
-      fontSize:18,
-      fontWeight:'bold',
-      color:COLORS.greyBlue,
-      textTransform: 'uppercase'
+      
+      color: COLORS.black,
+      fontSize:15,
+      paddingLeft: 10
     }
   })
 

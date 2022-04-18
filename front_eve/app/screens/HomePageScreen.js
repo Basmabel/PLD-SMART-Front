@@ -7,6 +7,10 @@ import { Column } from 'native-base';
 import MyCarousel from '../components/MyCarousel';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { Colors } from "react-native-paper";
+import {
+  useFonts,
+  Roboto_400Regular
+} from "@expo-google-fonts/dev";
 
 
 /*const popEvents = [
@@ -72,6 +76,10 @@ export default function HomePageScreen() {
    const [userId, setUserId] = React.useState("")
    const [userToken, setUserToken] = React.useState("")
 
+  var [fontsLoaded] = useFonts({
+    Roboto_400Regular
+  });
+
   useEffect(() => {
 
     const retreiveData = async ()=>{
@@ -92,7 +100,7 @@ export default function HomePageScreen() {
     }
     //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
     retreiveData();
-    if(retreive){      
+    if(retreive && fontsLoaded){      
       Promise.all([
         fetch('http://169.254.3.246:3000/getPopular'),
         fetch('http://169.254.3.246:3000/getUserInfo',{
@@ -248,6 +256,7 @@ const styles = StyleSheet.create({
     color: COLORS.greyBlue,
     fontSize: 25,
     fontWeight: "bold",
+    fontFamily: Roboto_400Regular,
   },
   infoView: {
     flexDirection: "column",
