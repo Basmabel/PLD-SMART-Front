@@ -5122,6 +5122,11 @@
   "resolved" "https://registry.npmjs.org/mockdate/-/mockdate-3.0.5.tgz"
   "version" "3.0.5"
 
+"moment@^2.22.0":
+  "integrity" "sha512-c6YRvhEo//6T2Jz/vVtYzqBzwvPT95JBQ+smCytzf7c50oMZRsR/a4w88aD34I+/QVSfnoAnSBFPJHItlOMJVw=="
+  "resolved" "https://registry.npmjs.org/moment/-/moment-2.29.3.tgz"
+  "version" "2.29.3"
+
 "ms@2.0.0":
   "integrity" "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g="
   "resolved" "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz"
@@ -5735,6 +5740,13 @@
     "flow-parser" "^0.121.0"
     "jscodeshift" "^0.11.0"
     "nullthrows" "^1.1.1"
+
+"react-native-datepicker@^1.7.2":
+  "integrity" "sha1-WNCCJZGgrJsyq6CCZQIioO4pZp0="
+  "resolved" "https://registry.npmjs.org/react-native-datepicker/-/react-native-datepicker-1.7.2.tgz"
+  "version" "1.7.2"
+  dependencies:
+    "moment" "^2.22.0"
 
 "react-native-element-dropdown@^1.8.8":
   "integrity" "sha512-ZrGQhFOlhh6Y15kraNOftTScQFWCfgz+Toq7DoGyX58YUlFeY7q95Z+w9W82XAr0LrO/VIrLBvgnYqTkGYpr/A=="

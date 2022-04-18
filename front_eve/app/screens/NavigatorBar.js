@@ -20,6 +20,7 @@ import {
   useBottomTabBarHeight,
 } from "@react-navigation/bottom-tabs";
 import HomePageScreen from "../screens/HomePageScreen";
+import SearchScreen from "./SearchScreen.js";
 
 const Tab = createBottomTabNavigator();
 
@@ -38,12 +39,26 @@ export default function NavigatorBar() {
         name="Home"
         component={HomePageScreen}
         options={{
-          headerStyle: { backgroundColor: COLORS.greyBlue },
-          headerTitleStyle: { color: COLORS.white },
+          headerShown: false,
           component: { HomePageScreen },
           tabBarIcon: () => (
             <MaterialCommunityIcons
               name="home"
+              color={COLORS.white}
+              size={24}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Map"
+        component={SearchScreen}
+        options={{
+          headerShown: false,
+          component: { HomePageScreen },
+          tabBarIcon: () => (
+            <MaterialCommunityIcons
+              name="map-marker"
               color={COLORS.white}
               size={24}
             />

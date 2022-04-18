@@ -36,7 +36,7 @@ const SignInScreen = ({ navigation }) => {
         body: JSON.stringify({ email: data.email, password: data.password }),
       });
       const result = await response.text();
-      navigation.navigate("NavigatorBar");
+      navigation.navigate("Previous");
       alert(result);
     } catch (error) {
       console.error(error);

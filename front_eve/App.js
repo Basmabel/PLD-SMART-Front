@@ -11,6 +11,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import SearchScreen from "./app/screens/SearchScreen.js";
 import { TextField } from "native-base";
+import FilterScreen from "./app/screens/FilterScreen.js";
 
 const Stack = createStackNavigator();
 
@@ -26,7 +27,26 @@ export default function App() {
         <Stack.Screen name="NavigatorBar" component={NavigatorBar} />
       </Stack.Navigator>
     </NavigationContainer>*/
-    <SearchScreen />
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="SignInScreen"
+          component={SignInScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="SignUpScreen"
+          component={SignUpScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Previous"
+          component={NavigatorBar}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen name="FilterScreen" component={FilterScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 

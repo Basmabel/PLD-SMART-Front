@@ -71,7 +71,7 @@ export const markers = [
   },
 ];
 
-export default function SearchScreen() {
+const SearchScreen = ({ navigation }) => {
   const theme = useTheme();
   const initialMapState = {
     markers,
@@ -199,7 +199,10 @@ export default function SearchScreen() {
         })}
       </MapView>
       <View style={styles.buttonView}>
-        <TouchableOpacity style={styles.filter}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("FilterScreen")}
+          style={styles.filter}
+        >
           <Ionicons name="ios-filter" size={20} />
         </TouchableOpacity>
       </View>
@@ -287,7 +290,8 @@ export default function SearchScreen() {
       </Animated.ScrollView>
     </View>
   );
-}
+};
+export default SearchScreen;
 
 const styles = StyleSheet.create({
   container: {
