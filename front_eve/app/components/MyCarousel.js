@@ -31,6 +31,7 @@ const MyCarousel = ({data, type}) => {
         renderItem={obj.card}
         sliderWidth={widthWind}
         itemWidth={obj.width+20}
+        inactiveSlideOpacity={1}
         inactiveSlideScale={1}
         activeSlideAlignment={'start'}
         onSnapToItem={(index) => setIndex(index)}

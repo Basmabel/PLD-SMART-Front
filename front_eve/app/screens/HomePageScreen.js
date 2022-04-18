@@ -3,14 +3,15 @@ import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView} from
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS} from '../config/colors.js';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Column } from 'native-base';
 import MyCarousel from '../components/MyCarousel';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { Colors } from "react-native-paper";
-import {
-  useFonts,
-  Roboto_400Regular
-} from "@expo-google-fonts/dev";
+import {useFonts} from "@expo-google-fonts/dev";
+import AppLoading from "expo-app-loading";
+import { 
+  Montserrat_400Regular,
+  Montserrat_500Medium,
+  Montserrat_600SemiBold
+} from '@expo-google-fonts/dev'
 
 
 /*const popEvents = [
@@ -64,6 +65,16 @@ const categorie = [
     imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
   },
 ];
+
+var light = "dark"
+var colorBack= COLORS.greyBlue
+var colorText=COLORS.lightBlue
+
+if(light==="light"){
+  colorBack=COLORS.white
+  colorText=COLORS.greyBlue
+}
+
 export default function HomePageScreen() {
   const tabBarHeight = useBottomTabBarHeight() * 2;
 
@@ -76,10 +87,18 @@ export default function HomePageScreen() {
    const [userId, setUserId] = React.useState("")
    const [userToken, setUserToken] = React.useState("")
 
-  var [fontsLoaded] = useFonts({
-    Roboto_400Regular
+  
+
+   var [fontsLoaded] = useFonts({
+    Montserrat_400Regular,
+    Montserrat_500Medium,
+    Montserrat_600SemiBold
   });
 
+
+   
+
+  
   useEffect(() => {
 
     const retreiveData = async ()=>{
@@ -100,7 +119,7 @@ export default function HomePageScreen() {
     }
     //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
     retreiveData();
-    if(retreive && fontsLoaded){      
+    if(retreive){      
       Promise.all([
         fetch('http://169.254.3.246:3000/getPopular'),
         fetch('http://169.254.3.246:3000/getUserInfo',{
@@ -166,61 +185,70 @@ export default function HomePageScreen() {
   }, [retreive]);
 
    const DisplayEvents=()=>{
-      const listEvents = eventPerCat.map((item,index)=>
-          <View style={styles.events} key={item.category_id}>
+      const listEvents = eventPerCat.map((item)=>
+      
+          <View style={styles.events} key={item[0].category_id}>
                           <View style={styles.categorieEvents}>
-                              <Text style={[styles.title_header, styles.title_body]}>{categories[index].description}</Text>
+                              <Text style={[styles.title_body]}>{item[0].description}</Text>
                           </View>  
                           <MyCarousel data={item} type={{"event":"oui"}}/>                  
           </View>
       );
-      return(
-        <View>{listEvents}</View>
-      );
+      if(!fontsLoaded){
+        return(<AppLoading/>)
+      }else{
+        return(
+          <View>{listEvents}</View>
+        );
+      }
+      
     }
     
+    if(!fontsLoaded){
+      return(<AppLoading/>)
+    }else{
+      return(
+        
+        <SafeAreaView style={StyleSheet.container}>
 
-    return(
-      
-       <SafeAreaView style={StyleSheet.container}>
-
-         {isLoading ? (<Text>Loading...</Text>) :
-           ( <View>
-           <View style={styles.header}>
-                <Text style={styles.title_header}>Home</Text>
-                <View style={styles.infoView}>
-                    <Image style={styles.profilImage} source={{uri: userInfo[0].photo}}/>
-                </View>
-           </View>
-           <View style={styles.body}>
-            <ScrollView style={[{marginBottom:tabBarHeight}]}>
-                <View style={styles.locationView}>
-                      <Text style={styles.text_header}> Lyon </Text>
-                      <MaterialCommunityIcons name="map-marker" color={COLORS.white} size={24}/>
-                </View>
-                  <View style={styles.contentContainer}>
-                          <View style={styles.events}>
-                              <View style={styles.categorieEvents}>
-                                  <Text style={[styles.title_header, styles.title_body]}>Popular</Text>
-                                  <MaterialCommunityIcons name="fire" color={COLORS.white} size={26}/>
-                              </View>  
-                              <MyCarousel data={popularEvents} type={{"event":"oui"}}/>             
-                          </View>
-                          <View style={styles.events}>
-                              <View style={styles.categorieEvents}>
-                                  <Text style={[styles.title_header, styles.title_body]}>Catégories</Text>
-                                  <MaterialCommunityIcons name="bookmark" color={COLORS.white} size={26}/>
-                              </View>  
-                              <MyCarousel data={categories} type={{"event":"non"}}/>                  
-                          </View>
-                          <DisplayEvents/>
+          {isLoading ? (<Text>Loading...</Text>) :
+            ( <View>
+            <View style={styles.header}>
+                  <Text style={styles.title_header}>Home</Text>
+                  <View style={styles.infoView}>
+                      <Image style={styles.profilImage} source={{uri: userInfo[0].photo}}/>
                   </View>
-            </ScrollView>
-           </View>
-           
-           </View>)}           
-       </SafeAreaView>
-    );
+            </View>
+            <View style={styles.body}>
+              <ScrollView style={[{marginBottom:tabBarHeight}]}>
+                  <View style={styles.locationView}>
+                        <Text style={styles.text_header}> Lyon </Text>
+                        <MaterialCommunityIcons name="map-marker" color={colorText} size={24}/>
+                  </View>
+                    <View style={styles.contentContainer}>
+                            <View style={styles.events}>
+                                <View style={styles.categorieEvents}>
+                                    <Text style={[styles.title_body]}>Categories</Text>
+                                </View>  
+                                <MyCarousel data={categories} type={{"event":"non"}}/>                  
+                            </View>
+                            <View style={styles.events}>
+                                <View style={styles.categorieEvents}>
+                                    <Text style={[styles.title_body]}>Popular</Text>
+                                </View>  
+                                <MyCarousel data={popularEvents} type={{"event":"oui"}}/>             
+                            </View>
+                           
+                            <DisplayEvents/>
+                    </View>
+              </ScrollView>
+            </View>
+            
+            </View>)}           
+        </SafeAreaView>
+    );}
+
+    
 }
 
 /*
@@ -234,6 +262,7 @@ export default function HomePageScreen() {
                         </View>
 */
 const windowHeight = Dimensions.get("window").height;
+
 
 const styles = StyleSheet.create({
   container: {
@@ -254,9 +283,8 @@ const styles = StyleSheet.create({
   },
   title_header: {
     color: COLORS.greyBlue,
-    fontSize: 25,
-    fontWeight: "bold",
-    fontFamily: Roboto_400Regular,
+    fontSize:25,
+    fontFamily: 'Montserrat_600SemiBold'
   },
   infoView: {
     flexDirection: "column",
@@ -271,15 +299,15 @@ const styles = StyleSheet.create({
     width:'100%',
     flexDirection: "row",
     justifyContent: "flex-end",
-    paddingTop:10,
     paddingRight: 10
   },
   text_header: {
     fontSize: 20,
-    color: COLORS.white
+    fontFamily: 'Montserrat_400Regular',
+    color: colorText
   },
   body: {
-    backgroundColor: COLORS.greyBlue,
+    backgroundColor: colorBack,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingHorizontal: 20,
@@ -292,7 +320,9 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   title_body: {
-    color: COLORS.white,
+    color: colorText,
+    fontFamily: 'Montserrat_600SemiBold',
+    fontSize: 23
   },
   events: {
     flexDirection: "column",
@@ -304,3 +334,5 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
 });
+
+ 
