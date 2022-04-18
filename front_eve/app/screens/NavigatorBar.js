@@ -21,6 +21,7 @@ import {
 } from "@react-navigation/bottom-tabs";
 import HomePageScreen from "../screens/HomePageScreen";
 import SearchScreen from "./SearchScreen.js";
+import MyAccountScreen from "./MyAccountScreen.js";
 
 const Tab = createBottomTabNavigator();
 
@@ -59,6 +60,21 @@ export default function NavigatorBar() {
           tabBarIcon: () => (
             <MaterialCommunityIcons
               name="map-marker"
+              color={COLORS.white}
+              size={24}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={MyAccountScreen}
+        options={{
+          headerShown: false,
+          component: { HomePageScreen },
+          tabBarIcon: () => (
+            <MaterialCommunityIcons
+              name="account"
               color={COLORS.white}
               size={24}
             />
