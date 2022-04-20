@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { COLORS } from "../config/colors.js";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   createBottomTabNavigator,
@@ -21,7 +22,7 @@ import {
 } from "@react-navigation/bottom-tabs";
 import HomePageScreen from "../screens/HomePageScreen";
 import SearchScreen from "../screens/SearchScreen";
-
+import MyEventsScreen from "../screens/MyEventsScreen";
 const Tab = createBottomTabNavigator();
 
 export default function NavigatorBar() {
@@ -60,6 +61,22 @@ export default function NavigatorBar() {
           tabBarIcon: () => (
             <MaterialCommunityIcons
               name="map-outline"
+              color={COLORS.mauve}
+              size={25}
+              style={{paddingTop:5}}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="My events"
+        component={MyEventsScreen}
+        options={{
+          headerShown: false,
+          component: { MyEventsScreen },
+          tabBarIcon: () => (
+            <MaterialIcons
+              name="event"
               color={COLORS.mauve}
               size={25}
               style={{paddingTop:5}}

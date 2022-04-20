@@ -223,7 +223,7 @@ export default function HomePageScreen() {
                   </View>
             </View>
             <View style={styles.body}>
-              <ScrollView style={[{marginBottom:tabBarHeight}]}>
+              <ScrollView style={[{marginBottom:tabBarHeight*2}]}>
                   <View style={styles.locationView}>
                         <Text style={styles.text_header}> Lyon </Text>
                         <MaterialCommunityIcons name="map-marker" color={colorText} size={24}/>
