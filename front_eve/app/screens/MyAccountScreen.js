@@ -20,12 +20,12 @@ import {
   import Feather from "react-native-vector-icons/Feather";
   import FontAwesome from "react-native-vector-icons/FontAwesome";
   import { NativeBaseProvider } from 'native-base';
-  import Dialog from "react-native-dialog";
+  import DialogInput from 'react-native-dialog-input';
 
   const Swiper = require("react-native-swiper");
   
   //Récup les infos d'inscription
-  const userInfo = {
+  /*const userInfo = {
     name: "Meryem",
     surname: "Alami",
     email: "malami@gmail.com",
@@ -40,8 +40,9 @@ import {
     gender: "Femme",
     birthDate: "19/12/2000",
     imgProfil: "https://picsum.photos/200/300",
-  };
-  
+  };*/
+
+
   //Recup les events
   const organizedEvents = [
     {
@@ -66,13 +67,15 @@ import {
       imgProfil: "https://picsum.photos/id/11/200/300",
     },
   ];
+
+  //Recup les ratings
+  const rating = {value:"10/10"};
   
-
-
 
   export default function MyAccountScreen() {
     const tabBarHeight = useBottomTabBarHeight() * 2;
 
+    //Edit functions
     const editName= () => {Alert.alert("You can't edit your name")}
     const editSurame= () => {Alert.alert("You can't edit your surname")}
     const editMail= () => {Alert.alert("You can't edit your email")}
@@ -88,17 +91,45 @@ import {
     const editBirthDate= () => {console.log("editBirthDate")}
     const editImgProfil= () => {console.log("editImgProfil")}
 
+    const [userInfo, setUserInfo] = React.useState({
+        name: "Meryem",
+        surname: "Alami",
+        email: "malami@gmail.com",
+        phoneNumber: "0606060606",
+        city: "Lyon",
+        streetNb: "20",
+        street: "Avenue Albert Einstein",
+        region: "Rhone",
+        zipCode: "69100",
+        addressComplement: "Batiment M",
+        password: "malamieve",
+        gender: "Femme",
+        birthDate: "19/12/2000",
+        imgProfil: "https://picsum.photos/200/300",
+        //secureTextEntry: true,
+        //isValidPassword: true,
+        //isCompatiblePassword: true,
+      });
+
+    //Dialog visibility
     const [visible, setVisible] = useState(false);
 
-    const handleCancel = () => {
+    const sendInput = (inputText) => {
+        console.log(inputText);
+        setUserInfo({
+            ...userInfo,
+            password: inputText,
+            //isValidPassword: false,
+        });
+        //console.log(userInfo.password);
         setVisible(false);
-      };
+    };
     
-      const handleDelete = () => {
-        // The user has pressed the "Delete" button, so here you can do your own logic.
-        // ...Your logic
+    const showDialog = () => {
         setVisible(false);
-      };
+    };
+
+    
 
     return (
     <ScrollView>
@@ -162,9 +193,20 @@ import {
                 defaultValue={userInfo.password}
                 //onChangeText={onChangeEmail}
                 />
+
                 <TouchableOpacity onPress={editPassword}>
                     <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
                 </TouchableOpacity>
+                <View>
+                   <DialogInput 
+                        isDialogVisible={visible}
+                        title={"Enter a new password"}
+                        //message={"Enter a new password"}
+                        hintInput ={"password"}
+                        submitInput={ (inputText) => {sendInput(inputText)} }
+                        closeDialog={ () => {showDialog(false)}}>
+                    </DialogInput>
+                </View>
             </View>
 
             
@@ -425,6 +467,11 @@ import {
       height: 100,
       borderRadius: 25,
     },
+    dialogStyle: {
+        width: '20%',
+        height: '20%',
+        borderRadius: 25,
+      },
     locationView: {
       flexDirection: "row",
     },
