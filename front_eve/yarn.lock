@@ -5748,6 +5748,11 @@
   dependencies:
     "moment" "^2.22.0"
 
+"react-native-dialog@^9.2.1":
+  "integrity" "sha512-UNnGFTpH0cX16cJZLFq9/TAZH1+B2vzJrQL1mUaSqZjV+sFTpUB1WvghJZxPwi52v587kJpfKN7oPfWaXAu+YQ=="
+  "resolved" "https://registry.npmjs.org/react-native-dialog/-/react-native-dialog-9.2.1.tgz"
+  "version" "9.2.1"
+
 "react-native-element-dropdown@^1.8.8":
   "integrity" "sha512-ZrGQhFOlhh6Y15kraNOftTScQFWCfgz+Toq7DoGyX58YUlFeY7q95Z+w9W82XAr0LrO/VIrLBvgnYqTkGYpr/A=="
   "resolved" "https://registry.npmjs.org/react-native-element-dropdown/-/react-native-element-dropdown-1.8.8.tgz"
@@ -5918,7 +5923,7 @@
     "normalize-css-color" "^1.0.2"
     "prop-types" "^15.6.0"
 
-"react-native@*", "react-native@^0.64.0", "react-native@>= 0.51", "react-native@>=0.42.0", "react-native@>=0.48.4", "react-native@>=0.50.0", "react-native@>=0.57", "react-native@>=0.59.0", "react-native@>=0.60", "react-native@>=0.64.0-rc.0 || 0.0.0-*", "react-native@0.64.3":
+"react-native@*", "react-native@^0.64.0", "react-native@>= 0.51", "react-native@>=0.42.0", "react-native@>=0.48.4", "react-native@>=0.50.0", "react-native@>=0.57", "react-native@>=0.59.0", "react-native@>=0.60", "react-native@>=0.63.0", "react-native@>=0.64.0-rc.0 || 0.0.0-*", "react-native@0.64.3":
   "integrity" "sha512-2OEU74U0Ek1/WeBzPbg6XDsCfjF/9fhrNX/5TFgEiBKd5mNc9LOZ/OlMmkb7iues/ZZ/oc51SbEfLRQdcW0fVw=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.64.3.tgz"
   "version" "0.64.3"

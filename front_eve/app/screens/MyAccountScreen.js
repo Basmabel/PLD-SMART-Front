@@ -9,8 +9,9 @@ import {
     TextInput,
     TouchableOpacity,
     ImageBackground,
+    Alert,
   } from "react-native";
-  import React from 'react';
+  import React, { useState } from 'react';
   import { COLORS } from "../config/colors.js";
   import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
   import { Button, Column } from "native-base";
@@ -19,6 +20,7 @@ import {
   import Feather from "react-native-vector-icons/Feather";
   import FontAwesome from "react-native-vector-icons/FontAwesome";
   import { NativeBaseProvider } from 'native-base';
+  import Dialog from "react-native-dialog";
 
   const Swiper = require("react-native-swiper");
   
@@ -71,9 +73,9 @@ import {
   export default function MyAccountScreen() {
     const tabBarHeight = useBottomTabBarHeight() * 2;
 
-    const editName= () => {console.log("editName")}
-    const editSurame= () => {console.log("editSurname")}
-    const editMail= () => {console.log("editMail")}
+    const editName= () => {Alert.alert("You can't edit your name")}
+    const editSurame= () => {Alert.alert("You can't edit your surname")}
+    const editMail= () => {Alert.alert("You can't edit your email")}
     const editPhoneNumber= () => {console.log("editPhoneNumber")}
     const editCity= () => {console.log("editCity")}
     const editStreetNumber= () => {console.log("editStreetNumber")}
@@ -81,10 +83,22 @@ import {
     const editRegion= () => {console.log("editRegion")}
     const editZipCode= () => {console.log("editZipCode")}
     const editAddressComplement= () => {console.log("editAddressComplement")}
-    const editPassword= () => {console.log("editPassword")}
+    const editPassword= () => {setVisible(true);}
     const editGender= () => {console.log("editGender")}
     const editBirthDate= () => {console.log("editBirthDate")}
     const editImgProfil= () => {console.log("editImgProfil")}
+
+    const [visible, setVisible] = useState(false);
+
+    const handleCancel = () => {
+        setVisible(false);
+      };
+    
+      const handleDelete = () => {
+        // The user has pressed the "Delete" button, so here you can do your own logic.
+        // ...Your logic
+        setVisible(false);
+      };
 
     return (
     <ScrollView>
@@ -152,6 +166,8 @@ import {
                     <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
                 </TouchableOpacity>
             </View>
+
+            
         </View>
 
         <View style= {{marginHorizontal:30}}>
@@ -165,6 +181,7 @@ import {
                 defaultValue={userInfo.email}
                 placeholder="Veillez entrer votre adresse mail"
                 placeholderTextColor={COLORS.greyBlue}
+                editable={false}
                 //onChangeText={onChangeEmail}
                 />
                 <TouchableOpacity onPress={editMail}>
