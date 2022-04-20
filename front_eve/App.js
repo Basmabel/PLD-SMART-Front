@@ -11,6 +11,7 @@ import "react-native-gesture-handler";
 import { createStackNavigator } from "@react-navigation/stack";
 import SearchScreen from "./app/screens/SearchScreen.js";
 import { TextField } from "native-base";
+import ValidationCode from './app/screens/ValidationCode'
 
 const Stack = createStackNavigator();
 
@@ -26,6 +27,7 @@ export default function App() {
         <Stack.Screen name="NavigatorBar" component={NavigatorBar} />
       </Stack.Navigator>
     </NavigationContainer>
+   // <ValidationCode/>
    // <SearchScreen />
   );
 }

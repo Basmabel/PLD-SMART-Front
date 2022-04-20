@@ -70,7 +70,7 @@ export default function SignUpScreen({ navigation }) {
     if(data.isValidUser && data.isValidPassword && !data.isCompatiblePassword && valuesNotNul()){
       try{
         //const response = await  fetch('https://eve-back.herokuapp.com/signup',
-        const response = await  fetch('https://eve-back.herokuapp.com/signup',
+        const response = await  fetch('https://169.254.3.246:3000/signup',
         {method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({"name": name,
@@ -92,7 +92,15 @@ export default function SignUpScreen({ navigation }) {
               });
 
               const resp= await response.text();
-              navigation.navigate("SignInScreen");
+              const status = response.status;
+              if(status===401 || status===400){
+                alert(resp)
+              }else{
+                navigation.navigate("SignInScreen");
+              }
+              
+
+              
               
         } catch (error) {
           console.error(error);
