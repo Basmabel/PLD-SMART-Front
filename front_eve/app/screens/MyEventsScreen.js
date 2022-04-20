@@ -129,7 +129,7 @@ export default function MyEventsScreen() {
                     <View style={styles.contentContainer}>
                             <View style={styles.events}>
                                 <View style={styles.categorieEvents}>
-                                    <Text style={[styles.title_body]}>Incoming Events</Text>
+                                    <Text style={[styles.title_body]}>Upcoming Events</Text>
                                 </View>  
                                 <MyCarousel data={comingEvents} type={{"event":"oui"}}/>             
                             </View>
