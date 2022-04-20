@@ -23,25 +23,6 @@ import {
   import DialogInput from 'react-native-dialog-input';
 
   const Swiper = require("react-native-swiper");
-  
-  //Récup les infos d'inscription
-  /*const userInfo = {
-    name: "Meryem",
-    surname: "Alami",
-    email: "malami@gmail.com",
-    phoneNumber: "0606060606",
-    city: "Lyon",
-    streetNb: "20",
-    street: "Avenue Albert Einstein",
-    region: "Rhone",
-    zipCode: "69100",
-    addressComplement: "Batiment M",
-    password: "malamieve",
-    gender: "Femme",
-    birthDate: "19/12/2000",
-    imgProfil: "https://picsum.photos/200/300",
-  };*/
-
 
   //Recup les events
   const organizedEvents = [
@@ -79,18 +60,19 @@ import {
     const editName= () => {Alert.alert("You can't edit your name")}
     const editSurame= () => {Alert.alert("You can't edit your surname")}
     const editMail= () => {Alert.alert("You can't edit your email")}
-    const editPhoneNumber= () => {console.log("editPhoneNumber")}
+    const editPhoneNumber= () => {setVisiblePhoneNumber(true);}
     const editCity= () => {console.log("editCity")}
     const editStreetNumber= () => {console.log("editStreetNumber")}
     const editStreet= () => {console.log("editStreet")}
     const editRegion= () => {console.log("editRegion")}
     const editZipCode= () => {console.log("editZipCode")}
     const editAddressComplement= () => {console.log("editAddressComplement")}
-    const editPassword= () => {setVisible(true);}
+    const editPassword= () => {setVisiblePassword(true);}
     const editGender= () => {console.log("editGender")}
     const editBirthDate= () => {console.log("editBirthDate")}
     const editImgProfil= () => {console.log("editImgProfil")}
 
+    //Recup les infos d'inscription
     const [userInfo, setUserInfo] = React.useState({
         name: "Meryem",
         surname: "Alami",
@@ -112,21 +94,21 @@ import {
       });
 
     //Dialog visibility
-    const [visible, setVisible] = useState(false);
+    const [visiblePassword, setVisiblePassword] = useState(false);
+    const [visiblePhoneNumber, setVisiblePhoneNumber] = useState(false);
 
-    const sendInput = (inputText) => {
-        console.log(inputText);
-        setUserInfo({
-            ...userInfo,
-            password: inputText,
-            //isValidPassword: false,
-        });
-        //console.log(userInfo.password);
-        setVisible(false);
+
+    //Write data
+    const sendInputPassword = (inputText) => {setUserInfo({ ...userInfo,password: inputText,});
+        setVisiblePassword(false);
+    };
+    const sendInputPhoneNumber = (inputText) => {setUserInfo({ ...userInfo,phoneNumber: inputText,});
+        setVisiblePhoneNumber(false);
     };
     
     const showDialog = () => {
-        setVisible(false);
+        setVisiblePassword(false);
+        setVisiblePhoneNumber(false);
     };
 
     
@@ -191,6 +173,7 @@ import {
                 <Feather name="lock" color={COLORS.midnightBlue} size={20} />
                 <TextInput style={styles.textInput}
                 defaultValue={userInfo.password}
+                editable={false}
                 //onChangeText={onChangeEmail}
                 />
 
@@ -199,11 +182,11 @@ import {
                 </TouchableOpacity>
                 <View>
                    <DialogInput 
-                        isDialogVisible={visible}
+                        isDialogVisible={visiblePassword}
                         title={"Enter a new password"}
                         //message={"Enter a new password"}
                         hintInput ={"password"}
-                        submitInput={ (inputText) => {sendInput(inputText)} }
+                        submitInput={ (inputText) => {sendInputPassword(inputText)} }
                         closeDialog={ () => {showDialog(false)}}>
                     </DialogInput>
                 </View>
@@ -243,11 +226,21 @@ import {
                 defaultValue={userInfo.phoneNumber}
                 placeholder="Enter your phone number"
                 placeholderTextColor={COLORS.greyBlue}
+                editable={false}
                 //onChangeText={onChangeEmail}
                 />
                 <TouchableOpacity onPress={editPhoneNumber}>
                     <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
                 </TouchableOpacity>
+                <View>
+                   <DialogInput 
+                        isDialogVisible={visiblePhoneNumber}
+                        title={"Enter a new phone number"}
+                        hintInput ={"Phone number"}
+                        submitInput={ (inputText) => {sendInputPhoneNumber(inputText)} }
+                        closeDialog={ () => {showDialog(false)}}>
+                    </DialogInput>
+                </View>
             </View>
         </View>
 
@@ -271,6 +264,7 @@ import {
                 defaultValue={userInfo.streetNb}
                 placeholder="Enter your street number"
                 placeholderTextColor={COLORS.greyBlue}
+                editable={false}
                 //onChangeText={onChangeEmail}
                 />
                 <TouchableOpacity onPress={editStreetNumber}>
@@ -289,6 +283,8 @@ import {
                 defaultValue={userInfo.street}
                 placeholder="Enter your street"
                 placeholderTextColor={COLORS.greyBlue}
+                editable={false}
+
                 //onChangeText={onChangeEmail}
                 />
                 <TouchableOpacity onPress={editStreet}>
@@ -309,6 +305,7 @@ import {
                 defaultValue={userInfo.addressComplement}
                 placeholder="Enter your address complement"
                 placeholderTextColor={COLORS.greyBlue}
+                editable={false}
                 //onChangeText={onChangeEmail}
                 />
                 <TouchableOpacity onPress={editAddressComplement}>
@@ -327,6 +324,7 @@ import {
                 defaultValue={userInfo.zipCode}
                 placeholder="Enter your zip code"
                 placeholderTextColor={COLORS.greyBlue}
+                editable={false}
                 //onChangeText={onChangeEmail}
                 />
                 <TouchableOpacity onPress={editZipCode}>
@@ -348,6 +346,7 @@ import {
                 defaultValue={userInfo.city}
                 placeholder="Enter your city"
                 placeholderTextColor={COLORS.greyBlue}
+                editable={false}
                 //onChangeText={onChangeEmail}
                 />
                 <TouchableOpacity onPress={editCity}>
@@ -366,6 +365,7 @@ import {
                 defaultValue={userInfo.region}
                 placeholder="Enter your region"
                 placeholderTextColor={COLORS.greyBlue}
+                editable={false}
                 //onChangeText={onChangeEmail}
                 />
                 <TouchableOpacity onPress={editRegion}>
@@ -388,6 +388,7 @@ import {
                 defaultValue={userInfo.gender}
                 placeholder="Enter your gender"
                 placeholderTextColor={COLORS.greyBlue}
+                editable={false}
                 //onChangeText={onChangeEmail}
                 />
                 <TouchableOpacity onPress={editGender}>
@@ -407,6 +408,7 @@ import {
                 defaultValue={userInfo.birthDate}
                 placeholder="Enter your birth date"
                 placeholderTextColor={COLORS.greyBlue}
+                editable={false}
                 //onChangeText={onChangeEmail}
                 />
                 <TouchableOpacity onPress={editBirthDate}>
