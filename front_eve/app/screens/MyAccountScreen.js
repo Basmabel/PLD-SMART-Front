@@ -8,6 +8,7 @@ import {
     ScrollView,
     TextInput,
     TouchableOpacity,
+    ImageBackground,
   } from "react-native";
   import React from 'react';
   import { COLORS } from "../config/colors.js";
@@ -91,6 +92,7 @@ import {
         <View style={styles.header}>
             <Text style={styles.title_header}> Your profile </Text>
         </View>
+
 
         <View style={{paddingTop: 40,justifyContent: "center",alignItems: "center",}}>
             <Image
@@ -190,12 +192,21 @@ import {
             </View>
         </View>
 
-        <View style= {{marginHorizontal:30}}>
+        <View style= {{marginHorizontal:25}}>
             <Text style={[styles.text_footer, styles.titleTextInput]}>
-                Street number
+                Address
+            </Text>
+        </View>
+        <ImageBackground style={{marginHorizontal:15, marginTop: 10,}}source={require('../assets/images/lightViolet.png')}>
+        
+
+        <View style={{flexDirection: "row",}}>
+        <View style= {{marginHorizontal:30}}>
+            <Text style={[styles.text_footer, styles.titleTextInput, ]}>
+                Street n°
             </Text>
 
-            <View style={styles.action}>
+            <View style={[styles.action,{width: (windowWidth/4)}]}>
                 <Feather name="home" color={COLORS.midnightBlue} size={20} />
                 <TextInput style={styles.textInput}
                 defaultValue={userInfo.streetNb}
@@ -210,12 +221,11 @@ import {
         </View>
 
         <View style= {{marginHorizontal:30}}>
-            <Text style={[styles.text_footer, styles.titleTextInput]}>
+            <Text style={[styles.text_footer, styles.titleTextInput,{marginHorizontal:-50}]}>
                 Street
             </Text>
 
-            <View style={styles.action}>
-                <Feather name="home" color={COLORS.midnightBlue} size={20} />
+            <View style={[styles.action,{width: (windowWidth/2), marginHorizontal:-50}]}>
                 <TextInput style={styles.textInput}
                 defaultValue={userInfo.street}
                 placeholder="Enter your street"
@@ -227,13 +237,14 @@ import {
                 </TouchableOpacity>
             </View>
         </View>
-
+        </View>
+        <View style={{flexDirection: "row",}}>
         <View style= {{marginHorizontal:30}}>
             <Text style={[styles.text_footer, styles.titleTextInput]}>
                 Address complement
             </Text>
 
-            <View style={styles.action}>
+            <View style={[styles.action,{width: (windowWidth/2),}]}>
                 <Feather name="home" color={COLORS.midnightBlue} size={20} />
                 <TextInput style={styles.textInput}
                 defaultValue={userInfo.addressComplement}
@@ -248,12 +259,11 @@ import {
         </View>
 
         <View style= {{marginHorizontal:30}}>
-            <Text style={[styles.text_footer, styles.titleTextInput]}>
+            <Text style={[styles.text_footer, styles.titleTextInput, {marginHorizontal:-50}]}>
                 Zip Code
             </Text>
 
-            <View style={styles.action}>
-                <Feather name="home" color={COLORS.midnightBlue} size={20} />
+            <View style={[styles.action,{width: (windowWidth/4), marginHorizontal:-50}]}>
                 <TextInput style={styles.textInput}
                 defaultValue={userInfo.zipCode}
                 placeholder="Enter your zip code"
@@ -265,13 +275,15 @@ import {
                 </TouchableOpacity>
             </View>
         </View>
+        </View>
 
+        <View style={{flexDirection: "row",}}>
         <View style= {{marginHorizontal:30}}>
             <Text style={[styles.text_footer, styles.titleTextInput]}>
                 City
             </Text>
 
-            <View style={styles.action}>
+            <View style={[styles.action,{width: (windowWidth/3)}]}>
                 <Feather name="home" color={COLORS.midnightBlue} size={20} />
                 <TextInput style={styles.textInput}
                 defaultValue={userInfo.city}
@@ -286,12 +298,11 @@ import {
         </View>
 
         <View style= {{marginHorizontal:30}}>
-            <Text style={[styles.text_footer, styles.titleTextInput]}>
+            <Text style={[styles.text_footer, styles.titleTextInput, {marginHorizontal:-40}]}>
                 Region
             </Text>
 
-            <View style={styles.action}>
-                <Feather name="home" color={COLORS.midnightBlue} size={20} />
+            <View style={[styles.action,{width: (windowWidth/2.5), marginHorizontal:-40}]}>
                 <TextInput style={styles.textInput}
                 defaultValue={userInfo.region}
                 placeholder="Enter your region"
@@ -303,6 +314,9 @@ import {
                 </TouchableOpacity>
             </View>
         </View>
+        </View>
+        </ImageBackground>
+
         
         <View style= {{marginHorizontal:30}}>
             <Text style={[styles.text_footer, styles.titleTextInput]}>
@@ -358,6 +372,8 @@ import {
   }
   
   const windowHeight = Dimensions.get("window").height;
+  const windowWidth = Dimensions.get("window").width;
+
   
   const styles = StyleSheet.create({
     container: {
@@ -378,6 +394,7 @@ import {
         borderBottomWidth: 1,
         borderBottomColor: COLORS.mauve,
         paddingBottom: 5,
+        width: (windowWidth - 60),
       },
     title_header: {
       color: COLORS.greyBlue,
@@ -387,8 +404,8 @@ import {
       alignItems: "center",
     },
     profilImage: {
-      width: 90,
-      height: 90,
+      width: 100,
+      height: 100,
       borderRadius: 25,
     },
     locationView: {
@@ -421,7 +438,7 @@ import {
         marginTop: Platform.OS === "ios" ? 0 : -12,
         paddingLeft: 10,
         color: COLORS.greyBlue,
-        marginHorizontal: 10,
+        marginHorizontal: 1,
     },
     text_footer: {
         marginTop: Platform.OS === "ios" ? 5 : 6,

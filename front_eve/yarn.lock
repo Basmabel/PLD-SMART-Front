@@ -5803,6 +5803,13 @@
   dependencies:
     "@types/geojson" "^7946.0.7"
 
+"react-native-panel@^1.0.4":
+  "integrity" "sha512-MV7I5+daItvy98MNygyUk+TdF44FjrZmHd/9IRL4kNzRi9zWx/2lWjZ1Vn5f6lSN14ALhm031iLErX2hxXF/og=="
+  "resolved" "https://registry.npmjs.org/react-native-panel/-/react-native-panel-1.0.4.tgz"
+  "version" "1.0.4"
+  dependencies:
+    "prop-types" "^15.6.1"
+
 "react-native-paper@^4.12.0":
   "integrity" "sha512-4g9bbxbxTkylcriYy8W+EgXo71mrZHhIm044G+4LTp0JaOEWjGJm571OwV5pPAMwN1N8xUs24ymvHfpOjqHpaw=="
   "resolved" "https://registry.npmjs.org/react-native-paper/-/react-native-paper-4.12.0.tgz"
