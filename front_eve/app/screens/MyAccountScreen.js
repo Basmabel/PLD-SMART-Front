@@ -7,13 +7,17 @@ import {
     SafeAreaView,
     ScrollView,
     TextInput,
+    TouchableOpacity,
   } from "react-native";
+  import React from 'react';
   import { COLORS } from "../config/colors.js";
-  import { MaterialCommunityIcons } from "@expo/vector-icons";
-  import { Column } from "native-base";
+  import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+  import { Button, Column } from "native-base";
   import MyCarousel from "../components/MyCarousel";
   import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
   import Feather from "react-native-vector-icons/Feather";
+  import FontAwesome from "react-native-vector-icons/FontAwesome";
+  import { NativeBaseProvider } from 'native-base';
 
   const Swiper = require("react-native-swiper");
   
@@ -35,34 +39,52 @@ import {
     imgProfil: "https://picsum.photos/200/300",
   };
   
-  /*const categorie = [
+  //Recup les events
+  const organizedEvents = [
     {
-      name: "party",
-      imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
+      name: "Pool party",
+      date: "20 april 2022",
+      place: "Ibiza",
+      imgUrl: "https://picsum.photos/id/11/200/300",
+      imgProfil: "https://picsum.photos/id/11/200/300",
     },
     {
-      name: "party",
-      imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
+      name: "Laser game",
+      date: "5 february 2021",
+      place: "Charpennes",
+      imgUrl: "https://picsum.photos/id/11/200/300",
+      imgProfil: "https://picsum.photos/id/11/200/300",
     },
     {
-      name: "party",
-      imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
+      name: "Aenean leo",
+      date: "5 march 2020",
+      place: "Charpennes",
+      imgUrl: "https://picsum.photos/id/11/200/300",
+      imgProfil: "https://picsum.photos/id/11/200/300",
     },
-    {
-      name: "party",
-      imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
-    },
-    {
-      name: "party",
-      imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
-    },
-  ];*/
+  ];
+  
 
 
 
   export default function MyAccountScreen() {
     const tabBarHeight = useBottomTabBarHeight() * 2;
-  
+
+    const editName= () => {console.log("editName")}
+    const editSurame= () => {console.log("editSurname")}
+    const editMail= () => {console.log("editMail")}
+    const editPhoneNumber= () => {console.log("editPhoneNumber")}
+    const editCity= () => {console.log("editCity")}
+    const editStreetNumber= () => {console.log("editStreetNumber")}
+    const editStreet= () => {console.log("editStreet")}
+    const editRegion= () => {console.log("editRegion")}
+    const editZipCode= () => {console.log("editZipCode")}
+    const editAddressComplement= () => {console.log("editAddressComplement")}
+    const editPassword= () => {console.log("editPassword")}
+    const editGender= () => {console.log("editGender")}
+    const editBirthDate= () => {console.log("editBirthDate")}
+    const editImgProfil= () => {console.log("editImgProfil")}
+
     return (
     <ScrollView>
       <SafeAreaView style={StyleSheet.container}>
@@ -89,7 +111,9 @@ import {
                 editable={false}
                 //onChangeText={onChangeEmail}
                 />
-                <Feather name="edit" color={COLORS.midnightBlue} size={20} onPress={console.log("Modification...")}/>
+                <TouchableOpacity onPress={editName}>
+                    <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
+                </TouchableOpacity>
             </View>
         </View>
 
@@ -105,6 +129,9 @@ import {
                 editable={false}
                 //onChangeText={onChangeEmail}
                 />
+                <TouchableOpacity onPress={editSurame}>
+                    <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
+                </TouchableOpacity>
             </View>
         </View>
 
@@ -119,6 +146,9 @@ import {
                 defaultValue={userInfo.password}
                 //onChangeText={onChangeEmail}
                 />
+                <TouchableOpacity onPress={editPassword}>
+                    <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
+                </TouchableOpacity>
             </View>
         </View>
 
@@ -135,6 +165,9 @@ import {
                 placeholderTextColor={COLORS.greyBlue}
                 //onChangeText={onChangeEmail}
                 />
+                <TouchableOpacity onPress={editMail}>
+                    <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
+                </TouchableOpacity>
             </View>
         </View>
 
@@ -151,6 +184,9 @@ import {
                 placeholderTextColor={COLORS.greyBlue}
                 //onChangeText={onChangeEmail}
                 />
+                <TouchableOpacity onPress={editPhoneNumber}>
+                    <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
+                </TouchableOpacity>
             </View>
         </View>
 
@@ -167,6 +203,9 @@ import {
                 placeholderTextColor={COLORS.greyBlue}
                 //onChangeText={onChangeEmail}
                 />
+                <TouchableOpacity onPress={editStreetNumber}>
+                    <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
+                </TouchableOpacity>
             </View>
         </View>
 
@@ -183,6 +222,9 @@ import {
                 placeholderTextColor={COLORS.greyBlue}
                 //onChangeText={onChangeEmail}
                 />
+                <TouchableOpacity onPress={editStreet}>
+                    <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
+                </TouchableOpacity>
             </View>
         </View>
 
@@ -199,6 +241,9 @@ import {
                 placeholderTextColor={COLORS.greyBlue}
                 //onChangeText={onChangeEmail}
                 />
+                <TouchableOpacity onPress={editAddressComplement}>
+                    <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
+                </TouchableOpacity>
             </View>
         </View>
 
@@ -215,6 +260,9 @@ import {
                 placeholderTextColor={COLORS.greyBlue}
                 //onChangeText={onChangeEmail}
                 />
+                <TouchableOpacity onPress={editZipCode}>
+                    <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
+                </TouchableOpacity>
             </View>
         </View>
 
@@ -231,6 +279,9 @@ import {
                 placeholderTextColor={COLORS.greyBlue}
                 //onChangeText={onChangeEmail}
                 />
+                <TouchableOpacity onPress={editCity}>
+                    <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
+                </TouchableOpacity>
             </View>
         </View>
 
@@ -247,6 +298,9 @@ import {
                 placeholderTextColor={COLORS.greyBlue}
                 //onChangeText={onChangeEmail}
                 />
+                <TouchableOpacity onPress={editRegion}>
+                    <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
+                </TouchableOpacity>
             </View>
         </View>
         
@@ -263,6 +317,9 @@ import {
                 placeholderTextColor={COLORS.greyBlue}
                 //onChangeText={onChangeEmail}
                 />
+                <TouchableOpacity onPress={editGender}>
+                    <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
+                </TouchableOpacity>
             </View>
         </View>
 
@@ -279,7 +336,19 @@ import {
                 placeholderTextColor={COLORS.greyBlue}
                 //onChangeText={onChangeEmail}
                 />
+                <TouchableOpacity onPress={editBirthDate}>
+                    <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
+                </TouchableOpacity>
             </View>
+
+            <View style={styles.events}>
+            <View style={styles.categorieEvents}>
+              <Text style={styles.title_header}>Organized events</Text>
+              <MaterialIcons name="event-available" color={COLORS.greyBlue} size={26}/>
+            </View>
+            <MyCarousel data={organizedEvents} type={{ event: "oui" }} />
+          </View>
+
         </View>
         
 
@@ -296,18 +365,18 @@ import {
     },
     header: {
       paddingHorizontal: 20,
-      paddingTop: 20,
+      paddingTop: 30,
       flexDirection: "row",
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: COLORS.pink,
-      textAlign : "center",
+      justifyContent: "space-evenly" ,
+      //alignItems: "center",
+      backgroundColor: COLORS.mauve,
+      //textAlign : "center",
     },
     action: {
         flexDirection: "row",
         marginTop: 10,
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.pink,
+        borderBottomColor: COLORS.mauve,
         paddingBottom: 5,
       },
     title_header: {
@@ -318,8 +387,8 @@ import {
       alignItems: "center",
     },
     profilImage: {
-      width: 70,
-      height: 70,
+      width: 90,
+      height: 90,
       borderRadius: 25,
     },
     locationView: {
@@ -337,6 +406,7 @@ import {
     events: {
       flexDirection: "column",
       marginBottom: 20,
+      marginTop : 50,
     },
     categorieEvents: {
       flexDirection: "row",
@@ -344,7 +414,7 @@ import {
       marginBottom: 15,
     },
     titleTextInput : {
-        color: COLORS.pink,
+        color: COLORS.mauve,
     },
     textInput: {
         flex: 1,
