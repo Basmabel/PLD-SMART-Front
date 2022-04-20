@@ -27,6 +27,11 @@ const CarouselCard= ({ item, index }) => {
     date.setTime( date.getTime() + 2*60*60*1000+date.getTimezoneOffset()*60*1000);
   }
   
+  var isImage = true;
+  if(item.ImageProfil==""){
+    isImage=false;
+  }
+  
   var  months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
   var formattedDate =date.getDate()+" "+months[(date.getMonth())]+". "+ date.getFullYear(); 
   
@@ -38,7 +43,7 @@ const CarouselCard= ({ item, index }) => {
       />
        <View style={styles.header}>
          <Text style={styles.name}>{item.name}</Text>
-         <Image source={{uri: item.ImageProfil}} style={styles.profil}/>
+         <Image source={{uri: isImage? item.ImageProfil : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}} style={styles.profil}/>
        </View>
       <View style={styles.body}>
         <View style={styles.infos}>

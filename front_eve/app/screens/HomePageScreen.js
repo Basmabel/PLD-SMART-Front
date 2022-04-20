@@ -155,7 +155,7 @@ export default function HomePageScreen() {
                     nexEv = [...nexEv];
                     nexEv[iter]=eve;
                     iter++;
-                    //console.log(nexEv)
+                   // console.log(nexEv)
                 }
                 if(iter!=0 && cat_id!=eve.category_id){
                   stockEvent=[...stockEvent,nexEv];
@@ -168,9 +168,12 @@ export default function HomePageScreen() {
                   iter=0;
                   cat_id=item[i+1].category_id;
                   nexEv =[]
+                }else if(cat_id===eve.category_id && i+1==item.length){
+                  stockEvent=[...stockEvent,nexEv];
                 }
             });
             setEventPerCat(stockEvent);
+            //console.log(stockEvent)
           }
             
         });
