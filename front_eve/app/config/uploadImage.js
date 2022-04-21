@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Image, View, Platform, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
+import { COLORS } from "../config/colors.js";
+import Feather from "react-native-vector-icons/Feather";
+
 import * as ImagePicker from 'expo-image-picker';
 
 export default function UploadImage() {
@@ -44,7 +46,7 @@ useEffect(() => {
 <View style={imageUploaderStyles.uploadBtnContainer}>
 <TouchableOpacity onPress={addImage} style={imageUploaderStyles.uploadBtn} >
 <Text>{image ? 'Edit' : 'Upload'} Image</Text>
-<AntDesign name="camera" size={20} color="black" />
+<Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
 </TouchableOpacity>
 </View>
 
