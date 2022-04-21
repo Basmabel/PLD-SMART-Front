@@ -61,16 +61,16 @@ import {
     const editSurame= () => {Alert.alert("You can't edit your surname")}
     const editMail= () => {Alert.alert("You can't edit your email")}
     const editPhoneNumber= () => {setVisiblePhoneNumber(true);}
-    const editCity= () => {console.log("editCity")}
-    const editStreetNumber= () => {console.log("editStreetNumber")}
-    const editStreet= () => {console.log("editStreet")}
-    const editRegion= () => {console.log("editRegion")}
-    const editZipCode= () => {console.log("editZipCode")}
-    const editAddressComplement= () => {console.log("editAddressComplement")}
+    const editCity= () => {setVisibleCity(true);}
+    const editStreetNumber= () => {setVisibleStreetNumber(true);}
+    const editStreet= () => {setVisibleStreet(true);}
+    const editRegion= () => {setVisibleRegion(true);}
+    const editZipCode= () => {setVisibleZipCode(true);}
+    const editAddressComplement= () => {setVisibleAddressComplement(true);}
     const editPassword= () => {setVisiblePassword(true);}
-    const editGender= () => {console.log("editGender")}
-    const editBirthDate= () => {console.log("editBirthDate")}
-    const editImgProfil= () => {console.log("editImgProfil")}
+    const editGender= () => {setVisibleGender(true);}
+    const editBirthDate= () => {setVisibleBirthDate(true);}
+    const editImgProfil= () => {setVisibleImgProfil(true);}
 
     //Recup les infos d'inscription
     const [userInfo, setUserInfo] = React.useState({
@@ -94,21 +94,67 @@ import {
       });
 
     //Dialog visibility
-    const [visiblePassword, setVisiblePassword] = useState(false);
     const [visiblePhoneNumber, setVisiblePhoneNumber] = useState(false);
+    const [visibleCity, setVisibleCity] = useState(false);
+    const [visibleStreetNumber, setVisibleStreetNumber] = useState(false);
+    const [visibleStreet, setVisibleStreet] = useState(false);
+    const [visibleRegion, setVisibleRegion] = useState(false);
+    const [visibleZipCode, setVisibleZipCode] = useState(false);
+    const [visibleAddressComplement, setVisibleAddressComplement] = useState(false);
+    const [visiblePassword, setVisiblePassword] = useState(false);
+    const [visibleGender, setVisibleGender] = useState(false);
+    const [visibleBirthDate, setVisibleBirthDate] = useState(false);
+    const [visibleImgProfil, setVisibleImgProfil] = useState(false);
 
 
     //Write data
-    const sendInputPassword = (inputText) => {setUserInfo({ ...userInfo,password: inputText,});
-        setVisiblePassword(false);
-    };
+
     const sendInputPhoneNumber = (inputText) => {setUserInfo({ ...userInfo,phoneNumber: inputText,});
         setVisiblePhoneNumber(false);
     };
+    const sendInputCity = (inputText) => {setUserInfo({ ...userInfo,city: inputText,});
+        setVisibleCity(false);
+    };
+    const sendInputStreetNumber = (inputText) => {setUserInfo({ ...userInfo,streetNb: inputText,});
+        setVisibleStreetNumber(false);
+    };
+    const sendInputStreet = (inputText) => {setUserInfo({ ...userInfo,street: inputText,});
+        setVisibleStreet(false);
+    };
+    const sendInputRegion = (inputText) => {setUserInfo({ ...userInfo,region: inputText,});
+        setVisibleRegion(false);
+    };
+    const sendInputZipCode = (inputText) => {setUserInfo({ ...userInfo,zipCode: inputText,});
+        setVisibleZipCode(false);
+    };
+    const sendInputAddressComplement = (inputText) => {setUserInfo({ ...userInfo,addressComplement: inputText,});
+        setVisibleAddressComplement(false);
+    };
+    const sendInputPassword = (inputText) => {setUserInfo({ ...userInfo,password: inputText,});
+        setVisiblePassword(false);
+    };
+    const sendInputGender = (inputText) => {setUserInfo({ ...userInfo,gender: inputText,});
+        setVisibleGender(false);
+    };
+    const sendInputBirthDate = (inputText) => {setUserInfo({ ...userInfo,birthDate: inputText,});
+        setVisibleBirthDate(false);
+    };
+    const sendInputImgProfil = (inputText) => {setUserInfo({ ...userInfo,imgProfil: inputText,});
+        setVisibleImgProfil(false);
+    };
     
     const showDialog = () => {
-        setVisiblePassword(false);
         setVisiblePhoneNumber(false);
+        setVisibleCity(false);
+        setVisibleStreetNumber(false);
+        setVisibleStreet(false);
+        setVisibleRegion(false);
+        setVisibleZipCode(false);
+        setVisibleAddressComplement(false);
+        setVisiblePassword(false);
+        setVisibleGender(false);
+        setVisibleBirthDate(false);
+        setVisibleImgProfil(false);
     };
 
     
@@ -270,6 +316,13 @@ import {
                 <TouchableOpacity onPress={editStreetNumber}>
                     <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
                 </TouchableOpacity>
+                <DialogInput 
+                        isDialogVisible={visibleStreetNumber}
+                        title={"Enter a new street n°"}
+                        hintInput ={"street n°"}
+                        submitInput={ (inputText) => {sendInputStreetNumber(inputText)} }
+                        closeDialog={ () => {showDialog(false)}}>
+                </DialogInput>
             </View>
         </View>
 
@@ -290,6 +343,13 @@ import {
                 <TouchableOpacity onPress={editStreet}>
                     <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
                 </TouchableOpacity>
+                <DialogInput 
+                        isDialogVisible={visibleStreet}
+                        title={"Enter a new street"}
+                        hintInput ={"street"}
+                        submitInput={ (inputText) => {sendInputStreet(inputText)} }
+                        closeDialog={ () => {showDialog(false)}}>
+                </DialogInput>
             </View>
         </View>
         </View>
@@ -311,6 +371,13 @@ import {
                 <TouchableOpacity onPress={editAddressComplement}>
                     <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
                 </TouchableOpacity>
+                <DialogInput 
+                        isDialogVisible={visibleAddressComplement}
+                        title={"Enter a new address complement"}
+                        hintInput ={"address complement"}
+                        submitInput={ (inputText) => {sendInputAddressComplement(inputText)} }
+                        closeDialog={ () => {showDialog(false)}}>
+                </DialogInput>
             </View>
         </View>
 
@@ -330,6 +397,13 @@ import {
                 <TouchableOpacity onPress={editZipCode}>
                     <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
                 </TouchableOpacity>
+                <DialogInput 
+                        isDialogVisible={visibleZipCode}
+                        title={"Enter a new zip code"}
+                        hintInput ={"zip code"}
+                        submitInput={ (inputText) => {sendInputZipCode(inputText)} }
+                        closeDialog={ () => {showDialog(false)}}>
+                </DialogInput>
             </View>
         </View>
         </View>
@@ -352,6 +426,13 @@ import {
                 <TouchableOpacity onPress={editCity}>
                     <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
                 </TouchableOpacity>
+                <DialogInput 
+                        isDialogVisible={visibleCity}
+                        title={"Enter a new city"}
+                        hintInput ={"city"}
+                        submitInput={ (inputText) => {sendInputCity(inputText)} }
+                        closeDialog={ () => {showDialog(false)}}>
+                </DialogInput>
             </View>
         </View>
 
@@ -371,6 +452,13 @@ import {
                 <TouchableOpacity onPress={editRegion}>
                     <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
                 </TouchableOpacity>
+                <DialogInput 
+                        isDialogVisible={visibleRegion}
+                        title={"Enter a new region"}
+                        hintInput ={"region"}
+                        submitInput={ (inputText) => {sendInputRegion(inputText)} }
+                        closeDialog={ () => {showDialog(false)}}>
+                </DialogInput>
             </View>
         </View>
         </View>
@@ -394,6 +482,13 @@ import {
                 <TouchableOpacity onPress={editGender}>
                     <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
                 </TouchableOpacity>
+                <DialogInput 
+                        isDialogVisible={visibleGender}
+                        title={"Enter a new gender"}
+                        hintInput ={"gender"}
+                        submitInput={ (inputText) => {sendInputGender(inputText)} }
+                        closeDialog={ () => {showDialog(false)}}>
+                </DialogInput>
             </View>
         </View>
 
@@ -414,6 +509,13 @@ import {
                 <TouchableOpacity onPress={editBirthDate}>
                     <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
                 </TouchableOpacity>
+                <DialogInput 
+                        isDialogVisible={visibleBirthDate}
+                        title={"Enter a new birth date"}
+                        hintInput ={"birth date"}
+                        submitInput={ (inputText) => {sendInputBirthDate(inputText)} }
+                        closeDialog={ () => {showDialog(false)}}>
+                </DialogInput>
             </View>
 
             <View style={styles.events}>
@@ -422,6 +524,15 @@ import {
               <MaterialIcons name="event-available" color={COLORS.greyBlue} size={26}/>
             </View>
             <MyCarousel data={organizedEvents} type={{ event: "oui" }} />
+
+            <View style={styles.events}>
+            <View style={styles.categorieEvents}>
+              <Text style={styles.title_header}>Ratings</Text>
+              <MaterialIcons name="star-rate" color={COLORS.greyBlue} size={26}/>
+
+            </View>
+            </View>
+            
           </View>
 
         </View>
@@ -465,9 +576,9 @@ import {
       alignItems: "center",
     },
     profilImage: {
-      width: 100,
-      height: 100,
-      borderRadius: 25,
+      width: 120,
+      height: 120,
+      borderRadius: 100,
     },
     dialogStyle: {
         width: '20%',
