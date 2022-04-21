@@ -38,7 +38,7 @@ useEffect(() => {
  return (
 <View style={imageUploaderStyles.container}>
                {
-                   image  &&<Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
+                   image  &&<Image source={{ uri: image }} style={{ width: 120, height: 120 }} />
                }
 
 <View style={imageUploaderStyles.uploadBtnContainer}>

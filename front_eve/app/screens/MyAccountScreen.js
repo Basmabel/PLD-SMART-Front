@@ -73,7 +73,7 @@ import {
     const editBirthDate= () => {setVisibleBirthDate(true);}
     const editImgProfil= () => {setVisibleImgProfil(true);}
 
-    //Recup les infos d'inscription
+    //Recup les infos d'inscription ET imgProfil
     const [userInfo, setUserInfo] = React.useState({
         name: "Meryem",
         surname: "Alami",
