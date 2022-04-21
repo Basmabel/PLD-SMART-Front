@@ -21,6 +21,7 @@ import {
   import FontAwesome from "react-native-vector-icons/FontAwesome";
   import { NativeBaseProvider } from 'native-base';
   import DialogInput from 'react-native-dialog-input';
+  import UploadImage from '../config/uploadImage.js';
 
   const Swiper = require("react-native-swiper");
 
@@ -166,12 +167,8 @@ import {
             <Text style={styles.title_header}> Your profile </Text>
         </View>
 
-
         <View style={{paddingTop: 40,justifyContent: "center",alignItems: "center",}}>
-            <Image
-                style={styles.profilImage}
-                source={{ uri: userInfo.imgProfil }}
-            />
+        <UploadImage/>
         </View>
 
         <View style= {{marginHorizontal:30}}>
