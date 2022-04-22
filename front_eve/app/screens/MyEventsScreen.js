@@ -13,59 +13,6 @@ import {
   Montserrat_600SemiBold
 } from '@expo-google-fonts/dev'
 
-
-/*const popEvents = [
-    {
-      name: "Aenean leo",
-      date: "5 march 2020",
-      place: "Charpennes",
-      imgUrl: "https://picsum.photos/id/11/200/300",
-      imgProfil: "https://picsum.photos/id/11/200/300"
-    },
-    {
-      name: "Aenean leo",
-      date: "5 march 2020",
-      place: "Charpennes",
-      imgUrl: "https://picsum.photos/id/11/200/300",
-      imgProfil: "https://picsum.photos/id/11/200/300"
-    },
-    {
-      name: "Aenean leo",
-      date: "5 march 2020",
-      place: "Charpennes",
-      imgUrl: "https://picsum.photos/id/11/200/300",
-      imgProfil: "https://picsum.photos/id/11/200/300"
-    }
-  ];*/
-
-const userInfo = {
-  name: "Coco",
-  imgProfil: "https://picsum.photos/200/300",
-};
-
-const categorie = [
-  {
-    name: "party",
-    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
-  },
-  {
-    name: "party",
-    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
-  },
-  {
-    name: "party",
-    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
-  },
-  {
-    name: "party",
-    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
-  },
-  {
-    name: "party",
-    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
-  },
-];
-
 var light = "dark"
 var colorBack= COLORS.greyBlue
 var colorText=COLORS.lightBlue
@@ -75,17 +22,17 @@ if(light==="light"){
   colorText=COLORS.greyBlue
 }
 
-export default function HomePageScreen() {
+export default function MyEventsScreen() {
   const tabBarHeight = useBottomTabBarHeight() * 2;
 
-   const [popularEvents,setPopularEvents] = React.useState([]);
    const [userInfo, setUserInfo] = React.useState(null);
    const [isLoading, setLoading] = React.useState(true);
-   const [categories,setCategories] = React.useState(null)
-   const [eventPerCat, setEventPerCat] = React.useState([]);
    const [retreive, setRetreive] = React.useState(false);
    const [userId, setUserId] = React.useState("")
    const [userToken, setUserToken] = React.useState("")
+   const [comingEvents, setComingEvents] = React.useState([]);
+   const [historic, setHistoric] = React.useState([]);
+   const [favorites, setFavorites] = React.useState([]);
 
   
 
@@ -121,19 +68,33 @@ export default function HomePageScreen() {
     retreiveData();
     if(retreive){      
       Promise.all([
-        fetch('http://169.254.3.246:3000/getPopular'),
+        fetch('http://169.254.3.246:3000/getComingEvents',{
+          method: "POST",
+          headers: {'content-type': 'application/json'},
+          body: JSON.stringify({
+            "id":userId
+          })
+        }),
         fetch('http://169.254.3.246:3000/getUserInfo',{
-          //fetch('https://eve-back.herokuapp.com/getPopular'),
-          //fetch('https://eve-back.herokuapp.com/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-          fetch('http://169.254.3.246:3000/getCategories'),
-          fetch('http://169.254.3.246:3000/getEventsByCategory')
-         // fetch('https://eve-back.herokuapp.com/getCategories'),
-         // fetch('https://eve-back.herokuapp.com/getEventsByCategory')
+          fetch('http://169.254.3.246:3000/getMyHistoric',{
+          method: "POST",
+          headers: {'content-type': 'application/json'},
+          body: JSON.stringify({
+            "id":userId
+          })
+        }),
+        fetch('http://169.254.3.246:3000/getMyFavorite',{
+          method: "POST",
+          headers: {'content-type': 'application/json'},
+          body: JSON.stringify({
+            "id":userId
+          })
+        }),
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
         return Promise.all(responses.map(function (response) {
@@ -144,42 +105,14 @@ export default function HomePageScreen() {
         // You would do something with both sets of data here
         data.map((item,index)=>{
           if(index==0){
-            setPopularEvents(item)
+            setComingEvents(item)
           }else if(index==1){
             setUserInfo(item)
           }else if(index==2){
-            setCategories(item)
-          }else if(index==3){
-            var cat_id=item[0].category_id;
-            var nexEv =[];
-            var iter = 0;
-            var stockEvent = []
-            item.map((eve,i)=>{
-                if(cat_id===eve.category_id){
-                    nexEv = [...nexEv];
-                    nexEv[iter]=eve;
-                    iter++;
-                   // console.log(nexEv)
-                }
-                if(iter!=0 && cat_id!=eve.category_id){
-                  stockEvent=[...stockEvent,nexEv];
-                  iter=0;
-                  cat_id=eve.category_id;
-                  nexEv =[]
-                  //console.log(stockEvent)
-                }else if(cat_id===eve.category_id && i+1<item.length && cat_id!=item[i+1].category_id){
-                  stockEvent=[...stockEvent,nexEv];
-                  iter=0;
-                  cat_id=item[i+1].category_id;
-                  nexEv =[]
-                }else if(cat_id===eve.category_id && i+1==item.length){
-                  stockEvent=[...stockEvent,nexEv];
-                }
-            });
-            setEventPerCat(stockEvent);
-            //console.log(stockEvent)
-          }
-            
+            setHistoric(item)
+          } else if(index==3){
+            setFavorites(item)
+          }          
         });
       }).catch(function (error) {
         // if there's an error, log it
@@ -191,25 +124,6 @@ export default function HomePageScreen() {
 
   }, [retreive]);
 
-   const DisplayEvents=()=>{
-      const listEvents = eventPerCat.map((item)=>
-      
-          <View style={styles.events} key={item[0].category_id}>
-                          <View style={styles.categorieEvents}>
-                              <Text style={[styles.title_body]}>{item[0].description}</Text>
-                          </View>  
-                          <MyCarousel data={item} type={{"event":"oui"}}/>                  
-          </View>
-      );
-      if(!fontsLoaded){
-        return(<AppLoading/>)
-      }else{
-        return(
-          <View>{listEvents}</View>
-        );
-      }
-      
-    }
     
     if(!fontsLoaded){
       return(<AppLoading/>)
@@ -235,19 +149,24 @@ export default function HomePageScreen() {
                     <View style={styles.contentContainer}>
                             <View style={styles.events}>
                                 <View style={styles.categorieEvents}>
-                                    <Text style={[styles.title_body]}>Categories</Text>
+                                    <Text style={[styles.title_body]}>Upcoming Events</Text>
                                 </View>  
-                                <MyCarousel data={categories} type={{"event":"non"}}/>                  
+                                <MyCarousel data={comingEvents} type={{"event":"oui"}}/>             
                             </View>
                             <View style={styles.events}>
                                 <View style={styles.categorieEvents}>
-                                    <Text style={[styles.title_body]}>Popular</Text>
+                                    <Text style={[styles.title_body]}>Historic</Text>
                                 </View>  
-                                <MyCarousel data={popularEvents} type={{"event":"oui"}}/>             
+                                <MyCarousel data={historic} type={{"event":"oui"}}/>             
                             </View>
-                           
-                            <DisplayEvents/>
+                            <View style={styles.events}>
+                                <View style={styles.categorieEvents}>
+                                    <Text style={[styles.title_body]}>Favorites Events</Text>
+                                </View>  
+                                <MyCarousel data={favorites} type={{"event":"oui"}}/>             
+                            </View>
                     </View>
+                    
               </ScrollView>
             </View>
             

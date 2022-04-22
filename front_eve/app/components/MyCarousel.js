@@ -12,7 +12,7 @@ const widthWind = Dimensions.get('window').width;
 const MyCarousel = ({data, type}) => {
   const isCarousel = React.useRef(null);
   const [index, setIndex] = React.useState(0);
-  console.log(type.event);
+
   var obj=null;
     
   if(type.event==="oui"){
@@ -31,6 +31,7 @@ const MyCarousel = ({data, type}) => {
         renderItem={obj.card}
         sliderWidth={widthWind}
         itemWidth={obj.width+20}
+        inactiveSlideOpacity={1}
         inactiveSlideScale={1}
         activeSlideAlignment={'start'}
         onSnapToItem={(index) => setIndex(index)}

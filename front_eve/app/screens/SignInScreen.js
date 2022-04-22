@@ -13,7 +13,7 @@ import {
 import * as Animatable from "react-native-animatable";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Feather from "react-native-vector-icons/Feather";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from "react-native-paper";
 
 const SignInScreen = ({ navigation }) => {
@@ -27,6 +27,48 @@ const SignInScreen = ({ navigation }) => {
     isValidUser: true,
     isValidPassword: true,
   });
+
+  var status =0;
+  const loginData = async () => {
+    if(data.isValidUser && data.isValidPassword && data.password!="" && data.email!=""){
+      //const response = await  fetch('https://eve-back.herokuapp.com/signup',
+      fetch("http://169.254.3.246:3000/login", {
+      //  fetch("https://eve-back.herokuapp.com/login",{
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email: data.email, password: data.password }),
+      }).then((response)=>{
+          status = response.status;
+          console.log(response.status)
+          if(status==400 || status==401){
+            return response.text()
+          }else{
+            return response.json();
+          }
+      })
+      .then(async (json)=>{
+        if(status==400 || status==401){
+          alert(json)
+        }else{
+          await AsyncStorage.setItem('key',JSON.stringify(json.id));
+          await AsyncStorage.setItem('token',JSON.stringify(json.token));
+          navigation.navigate("NavigatorBar")
+        }
+      })
+      .catch((error)=>console.error(error))
+    }else{
+      if(!data.isValidUser){
+        alert("Your email is not valid")
+      }else if(!data.isValidPassword){
+        alert("Your password is not valid")
+      }else if(data.email==="" || data.password===""){
+        alert("Please fill in every field")
+      }
+    }
+     
+   
+      //const response = await fetch("https://eve-back.herokuapp.com/login"
+  };
 
   const { colors } = useTheme();
 
@@ -91,7 +133,7 @@ const SignInScreen = ({ navigation }) => {
     <View style={styles.container}>
       <StatusBar backgroundColor={COLORS.beige} barStyle="light-content" />
       <View style={styles.header}>
-        <Text style={styles.text_header}>Bienvenue!</Text>
+        <Text style={styles.text_header}>Welcome!</Text>
       </View>
       <Animatable.View
         animation="fadeInUpBig"
@@ -115,7 +157,7 @@ const SignInScreen = ({ navigation }) => {
         <View style={styles.action}>
           <FontAwesome name="user-o" color={COLORS.lightBlue} size={20} />
           <TextInput
-            placeholder="Veuillez entrer votre email"
+            placeholder="Please enter your email"
             placeholderTextColor={COLORS.lightBlue}
             style={[
               styles.textInput,
@@ -136,7 +178,7 @@ const SignInScreen = ({ navigation }) => {
         {data.isValidUser ? null : (
           <Animatable.View animation="fadeInLeft" duration={500}>
             <Text style={styles.errorMsg}>
-              Cette adresse E-mail est invalide.
+              Invalid email.
             </Text>
           </Animatable.View>
         )}
@@ -150,12 +192,12 @@ const SignInScreen = ({ navigation }) => {
             },
           ]}
         >
-          Mot de passe
+          Password
         </Text>
         <View style={styles.action}>
           <Feather name="lock" color={COLORS.lightBlue} size={20} />
           <TextInput
-            placeholder="Veuillez entrer votre mot de passe"
+            placeholder="Please enter your password"
             placeholderTextColor={COLORS.lightBlue}
             secureTextEntry={data.secureTextEntry ? true : false}
             style={[
@@ -185,16 +227,11 @@ const SignInScreen = ({ navigation }) => {
 
         <TouchableOpacity>
           <Text style={{ color: COLORS.beige, marginTop: 15 }}>
-            Mot de passe oublié?
+            Forgot password?
           </Text>
         </TouchableOpacity>
         <View style={styles.button}>
-          <TouchableOpacity
-            style={styles.signIn}
-            onPress={() => {
-              loginHandle(data.username, data.password);
-            }}
-          >
+          <TouchableOpacity style={styles.signIn} onPress={loginData}>
             <View style={styles.signIn}>
               <Text
                 style={[
@@ -204,7 +241,7 @@ const SignInScreen = ({ navigation }) => {
                   },
                 ]}
               >
-                Connexion
+                Login
               </Text>
             </View>
           </TouchableOpacity>
@@ -228,7 +265,7 @@ const SignInScreen = ({ navigation }) => {
                 },
               ]}
             >
-              Créer un compte
+              Signup
             </Text>
           </TouchableOpacity>
         </View>
@@ -315,63 +352,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
-/**
- * Define the state for a sign in operation 
- 
-this.state = {
-    email : '',
-    password: '',
-  };
- */
-
-/*const loginData = async () =>  
-{
-    try{
-        const response = await fetch('https://eve-back.herokuapp.com/signin')
-        {method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({"email":email, 
-                              "password":password, 
-            })
-        });
-        const data = await response.text();
-        alert(data);
-
-
-        }
-    }catch (error) {
-    console.error(error);
-  }
-}
-/*
-  fetch(url,
-    {
-      method: 'POST',
-      body: JSON.stringify({"email": this.state.email,
-                            "password": this.state.password})
-              
-    }).then(function (response) {
-          return response.json();
-    }).then(function (result) { 
-          // console.log(result);
-          if(!result.error)
-          {
-              that.setState({ 
-                status: result.error, // why result.error ? 
-                wholeResult: result,
-              });
-              Alert.alert("User register successfully \n userId: "+that.state.wholeResult.user.uid);
-              console.log(that.state.wholeResult.user.uid);
-          }else{
-              Alert.alert(result.error_msg);
-              console.log(result);
-          }
- 
- 
-    }).catch(function (error) {
-          console.log("-------- error ------- "+error);
-          alert("result:"+error)
-    });
-}
-*/

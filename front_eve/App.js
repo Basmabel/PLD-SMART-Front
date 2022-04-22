@@ -7,9 +7,12 @@ import SignInScreen from './app/screens/SignInScreen.js';
 import SignUpScreen from './app/screens/SignUpScreen.js';
 import HomePageScreen from './app/screens/HomePageScreen.js';
 import NavigatorBar from './app/screens/NavigatorBar.js';
-
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import "react-native-gesture-handler";
+import { createStackNavigator } from "@react-navigation/stack";
+import SearchScreen from "./app/screens/SearchScreen.js";
+import { TextField } from "native-base";
+import ValidationCode from './app/screens/ValidationCode'
 
 const Stack = createStackNavigator();
 
@@ -18,25 +21,36 @@ export default function App() {
     //<SignUpScreen/>
     //<NavigatorBar/>
     //<LandingScreen/>
-
-    //<SignInScreen/>
-
     <NavigationContainer>
       <Stack.Navigator>
-       
-        <Stack.Screen name="Connection" component={SignInScreen} />
-        <Stack.Screen name="Inscription" component={SignUpScreen} />
+        <Stack.Screen name="SignInScreen" component={SignInScreen} />
+        <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+        <Stack.Screen name="NavigatorBar" component={NavigatorBar} />
       </Stack.Navigator>
     </NavigationContainer>
+   // <ValidationCode/>
+   // <SearchScreen />
   );
 }
 
+/*const Stack = createNativeStackNavigator();
+
+const MyStack = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <SignInScreen name="Connexion" component={connexionScreen}/>
+        <SignUpScreen name="Inscription" component={inscriptionScreen}/>
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+*/
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
-
