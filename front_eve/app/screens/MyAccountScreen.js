@@ -12,6 +12,7 @@ import {
     Alert,
   } from "react-native";
   import React, { useState } from 'react';
+  import {useEffect} from "react";
   import { COLORS } from "../config/colors.js";
   import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
   import { Button, Column } from "native-base";
@@ -74,7 +75,12 @@ import {
     const editImgProfil= () => {setVisibleImgProfil(true);}
 
     //Recup les infos d'inscription ET imgProfil
-    const [userInfo, setUserInfo] = React.useState({
+    const [retreive, setRetreive] = React.useState(false);
+    const [userId, setUserId] = React.useState("");
+    const [userToken, setUserToken] = React.useState("");
+    const [isLoading, setLoading] = React.useState(true);
+    const [userInfo, setUserInfo] = React.useState
+    ({
         name: "Meryem",
         surname: "Alami",
         email: "malami@gmail.com",
@@ -93,6 +99,58 @@ import {
         //isValidPassword: true,
         //isCompatiblePassword: true,
       });
+
+      /*useEffect(() => {
+
+        const retreiveData = async ()=>{
+          try {
+            const valueString = await AsyncStorage.getItem('key');
+            const value = JSON.parse(valueString);
+    
+            const tokenString = await AsyncStorage.getItem('token');
+            const token = JSON.parse(tokenString);
+    
+            setUserId(value)
+            setUserToken(token)
+            setRetreive(true)
+          } catch (error) {
+            console.log(error)
+          }
+        }
+        retreiveData();
+        if(retreive){      
+          Promise.all([
+            fetch('http://169.254.3.246:3000/getUserInfo',{
+              method: "POST",
+              headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
+              body: JSON.stringify({
+                "id":userId
+              })}),
+            fetch('http://169.254.3.246:3000/getCategories'),
+            fetch('http://169.254.3.246:3000/getEventsByCategory')
+          ]).then(function (responses) {
+            // Get a JSON object from each of the responses
+            return Promise.all(responses.map(function (response) {
+              return response.json();
+            }));
+          }).then(function (data) {
+            // Log the data to the console
+            // You would do something with both sets of data here
+            data.map((item,index)=>{
+              if(index==0){
+                setUserInfo(item)
+              }else if(index==1){
+
+              }else if(index==2){
+
+              }
+            });
+          }).catch(function (error) {
+            // if there's an error, log it
+            console.log(error);
+          }).finally(()=> setLoading(false));
+        }
+      }, [retreive]);*/
 
     //Dialog visibility
     const [visiblePhoneNumber, setVisiblePhoneNumber] = useState(false);
@@ -524,13 +582,22 @@ import {
 
             <View style={styles.events}>
             <View style={styles.categorieEvents}>
+              <Text style={styles.title_header}>Upcoming events</Text>
+              <MaterialIcons name="calendar-today" color={COLORS.greyBlue} size={26}/>
+            </View>
+            <MyCarousel data={organizedEvents} type={{ event: "oui" }} />
+            </View>
+
+
+            <View style={styles.events}>
+            <View style={styles.categorieEvents}>
               <Text style={styles.title_header}>Ratings</Text>
               <MaterialIcons name="star-rate" color={COLORS.greyBlue} size={26}/>
 
             </View>
             </View>
             
-          </View>
+            </View>
 
         </View>
         
