@@ -31,6 +31,8 @@ export default function MyEventsScreen() {
    const [userId, setUserId] = React.useState("")
    const [userToken, setUserToken] = React.useState("")
    const [comingEvents, setComingEvents] = React.useState([]);
+   const [historic, setHistoric] = React.useState([]);
+   const [favorites, setFavorites] = React.useState([]);
 
   
 
@@ -78,7 +80,21 @@ export default function MyEventsScreen() {
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
-          })})
+          })}),
+          fetch('http://169.254.3.246:3000/getMyHistoric',{
+          method: "POST",
+          headers: {'content-type': 'application/json'},
+          body: JSON.stringify({
+            "id":userId
+          })
+        }),
+        fetch('http://169.254.3.246:3000/getMyFavorite',{
+          method: "POST",
+          headers: {'content-type': 'application/json'},
+          body: JSON.stringify({
+            "id":userId
+          })
+        }),
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
         return Promise.all(responses.map(function (response) {
@@ -92,7 +108,11 @@ export default function MyEventsScreen() {
             setComingEvents(item)
           }else if(index==1){
             setUserInfo(item)
-          }            
+          }else if(index==2){
+            setHistoric(item)
+          } else if(index==3){
+            setFavorites(item)
+          }          
         });
       }).catch(function (error) {
         // if there's an error, log it
@@ -121,7 +141,7 @@ export default function MyEventsScreen() {
                   </View>
             </View>
             <View style={styles.body}>
-              <ScrollView style={[{marginBottom:tabBarHeight}]}>
+              <ScrollView style={[{marginBottom:tabBarHeight*2}]}>
                   <View style={styles.locationView}>
                         <Text style={styles.text_header}> Lyon </Text>
                         <MaterialCommunityIcons name="map-marker" color={colorText} size={24}/>
@@ -133,7 +153,20 @@ export default function MyEventsScreen() {
                                 </View>  
                                 <MyCarousel data={comingEvents} type={{"event":"oui"}}/>             
                             </View>
+                            <View style={styles.events}>
+                                <View style={styles.categorieEvents}>
+                                    <Text style={[styles.title_body]}>Historic</Text>
+                                </View>  
+                                <MyCarousel data={historic} type={{"event":"oui"}}/>             
+                            </View>
+                            <View style={styles.events}>
+                                <View style={styles.categorieEvents}>
+                                    <Text style={[styles.title_body]}>Favorites Events</Text>
+                                </View>  
+                                <MyCarousel data={favorites} type={{"event":"oui"}}/>             
+                            </View>
                     </View>
+                    
               </ScrollView>
             </View>
             

@@ -19,7 +19,6 @@ if(light==="light"){
 }
 
 const CarouselCard= ({ item, index }) => {
-  
   var date = new Date(item.date_timestamp);
   if(date.getMonth()>9 || date.getMonth()<2 || (date.getMonth()==9 && date.getDay()>20) || (date.getMonth()==2 && date.getDay()<=20) ){
     date.setTime( date.getTime() + 60*60*1000+date.getTimezoneOffset()*60*1000);
