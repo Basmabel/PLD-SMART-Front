@@ -105,9 +105,9 @@ export default function SignUpScreen({ navigation }) {
                 sendEmail(email,'hello').then(() => {
                   console.log('Your message was successfully sent!');
                  }).catch((error)=>console.error(error))*/
-               // navigation.navigate("SignInScreen");
+                
               }
-              
+              navigation.navigate("SignInScreen");
 
               
               
