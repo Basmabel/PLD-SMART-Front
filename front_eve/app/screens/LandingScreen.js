@@ -12,6 +12,8 @@ import {
 import { useTheme } from "react-native-paper";
 
 const LandingScreen = ({ navigation }) => {
+  const goToInscription = () => navigation.navigate("Inscription");
+  const goToConnexion = () => navigation.navigate("Connexion");
   const [email, onChangeEmail] = React.useState("");
   const [password, onChangePassword] = React.useState("");
   const [data, setData] = React.useState({
@@ -34,7 +36,7 @@ const LandingScreen = ({ navigation }) => {
       </View>
         <View style={styles.button}> 
         <TouchableOpacity
-            onPress={() => navigation.navigate("SignUpScreen")}
+            onPress={goToInscription}
             style={[
               styles.signUp,
               {
@@ -57,7 +59,7 @@ const LandingScreen = ({ navigation }) => {
           </TouchableOpacity>
               
           <TouchableOpacity
-            onPress={() => navigation.navigate("SignInScreen")}
+            onPress={goToConnexion}
             style={[
               styles.signIn,
               {
