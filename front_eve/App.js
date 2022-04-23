@@ -45,6 +45,7 @@ export default function App() {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="FilterScreen" component={FilterScreen} />
+        <Stack.Screen name="SearchScreen" component={SearchScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

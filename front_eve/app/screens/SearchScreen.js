@@ -34,13 +34,13 @@ const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
 Geocoder.init("AIzaSyCY2VFm6E1vB8lYpmhz2jGQawaCN5UY5D4");
 
-/*const Images = [
+const Images = [
   { image: require("../assets/images/mcdo.jpg") },
   { image: require("../assets/images/patinoire.jpg") },
   { image: require("../assets/images/tete_dor.jpg") },
-];*/
+];
 
-/*export const markers = [
+export const markers = [
   {
     coordinate: {
       latitude: 45.7701707,
@@ -74,7 +74,7 @@ Geocoder.init("AIzaSyCY2VFm6E1vB8lYpmhz2jGQawaCN5UY5D4");
     rating: 4.5,
     reviews: 5,
   },
-];*/
+];
 
 const SearchScreen = ({ navigation }) => {
   const theme = useTheme();

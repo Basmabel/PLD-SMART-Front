@@ -1,17 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import { MultiSelect } from "react-native-element-dropdown";
+import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import DatePicker from "react-native-datepicker";
 import { COLORS } from "../config/colors";
 
 const data = [
-  { label: "Sports", value: "1" },
-  { label: "Cinema", value: "2" },
-  { label: "Culture", value: "3" },
-  { label: "Activities", value: "4" },
-  { label: "Party", value: "5" },
-  { label: "Events", value: "6" },
+  { label: "Sports", value: 1 },
+  { label: "Cinema", value: 2 },
+  { label: "Culture", value: 3 },
+  { label: "Activities", value: 4 },
+  { label: "Party", value: 5 },
+  { label: "Events", value: 6 },
 ];
 
 const getCurrentDate = () => {
@@ -24,37 +24,96 @@ const getCurrentDate = () => {
   return date + "-" + month + "-" + year; //format: dd-mm-yyyy;
 };
 
-const FilterScreen = () => {
-  const [selected, setSelected] = useState([]);
+const FilterScreen = ({ navigation }) => {
+  const [value, setValue] = useState(null);
+  const [categories, setCategories] = React.useState(data);
+  const [isFocus, setIsFocus] = useState(false);
 
+  const filterData = async () => {
+    //const response = await  fetch('https://eve-back.herokuapp.com/signup',
+    fetch("http://169.254.3.246:3000/filter", {
+      //  fetch("https://eve-back.herokuapp.com/login",{
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        category_id: data.value,
+        date: this.state.date,
+      }),
+    })
+      .then((response) => {
+        status = response.status;
+        console.log(response.status);
+        if (status == 400 || status == 401) {
+          return response.text();
+        } else {
+          return response.json();
+        }
+      })
+      .then(async (json) => {
+        if (status == 400 || status == 401) {
+          alert(json);
+        } else {
+          await AsyncStorage.setItem("key", JSON.stringify(json.id));
+          await AsyncStorage.setItem("token", JSON.stringify(json.token));
+          navigation.navigate("SearchScreen");
+        }
+      })
+      .catch((error) => console.error(error));
+  };
+
+  useEffect(() => {
+    Promise.all([
+      //fetch("http://169.254.3.246:3000/getCategories"),
+      fetch("https://eve-back.herokuapp.com/getCategories"),
+      // fetch('https://eve-back.herokuapp.com/getEventsByCategory')
+    ])
+      .then(function (responses) {
+        // Get a JSON object from each of the responses
+        return Promise.all(
+          responses.map(function (response) {
+            return response.json();
+          })
+        );
+      })
+      .then(function (data) {
+        setCategories(data);
+      })
+      .catch(function (error) {
+        // if there's an error, log it
+        console.log(error);
+      });
+  });
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Category</Text>
-      <MultiSelect
-        style={styles.dropdown}
+      <Dropdown
+        style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
         iconStyle={styles.iconStyle}
-        search
         data={data}
+        search
+        maxHeight={300}
         labelField="label"
         valueField="value"
-        placeholder="Select A category"
+        placeholder={!isFocus ? "Select A category" : "..."}
         searchPlaceholder="Search..."
-        value={selected}
+        value={"test"}
+        onFocus={() => setIsFocus(true)}
+        onBlur={() => setIsFocus(false)}
         onChange={(item) => {
-          setSelected(item);
+          setValue(item.value);
+          setIsFocus(false);
         }}
         renderLeftIcon={() => (
           <AntDesign
             style={styles.icon}
-            color="black"
+            color={isFocus ? "blue" : "black"}
             name="Safety"
             size={20}
           />
         )}
-        selectedStyle={styles.selectedStyle}
       />
 
       <Text style={styles.title}> Date</Text>
@@ -63,9 +122,9 @@ const FilterScreen = () => {
         date={getCurrentDate()}
         mode="date"
         placeholder="select date"
-        format="YYYY-MM-DD"
-        minDate="2016-05-01"
-        maxDate="2016-05-02"
+        format="DD/MM/YYYY"
+        minDate="01/01/2016"
+        maxDate="01/01/2026"
         confirmBtnText="Confirm"
         cancelBtnText="Cancel"
         customStyles={{
@@ -85,7 +144,7 @@ const FilterScreen = () => {
         }}
       />
       <View style={styles.button}>
-        <TouchableOpacity style={styles.Filter} onPress={console.log("heeey")}>
+        <TouchableOpacity style={styles.Filter} onPress={filterData}>
           <View style={styles.signIn}>
             <Text
               style={[
