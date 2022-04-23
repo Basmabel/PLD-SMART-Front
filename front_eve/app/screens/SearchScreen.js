@@ -11,6 +11,8 @@ import {
   Dimensions,
   Platform,
 } from "react-native";
+import * as Location from "expo-location";
+import { Marker } from "react-native-maps";
 import { mapDarkMode } from "../model/Map";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import GetLocation from "react-native-get-location";
@@ -23,19 +25,22 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import Fontisto from "react-native-vector-icons/Fontisto";
 import { COLORS } from "../config/colors";
 import { useTheme } from "@react-navigation/native";
+import Geocoder from "react-native-geocoding";
 
 const { width, height } = Dimensions.get("window");
 const CARD_HEIGHT = 220;
 const CARD_WIDTH = width * 0.8;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
-const Images = [
+Geocoder.init("AIzaSyCY2VFm6E1vB8lYpmhz2jGQawaCN5UY5D4");
+
+/*const Images = [
   { image: require("../assets/images/mcdo.jpg") },
   { image: require("../assets/images/patinoire.jpg") },
   { image: require("../assets/images/tete_dor.jpg") },
-];
+];*/
 
-export const markers = [
+/*export const markers = [
   {
     coordinate: {
       latitude: 45.7701707,
@@ -69,7 +74,7 @@ export const markers = [
     rating: 4.5,
     reviews: 5,
   },
-];
+];*/
 
 const SearchScreen = ({ navigation }) => {
   const theme = useTheme();
@@ -100,15 +105,39 @@ const SearchScreen = ({ navigation }) => {
   };
 
   const [state, setState] = React.useState(initialMapState);
+  const [popularEvents, setPopularEvents] = React.useState([]);
+  const [userInfo, setUserInfo] = React.useState(null);
+  const [isLoading, setLoading] = React.useState(true);
+  const [categories, setCategories] = React.useState(null);
+  const [eventPerCat, setEventPerCat] = React.useState([]);
+  const [retreive, setRetreive] = React.useState(false);
+  const [userId, setUserId] = React.useState("");
+  const [userToken, setUserToken] = React.useState("");
 
   let mapIndex = 0;
   let mapAnimation = new Animated.Value(0);
 
   useEffect(() => {
+    const retreiveData = async () => {
+      try {
+        const valueString = await AsyncStorage.getItem("key");
+        const value = JSON.parse(valueString);
+
+        const tokenString = await AsyncStorage.getItem("token");
+        const token = JSON.parse(tokenString);
+
+        setUserId(value);
+        setUserToken(token);
+        setRetreive(true);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     mapAnimation.addListener(({ value }) => {
       let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
-      if (index >= state.markers.length) {
-        index = state.markers.length - 1;
+      if (index >= { popularEvents }.length) {
+        index = { popularEvents }.length - 1;
       }
       if (index <= 0) {
         index = 0;
@@ -119,7 +148,7 @@ const SearchScreen = ({ navigation }) => {
       const regionTimeout = setTimeout(() => {
         if (mapIndex !== index) {
           mapIndex = index;
-          const { coordinate } = state.markers[index];
+          const { coordinate } = { popularEvents }.results[index];
           _map.current.animateToRegion(
             {
               ...coordinate,
@@ -131,9 +160,91 @@ const SearchScreen = ({ navigation }) => {
         }
       }, 10);
     });
-  });
 
-  const interpolations = state.markers.map((marker, index) => {
+    retreiveData();
+    if (retreive) {
+      Promise.all([
+        fetch("http://169.254.3.246:3000/getPopular"),
+        fetch("http://169.254.3.246:3000/getUserInfo", {
+          //fetch('https://eve-back.herokuapp.com/getPopular'),
+          //fetch('https://eve-back.herokuapp.com/getUserInfo',{
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            Authorization: "bearer " + userToken,
+          },
+          body: JSON.stringify({
+            id: userId,
+          }),
+        }),
+        fetch("http://169.254.3.246:3000/getCategories"),
+        fetch("http://169.254.3.246:3000/getEventsByCategory"),
+        // fetch('https://eve-back.herokuapp.com/getCategories'),
+        // fetch('https://eve-back.herokuapp.com/getEventsByCategory')
+      ])
+        .then(function (responses) {
+          // Get a JSON object from each of the responses
+          return Promise.all(
+            responses.map(function (response) {
+              return response.json();
+            })
+          );
+        })
+        .then(function (data) {
+          // Log the data to the console
+          // You would do something with both sets of data here
+          data.map((item, index) => {
+            if (index == 0) {
+              setPopularEvents(item);
+            } else if (index == 1) {
+              setUserInfo(item);
+            } else if (index == 2) {
+              setCategories(item);
+            } else if (index == 3) {
+              var cat_id = item[0].category_id;
+              var nexEv = [];
+              var iter = 0;
+              var stockEvent = [];
+              item.map((eve, i) => {
+                if (cat_id === eve.category_id) {
+                  nexEv = [...nexEv];
+                  nexEv[iter] = eve;
+                  iter++;
+                  // console.log(nexEv)
+                }
+                if (iter != 0 && cat_id != eve.category_id) {
+                  stockEvent = [...stockEvent, nexEv];
+                  iter = 0;
+                  cat_id = eve.category_id;
+                  nexEv = [];
+                  //console.log(stockEvent)
+                } else if (
+                  cat_id === eve.category_id &&
+                  i + 1 < item.length &&
+                  cat_id != item[i + 1].category_id
+                ) {
+                  stockEvent = [...stockEvent, nexEv];
+                  iter = 0;
+                  cat_id = item[i + 1].category_id;
+                  nexEv = [];
+                } else if (cat_id === eve.category_id && i + 1 == item.length) {
+                  stockEvent = [...stockEvent, nexEv];
+                }
+              });
+              setEventPerCat(stockEvent);
+              //console.log(stockEvent)
+            }
+          });
+        })
+        .catch(function (error) {
+          // if there's an error, log it
+          console.log(error);
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [retreive]);
+
+  const interpolations = Object.keys({ popularEvents }).map((marker, index) => {
     const inputRange = [
       (index - 1) * CARD_WIDTH,
       index * CARD_WIDTH,
@@ -145,6 +256,16 @@ const SearchScreen = ({ navigation }) => {
       outputRange: [1, 1.5, 1],
       extrapolate: "clamp",
     });
+
+    Geocoder.from("Pyramid", {
+      southwest: { lat: 45.7603831, lng: -115.25 },
+      northeast: { lat: 4.849664, lng: -115.1 },
+    })
+      .then((json) => {
+        var location = { popularEvents }.results[0].geometry.location;
+        console.log(location);
+      })
+      .catch((error) => console.warn(error));
 
     return { scale };
   });
@@ -173,7 +294,7 @@ const SearchScreen = ({ navigation }) => {
         customMapStyle={mapDarkMode}
         provider={PROVIDER_GOOGLE}
       >
-        {state.markers.map((marker, index) => {
+        {Object.keys({ popularEvents }).map((marker, index) => {
           const scaleStyle = {
             transform: [
               {
@@ -184,7 +305,7 @@ const SearchScreen = ({ navigation }) => {
           return (
             <MapView.Marker
               key={index}
-              coordinate={marker.coordinate}
+              coordinate={{ latitude: 45.7701707, longitude: 4.8635116 }}
               onPress={(e) => onMarkerPress(e)}
             >
               <Animated.View style={[styles.markerWrap]}>
@@ -246,10 +367,10 @@ const SearchScreen = ({ navigation }) => {
           { useNativeDriver: true }
         )}
       >
-        {state.markers.map((marker, index) => (
+        {Object.keys({ popularEvents }).map((marker, index) => (
           <View style={styles.card} key={index}>
             <Image
-              source={marker.image}
+              source={marker.photo}
               style={styles.cardImage}
               resizeMode="cover"
             />

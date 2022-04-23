@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { MultiSelect } from "react-native-element-dropdown";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import DatePicker from "react-native-datepicker";
@@ -24,7 +24,7 @@ const getCurrentDate = () => {
   return date + "-" + month + "-" + year; //format: dd-mm-yyyy;
 };
 
-const MultiSelectComponent = () => {
+const FilterScreen = () => {
   const [selected, setSelected] = useState([]);
 
   return (
@@ -64,8 +64,8 @@ const MultiSelectComponent = () => {
         mode="date"
         placeholder="select date"
         format="YYYY-MM-DD"
-        minDate="1990-01-01"
-        maxDate="2026-01-01"
+        minDate="2016-05-01"
+        maxDate="2016-05-02"
         confirmBtnText="Confirm"
         cancelBtnText="Cancel"
         customStyles={{
@@ -78,19 +78,40 @@ const MultiSelectComponent = () => {
           dateInput: {
             marginLeft: 36,
           },
+          datePickerCon: { backgroundColor: "black" },
         }}
         onDateChange={(date) => {
           this.setState({ date: date });
         }}
       />
+      <View style={styles.button}>
+        <TouchableOpacity style={styles.Filter} onPress={console.log("heeey")}>
+          <View style={styles.signIn}>
+            <Text
+              style={[
+                styles.textFilter,
+                {
+                  color: COLORS.greyBlue,
+                },
+              ]}
+            >
+              Filter
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
-export default MultiSelectComponent;
+export default FilterScreen;
 
 const styles = StyleSheet.create({
-  container: { padding: 16, backgroundColor: COLORS.beige, flex: 1 },
+  container: {
+    padding: 16,
+    backgroundColor: COLORS.beige,
+    flex: 1,
+  },
   title: {
     color: COLORS.greyBlue,
     fontSize: 16,
@@ -123,5 +144,21 @@ const styles = StyleSheet.create({
   },
   selectedStyle: {
     borderRadius: 12,
+  },
+  button: {
+    alignItems: "center",
+    marginTop: 50,
+  },
+  Filter: {
+    width: "100%",
+    backgroundColor: COLORS.lightBlue,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+  textFilter: {
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
