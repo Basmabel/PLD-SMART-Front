@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, {useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 //import { useDimensions, useDeviceOrientation } from '@react-native-community/hooks';
+
 import { COLORS } from "../config/colors";
 import {
   StyleSheet,
@@ -69,7 +70,7 @@ export default function SignUpScreen({ navigation }) {
   }
 
   const fetchSignUpVal = async () =>{
-    if(data.isValidUser && data.isValidPassword && !data.isCompatiblePassword && valuesNotNul()){
+    if(data.isValidUser && data.isValidPassword && !data.isCompatiblePassword && valuesNotNul() && validPhone() && validZip()){
       try{
         const response = await  fetch('https://eve-back.herokuapp.com/signup',
         {method: 'POST',
@@ -115,6 +116,10 @@ export default function SignUpScreen({ navigation }) {
         alert("The two passwords do not match")
       }else if(!valuesNotNul()){
         alert("You didn't fill every mandatory field")
+      }else if(!validPhone()){
+        alert("Phone number has to contain 10 digits")
+      }else if(!validZip()){
+        alert("Zip code number has to contain 5 digits")
       }
     }
     
@@ -175,6 +180,20 @@ const handlePasswordChange = (val) => {
     });
   }
 };
+
+const validPhone =()=>{
+  if(phone.length!=10){
+    return false
+  }
+  return true
+}
+
+const validZip =()=>{
+  if(zip_code.length!=5){
+    return false
+  }
+  return true
+}
 
 
   //(in)compatible passwords
@@ -357,6 +376,7 @@ const handlePasswordChange = (val) => {
                     placeholder="Please enter your phone number"
                     placeholderTextColor={COLORS.lightBlue}
                     onChangeText={onChangePhone}
+                    maxLength={10}
                 />  
           </View>
 
@@ -480,7 +500,7 @@ const handlePasswordChange = (val) => {
           </Text>
           <View style={styles.action}>
             <Feather name="home" color={COLORS.lightBlue} size={20} />
-              <TextInput style={styles.textInput}
+              <TextInput keyboardType="numeric" style={styles.textInput}
                     placeholder="Please enter your zip code"
                     placeholderTextColor={COLORS.lightBlue}
                     onChangeText={onChangeZipCode}
