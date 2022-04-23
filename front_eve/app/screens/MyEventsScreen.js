@@ -47,7 +47,7 @@ export default function MyEventsScreen() {
 
   
   useEffect(() => {
-
+    
     const retreiveData = async ()=>{
       try {
         const valueString = await AsyncStorage.getItem('key');
@@ -55,7 +55,6 @@ export default function MyEventsScreen() {
 
         const tokenString = await AsyncStorage.getItem('token');
         const token = JSON.parse(tokenString);
-
 
         setUserId(value)
         setUserToken(token)
@@ -68,27 +67,27 @@ export default function MyEventsScreen() {
     retreiveData();
     if(retreive){      
       Promise.all([
-        fetch('http://169.254.3.246:3000/getComingEvents',{
+        fetch('https://eve-back.herokuapp.com/getComingEvents',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('http://169.254.3.246:3000/getUserInfo',{
+        fetch('https://eve-back.herokuapp.com/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-          fetch('http://169.254.3.246:3000/getMyHistoric',{
+          fetch('https://eve-back.herokuapp.com/getMyHistoric',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('http://169.254.3.246:3000/getMyFavorite',{
+        fetch('https://eve-back.herokuapp.com/getMyFavorite',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({

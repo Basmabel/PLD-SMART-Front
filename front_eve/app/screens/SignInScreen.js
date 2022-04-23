@@ -31,9 +31,7 @@ const SignInScreen = ({ navigation }) => {
   var status =0;
   const loginData = async () => {
     if(data.isValidUser && data.isValidPassword && data.password!="" && data.email!=""){
-      //const response = await  fetch('https://eve-back.herokuapp.com/signup',
-      fetch("http://169.254.3.246:3000/login", {
-      //  fetch("https://eve-back.herokuapp.com/login",{
+      fetch("https://eve-back.herokuapp.com/login",{
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: data.email, password: data.password }),

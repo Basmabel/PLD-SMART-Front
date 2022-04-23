@@ -71,8 +71,7 @@ export default function SignUpScreen({ navigation }) {
   const fetchSignUpVal = async () =>{
     if(data.isValidUser && data.isValidPassword && !data.isCompatiblePassword && valuesNotNul()){
       try{
-       // const response = await  fetch('https://eve-back.herokuapp.com/signup',
-       const response = await  fetch('http://169.254.3.246:3000/signup',
+        const response = await  fetch('https://eve-back.herokuapp.com/signup',
         {method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({"name": name,
@@ -93,20 +92,13 @@ export default function SignUpScreen({ navigation }) {
                   })
               });
 
-              const resp= await response.text();
-              const status = response.status;
+              /*const status = response.status;
               console.log(status)
               console.log(resp)
               if(status===401 || status===400){
                 alert(resp)
               }else{
-                console.log(email)
-                /*await AsyncStorage.setItem('email',JSON.stringify(email));
-                sendEmail(email,'hello').then(() => {
-                  console.log('Your message was successfully sent!');
-                 }).catch((error)=>console.error(error))*/
-                
-              }
+              }*/
               navigation.navigate("SignInScreen");
 
               
@@ -200,7 +192,6 @@ const handlePasswordChange = (val) => {
         isCompatiblePassword: false,
       });
     }
-    console.log(data.isCompatiblePassword)
   };
 
   return (

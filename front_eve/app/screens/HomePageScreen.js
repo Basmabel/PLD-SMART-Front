@@ -121,19 +121,15 @@ export default function HomePageScreen() {
     retreiveData();
     if(retreive){      
       Promise.all([
-        fetch('http://169.254.3.246:3000/getPopular'),
-        fetch('http://169.254.3.246:3000/getUserInfo',{
-          //fetch('https://eve-back.herokuapp.com/getPopular'),
-          //fetch('https://eve-back.herokuapp.com/getUserInfo',{
+        fetch('https://eve-back.herokuapp.com/getPopular'),
+        fetch('https://eve-back.herokuapp.com/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-          fetch('http://169.254.3.246:3000/getCategories'),
-          fetch('http://169.254.3.246:3000/getEventsByCategory')
-         // fetch('https://eve-back.herokuapp.com/getCategories'),
-         // fetch('https://eve-back.herokuapp.com/getEventsByCategory')
+        fetch('https://eve-back.herokuapp.com/getCategories'),
+        fetch('https://eve-back.herokuapp.com/getEventsByCategory')
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
         return Promise.all(responses.map(function (response) {
