@@ -27,7 +27,7 @@ import {
   const Swiper = require("react-native-swiper");
 
   //Recup les events
-  const organizedEvents = [
+  /*const organizedEvents = [
     {
       name: "Pool party",
       date: "20 april 2022",
@@ -49,10 +49,10 @@ import {
       imgUrl: "https://picsum.photos/id/11/200/300",
       imgProfil: "https://picsum.photos/id/11/200/300",
     },
-  ];
+  ];*/
 
   //Recup les ratings
-  const rating = {value:"10/10"};
+  //const rating = {value:"10/10"};
   
 
   export default function MyAccountScreen() {
@@ -79,8 +79,14 @@ import {
     const [userId, setUserId] = React.useState("");
     const [userToken, setUserToken] = React.useState("");
     const [isLoading, setLoading] = React.useState(true);
-    const [userInfo, setUserInfo] = React.useState
-    ({
+    const [userInfo, setUserInfo] = React.useState(null);
+    const [organizedEvents, setOrganizedEvents] = React.useState(null);
+    const [ratings, setRatingsUser] = React.useState(null);
+    const [upcomingEvents, setUpcomingEvents] = React.useState(null);
+    const [review, setReviewUser] = React.useState(null);
+
+
+    /*({
         name: "Meryem",
         surname: "Alami",
         email: "malami@gmail.com",
@@ -98,9 +104,10 @@ import {
         //secureTextEntry: true,
         //isValidPassword: true,
         //isCompatiblePassword: true,
-      });
+      });*/
 
-      /*useEffect(() => {
+      //Recuperation des données
+      useEffect(() => {
 
         const retreiveData = async ()=>{
           try {
@@ -120,14 +127,17 @@ import {
         retreiveData();
         if(retreive){      
           Promise.all([
-            fetch('http://169.254.3.246:3000/getUserInfo',{
+            fetch('http://192.168.1.110:19000/getUserInfo',{
               method: "POST",
               headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
               body: JSON.stringify({
-                "id":userId
+                "id":userId,
               })}),
-            fetch('http://169.254.3.246:3000/getCategories'),
-            fetch('http://169.254.3.246:3000/getEventsByCategory')
+            fetch('http://192.168.1.110:19000/getHistoric'),
+            fetch('http://192.168.1.110:19000/getUpcomingEvent'),
+            fetch('http://192.168.1.110:19000/getReviewUser'),
+            fetch('http://192.168.1.110:19000/getRatingsUser'),
+
           ]).then(function (responses) {
             // Get a JSON object from each of the responses
             return Promise.all(responses.map(function (response) {
@@ -140,18 +150,47 @@ import {
               if(index==0){
                 setUserInfo(item)
               }else if(index==1){
-
+                setOrganizedEvents(item)
               }else if(index==2){
-
-              }
+                setUpcomingEvents(item)
+              }else if(index==3){
+                setReviewUser(item)
+              }else if(index==4){
+                setRatingsUser(item)
+              } 
             });
           }).catch(function (error) {
             // if there's an error, log it
             console.log(error);
           }).finally(()=> setLoading(false));
         }
-      }, [retreive]);*/
+      }, [retreive]);
 
+    //Modification des données
+    /*const storeData = async () => {
+      try {
+        await AsyncStorage.setItem(
+          'userId',
+          JSON.stringify(userInfo),
+          () => {
+            AsyncStorage.mergeItem(
+              'userId',
+              JSON.stringify(userInfo),
+              () => {
+                AsyncStorage.getItem(userId, (err, result) => {
+                  console.log(result);
+                });
+              }
+            );
+          }
+        );
+      } catch (error) {
+        // Error saving data
+      }
+    };
+    storeData();*/
+
+    //console.log(userInfo);
     //Dialog visibility
     const [visiblePhoneNumber, setVisiblePhoneNumber] = useState(false);
     const [visibleCity, setVisibleCity] = useState(false);
@@ -585,7 +624,7 @@ import {
               <Text style={styles.title_header}>Upcoming events</Text>
               <MaterialIcons name="calendar-today" color={COLORS.greyBlue} size={26}/>
             </View>
-            <MyCarousel data={organizedEvents} type={{ event: "oui" }} />
+            <MyCarousel data={upcomingEvents} type={{ event: "oui" }} />
             </View>
 
 
@@ -593,8 +632,17 @@ import {
             <View style={styles.categorieEvents}>
               <Text style={styles.title_header}>Ratings</Text>
               <MaterialIcons name="star-rate" color={COLORS.greyBlue} size={26}/>
-
+              <MyCarousel data={ratings} type={{ event: "oui" }} />
             </View>
+            
+            </View>
+
+            <View style={styles.events}>
+            <View style={styles.categorieEvents}>
+              <Text style={styles.title_header}>Review</Text>
+              <MaterialIcons name="preview" color={COLORS.greyBlue} size={26}/>
+            </View>
+            <MyCarousel data={review} type={{ event: "oui" }} />
             </View>
             
             </View>
