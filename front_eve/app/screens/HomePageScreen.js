@@ -108,8 +108,7 @@ export default function HomePageScreen() {
 
         const tokenString = await AsyncStorage.getItem('token');
         const token = JSON.parse(tokenString);
-
-
+        
         setUserId(value)
         setUserToken(token)
         setRetreive(true)

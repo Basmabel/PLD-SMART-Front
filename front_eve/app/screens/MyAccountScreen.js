@@ -80,7 +80,9 @@ export default function MyAccountScreen() {
   const [userId, setUserId] = React.useState("");
   const [userToken, setUserToken] = React.useState("");
   const [isLoading, setLoading] = React.useState(true);
-  const [userInfo, setUserInfo] = React.useState(null);
+  const [userInfo, setuserInfo] = React.useState(null);
+  const [participantRating, setParticipantRating]= React.useState(0);
+  const [creatorRating, setCreatorRating]= React.useState(0);
   const [organizedEvents, setOrganizedEvents] = React.useState(null);
   const [upcomingEvents, setUpcomingEvents] = React.useState(null);
   const [review, setReviewUser] = React.useState(null);
@@ -116,6 +118,7 @@ export default function MyAccountScreen() {
   
           const tokenString = await AsyncStorage.getItem('token');
           const token = JSON.parse(tokenString);
+          
           setUserId(value)
           setUserToken(token)
           setRetreive(true)
@@ -126,16 +129,24 @@ export default function MyAccountScreen() {
       retreiveData();
       if(retreive){      
         Promise.all([
-          fetch('https://eve-back.herokuapp.com/getUserInfo',{
+          fetch('http://169.254.3.246:3000/getMyAccountInfo',{
             method: "POST",
-            headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
+            headers: {'content-type': 'application/json'},
             body: JSON.stringify({
               "id":userId,
             })}),
-          fetch('https://eve-back.herokuapp.com/getHistoric'),
-          fetch('https://eve-back.herokuapp.com/getUpcomingEvent'),
-          fetch('https://eve-back.herokuapp.com/getReviewUser'),
-            console.log(response)
+          fetch('http://169.254.3.246:3000/getHistoric',{
+            method: "POST",
+            headers: {'content-type': 'application/json'},
+            body: JSON.stringify({
+              "id":userId,
+            })}),
+          fetch('http://169.254.3.246:3000/getReviewUser',{
+            method: "POST",
+            headers: {'content-type': 'application/json'},
+            body: JSON.stringify({
+              "id":userId,
+            })}),
         ]).then(function (responses) {
           // Get a JSON object from each of the responses
           return Promise.all(responses.map(function (response) {
@@ -145,14 +156,15 @@ export default function MyAccountScreen() {
           // Log the data to the console
           // You would do something with both sets of data here
           data.map((item,index)=>{
-            if(index==0){
-              setUserInfo(item)
-            }else if(index==1){
+            if(index===0){
+              setuserInfo(item.global_infos)
+              setCreatorRating(item.creator_rating[0].score)
+              setParticipantRating(item.participant_rating[0].score)
+            }else if(index===1){
               setOrganizedEvents(item)
-            }else if(index==2){
-              setUpcomingEvents(item)
-            }else if(index==3){
+            }else if(index===2){
               setReviewUser(item)
+              console.log(item)
             }
           });
         }).catch(function (error) {
@@ -167,11 +179,11 @@ export default function MyAccountScreen() {
     try {
       await AsyncStorage.setItem(
         'userId',
-        JSON.stringify(userInfo),
+        JSON.stringify(userInfo[0]),
         () => {
           AsyncStorage.mergeItem(
             'userId',
-            JSON.stringify(userInfo),
+            JSON.stringify(userInfo[0]),
             () => {
               AsyncStorage.getItem(userId, (err, result) => {
                 console.log(result);
@@ -202,37 +214,37 @@ export default function MyAccountScreen() {
 
   //Write data
 
-  const sendInputPhoneNumber = (inputText) => {setUserInfo({ ...userInfo,phoneNumber: inputText,});
+  const sendInputPhoneNumber = (inputText) => {setuserInfo({ ...userInfo,phoneNumber: inputText,});
       setVisiblePhoneNumber(false);
   };
-  const sendInputCity = (inputText) => {setUserInfo({ ...userInfo,city: inputText,});
+  const sendInputCity = (inputText) => {setuserInfo({ ...userInfo,city: inputText,});
       setVisibleCity(false);
   };
-  const sendInputStreetNumber = (inputText) => {setUserInfo({ ...userInfo,streetNb: inputText,});
+  const sendInputStreetNumber = (inputText) => {setuserInfo({ ...userInfo,streetNb: inputText,});
       setVisibleStreetNumber(false);
   };
-  const sendInputStreet = (inputText) => {setUserInfo({ ...userInfo,street: inputText,});
+  const sendInputStreet = (inputText) => {setuserInfo({ ...userInfo,street: inputText,});
       setVisibleStreet(false);
   };
-  const sendInputRegion = (inputText) => {setUserInfo({ ...userInfo,region: inputText,});
+  const sendInputRegion = (inputText) => {setuserInfo({ ...userInfo,region: inputText,});
       setVisibleRegion(false);
   };
-  const sendInputZipCode = (inputText) => {setUserInfo({ ...userInfo,zipCode: inputText,});
+  const sendInputZipCode = (inputText) => {setuserInfo({ ...userInfo,zipCode: inputText,});
       setVisibleZipCode(false);
   };
-  const sendInputAddressComplement = (inputText) => {setUserInfo({ ...userInfo,addressComplement: inputText,});
+  const sendInputAddressComplement = (inputText) => {setuserInfo({ ...userInfo,addressComplement: inputText,});
       setVisibleAddressComplement(false);
   };
-  const sendInputPassword = (inputText) => {setUserInfo({ ...userInfo,password: inputText,});
+  const sendInputPassword = (inputText) => {setuserInfo({ ...userInfo,password: inputText,});
       setVisiblePassword(false);
   };
-  const sendInputGender = (inputText) => {setUserInfo({ ...userInfo,gender: inputText,});
+  const sendInputGender = (inputText) => {setuserInfo({ ...userInfo,gender: inputText,});
       setVisibleGender(false);
   };
-  const sendInputBirthDate = (inputText) => {setUserInfo({ ...userInfo,birthDate: inputText,});
+  const sendInputBirthDate = (inputText) => {setuserInfo({ ...userInfo,birthDate: inputText,});
       setVisibleBirthDate(false);
   };
-  const sendInputImgProfil = (inputText) => {setUserInfo({ ...userInfo,imgProfil: inputText,});
+  const sendInputImgProfil = (inputText) => {setuserInfo({ ...userInfo,imgProfil: inputText,});
       setVisibleImgProfil(false);
   };
   
@@ -253,400 +265,403 @@ export default function MyAccountScreen() {
   
 
   return (
-  <ScrollView>
+  
     <SafeAreaView style={StyleSheet.container}>
-     <View style={styles.header}>
-          <Text style={styles.title_header}> Your profile </Text>
-      </View>
+    {isLoading ? (<Text>Loading...</Text>) :
+      (
+        <View>
+        <View style={styles.header}>
+                  <Text style={styles.title_header}>Profile</Text>
+        </View>
+        <View style={styles.body}>
+          <ScrollView>
+            <View style={{paddingTop: 40,justifyContent: "center",alignItems: "center"}}>
+            <UploadImage/>
+            </View>
 
-      <View style={{paddingTop: 40,justifyContent: "center",alignItems: "center",}}>
-      <UploadImage/>
-      </View>
+            <View style= {styles.content_info}>
+                <Text style={[styles.text_footer, styles.titleTextInput]}>
+                    Name
+                </Text>
 
-      <View style= {{marginHorizontal:30}}>
-          <Text style={[styles.text_footer, styles.titleTextInput]}>
-              Name
-          </Text>
+                <View style={styles.action}>
+                    <Feather name="user" color={COLORS.white} size={20} />
+                    <TextInput style={styles.textInput}
+                    defaultValue={userInfo[0].name}
+                    editable={false}
+                    //onChangeText={onChangeEmail}
+                    />
+                    <TouchableOpacity onPress={editName}>
+                        <Feather name="edit-2" color={COLORS.white} size={20}/>
+                    </TouchableOpacity>
+                </View>
+            </View>
 
-          <View style={styles.action}>
-              <Feather name="user" color={COLORS.midnightBlue} size={20} />
-              <TextInput style={styles.textInput}
-              defaultValue={userInfo.name}
-              editable={false}
-              //onChangeText={onChangeEmail}
-              />
-              <TouchableOpacity onPress={editName}>
-                  <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
-              </TouchableOpacity>
+            <View style= {styles.content_info}>
+                <Text style={[styles.text_footer, styles.titleTextInput]}>
+                    Surname
+                </Text>
+
+                <View style={styles.action}>
+                    <Feather name="user" color={COLORS.white} size={20} />
+                    <TextInput style={styles.textInput}
+                    defaultValue={userInfo[0].surname}
+                    editable={false}
+                    //onChangeText={onChangeEmail}
+                    />
+                    <TouchableOpacity onPress={editSurame}>
+                        <Feather name="edit-2" color={COLORS.white} size={20}/>
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+            <View style= {styles.content_info}>
+                <Text style={[styles.text_footer, styles.titleTextInput]}>
+                    Password
+                </Text>
+
+                <View style={styles.action}>
+                    <Feather name="lock" color={COLORS.lightBlue} size={20} />
+                    <TextInput style={styles.textInput}
+                    defaultValue={userInfo[0].password}
+                    editable={false}
+                    //onChangeText={onChangeEmail}
+                    />
+
+                    <TouchableOpacity onPress={editPassword}>
+                        <Feather name="edit-2" color={COLORS.white} size={20}/>
+                    </TouchableOpacity>
+                    <View>
+                      <DialogInput style={styles.dialoginput}
+                            isDialogVisible={visiblePassword}
+                            title={"Enter a new password"}
+                            //message={"Enter a new password"}
+                            hintInput ={"password"}
+                            submitInput={ (inputText) => {sendInputPassword(inputText)} }
+                            closeDialog={ () => {showDialog(false)}}>
+                        </DialogInput>
+                    </View>
+                </View>
+
+                
+            </View>
+
+            <View style= {styles.content_info}>
+                <Text style={[styles.text_footer, styles.titleTextInput]}>
+                    Email
+                </Text>
+
+                <View style={styles.action}>
+                    <Feather name="mail" color={COLORS.white} size={20} />
+                    <TextInput style={styles.textInput}
+                    defaultValue={userInfo[0].mail}
+                    placeholder="Veillez entrer votre adresse mail"
+                    placeholderTextColor={COLORS.lightBlue}
+                    editable={false}
+                    //onChangeText={onChangeEmail}
+                    />
+                    <TouchableOpacity onPress={editMail}>
+                        <Feather name="edit-2" color={COLORS.white} size={20}/>
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+            <View style= {styles.content_info}>
+                <Text style={[styles.text_footer, styles.titleTextInput]}>
+                    Phone number
+                </Text>
+
+                <View style={styles.action}>
+                    <Feather name="phone" color={COLORS.white} size={20} />
+                    <TextInput style={styles.textInput}
+                    defaultValue={userInfo[0].phone}
+                    placeholder="Enter your phone number"
+                    placeholderTextColor={COLORS.lightBlue}
+                    editable={false}
+                    //onChangeText={onChangeEmail}
+                    />
+                    <TouchableOpacity onPress={editPhoneNumber}>
+                        <Feather name="edit-2" color={COLORS.white} size={20}/>
+                    </TouchableOpacity>
+                    <View>
+                      <DialogInput style={styles.dialoginput}
+                            isDialogVisible={visiblePhoneNumber}
+                            title={"Enter a new phone number"}
+                            hintInput ={"Phone number"}
+                            submitInput={ (inputText) => {sendInputPhoneNumber(inputText)} }
+                            closeDialog={ () => {showDialog(false)}}>
+                        </DialogInput>
+                    </View>
+                </View>
+            </View>
+
+            <View style= {{marginHorizontal:25}}>
+                <Text style={[styles.text_footer, styles.titleTextInput]}>
+                    Address
+                </Text>
+            </View>
+            <View style={{flexDirection: "row",}}>
+            <View style= {styles.content_info}>
+                <Text style={[styles.text_footer, styles.titleTextInput, ]}>
+                    Street n°
+                </Text>
+
+                <View style={[styles.action,{width: (windowWidth/4)}]}>
+                    <Feather name="home" color={COLORS.white} size={20} />
+                    <TextInput style={styles.textInput}
+                    defaultValue={userInfo[0].street_number}
+                    placeholder="Enter your street number"
+                    placeholderTextColor={COLORS.lightBlue}
+                    editable={false}
+                    //onChangeText={onChangeEmail}
+                    />
+                    <TouchableOpacity onPress={editStreetNumber}>
+                        <Feather name="edit-2" color={COLORS.white} size={20}/>
+                    </TouchableOpacity>
+                    <DialogInput style={styles.dialoginput}
+                            isDialogVisible={visibleStreetNumber}
+                            title={"Enter a new street n°"}
+                            hintInput ={"street n°"}
+                            submitInput={ (inputText) => {sendInputStreetNumber(inputText)} }
+                            closeDialog={ () => {showDialog(false)}}>
+                    </DialogInput>
+                </View>
+            </View>
+
+            <View style= {styles.content_info}>
+                <Text style={[styles.text_footer, styles.titleTextInput,{marginHorizontal:-50}]}>
+                    Street
+                </Text>
+
+                <View style={[styles.action,{width: (windowWidth/2), marginHorizontal:-50}]}>
+                    <TextInput style={styles.textInput}
+                    defaultValue={userInfo[0].street}
+                    placeholder="Enter your street"
+                    placeholderTextColor={COLORS.lightBlue}
+                    editable={false}
+
+                    //onChangeText={onChangeEmail}
+                    />
+                    <TouchableOpacity onPress={editStreet}>
+                        <Feather name="edit-2" color={COLORS.white} size={20}/>
+                    </TouchableOpacity>
+                    <DialogInput style={styles.dialoginput}
+                            isDialogVisible={visibleStreet}
+                            title={"Enter a new street"}
+                            hintInput ={"street"}
+                            submitInput={ (inputText) => {sendInputStreet(inputText)} }
+                            closeDialog={ () => {showDialog(false)}}>
+                    </DialogInput>
+                </View>
+            </View>
+            </View>
+            <View style={{flexDirection: "row",}}>
+            <View style= {styles.content_info}>
+                <Text style={[styles.text_footer, styles.titleTextInput]}>
+                    Address complement
+                </Text>
+
+                <View style={[styles.action,{width: (windowWidth/2),}]}>
+                    <Feather name="home" color={COLORS.midnightBlue} size={20} />
+                    <TextInput style={styles.textInput}
+                    defaultValue={userInfo[0].address_complement}
+                    placeholder="Enter your address complement"
+                    placeholderTextColor={COLORS.lightBlue}
+                    editable={false}
+                    //onChangeText={onChangeEmail}
+                    />
+                    <TouchableOpacity onPress={editAddressComplement}>
+                        <Feather name="edit-2" color={COLORS.white} size={20}/>
+                    </TouchableOpacity>
+                    <DialogInput style={styles.dialoginput}
+                            isDialogVisible={visibleAddressComplement}
+                            title={"Enter a new address complement"}
+                            hintInput ={"address complement"}
+                            submitInput={ (inputText) => {sendInputAddressComplement(inputText)} }
+                            closeDialog={ () => {showDialog(false)}}>
+                    </DialogInput>
+                </View>
+            </View>
+
+            <View style= {styles.content_info}>
+                <Text style={[styles.text_footer, styles.titleTextInput, {marginHorizontal:-50}]}>
+                    Zip Code
+                </Text>
+
+                <View style={[styles.action,{width: (windowWidth/4), marginHorizontal:-50}]}>
+                    <TextInput style={styles.textInput}
+                    defaultValue={userInfo[0].zip_code}
+                    placeholder="Enter your zip code"
+                    placeholderTextColor={COLORS.lightBlue}
+                    editable={false}
+                    //onChangeText={onChangeEmail}
+                    />
+                    <TouchableOpacity onPress={editZipCode}>
+                        <Feather name="edit-2" color={COLORS.white} size={20}/>
+                    </TouchableOpacity>
+                    <DialogInput style={styles.dialoginput}
+                            isDialogVisible={visibleZipCode}
+                            title={"Enter a new zip code"}
+                            hintInput ={"zip code"}
+                            submitInput={ (inputText) => {sendInputZipCode(inputText)} }
+                            closeDialog={ () => {showDialog(false)}}>
+                    </DialogInput>
+                </View>
+            </View>
+            </View>
+
+            <View style={{flexDirection: "row",}}>
+            <View style= {styles.content_info}>
+                <Text style={[styles.text_footer, styles.titleTextInput]}>
+                    City
+                </Text>
+
+                <View style={[styles.action,{width: (windowWidth/3)}]}>
+                    <Feather name="home" color={COLORS.white} size={20} />
+                    <TextInput style={styles.textInput}
+                    defaultValue={userInfo[0].city}
+                    placeholder="Enter your city"
+                    placeholderTextColor={COLORS.lightBlue}
+                    editable={false}
+                    //onChangeText={onChangeEmail}
+                    />
+                    <TouchableOpacity onPress={editCity}>
+                        <Feather name="edit-2" color={COLORS.white} size={20}/>
+                    </TouchableOpacity>
+                    <DialogInput style={styles.dialoginput}
+                            isDialogVisible={visibleCity}
+                            title={"Enter a new city"}
+                            hintInput ={"city"}
+                            submitInput={ (inputText) => {sendInputCity(inputText)} }
+                            closeDialog={ () => {showDialog(false)}}>
+                    </DialogInput>
+                </View>
+            </View>
+
+            <View style= {styles.content_info}>
+                <Text style={[styles.text_footer, styles.titleTextInput, {marginHorizontal:-40}]}>
+                    Region
+                </Text>
+
+                <View style={[styles.action,{width: (windowWidth/2.5), marginHorizontal:-40}]}>
+                    <TextInput style={styles.textInput}
+                    defaultValue={userInfo[0].region}
+                    placeholder="Enter your region"
+                    placeholderTextColor={COLORS.lightBlue}
+                    editable={false}
+                    //onChangeText={onChangeEmail}
+                    />
+                    <TouchableOpacity onPress={editRegion}>
+                        <Feather name="edit-2" color={COLORS.white} size={20}/>
+                    </TouchableOpacity>
+                    <DialogInput style={styles.dialoginput}
+                            isDialogVisible={visibleRegion}
+                            title={"Enter a new region"}
+                            hintInput ={"region"}
+                            submitInput={ (inputText) => {sendInputRegion(inputText)} }
+                            closeDialog={ () => {showDialog(false)}}>
+                    </DialogInput>
+                </View>
+            </View>
+            </View>
+
+            
+            <View style= {styles.content_info}>
+                <Text style={[styles.text_footer, styles.titleTextInput]}>
+                    Gender
+                </Text>
+
+                <View style={styles.action}>
+                    <Feather name="user" color={COLORS.white} size={20} />
+                    <TextInput style={styles.textInput}
+                    defaultValue={userInfo[0].gender}
+                    placeholder="Enter your gender"
+                    placeholderTextColor={COLORS.lightBlue}
+                    editable={false}
+                    //onChangeText={onChangeEmail}
+                    />
+                    <TouchableOpacity onPress={editGender}>
+                        <Feather name="edit-2" color={COLORS.white} size={20}/>
+                    </TouchableOpacity>
+                    <DialogInput style={styles.dialoginput}
+                            isDialogVisible={visibleGender}
+                            title={"Enter a new gender"}
+                            hintInput ={"gender"}
+                            submitInput={ (inputText) => {sendInputGender(inputText)} }
+                            closeDialog={ () => {showDialog(false)}}>
+                    </DialogInput>
+                </View>
+            </View>
+
+            <View style= {styles.content_info}>
+                <Text style={[styles.text_footer, styles.titleTextInput]}>
+                    Birth date
+                </Text>
+
+                <View style={styles.action}>
+                    <Feather name="calendar" color={COLORS.white} size={20} />
+                    <TextInput style={styles.textInput}
+                    defaultValue={userInfo[0].date_birth}
+                    placeholder="Enter your birth date"
+                    placeholderTextColor={COLORS.greyBlue}
+                    editable={false}
+                    //onChangeText={onChangeEmail}
+                    />
+                    <TouchableOpacity onPress={editBirthDate}>
+                        <Feather name="edit-2" color={COLORS.white} size={20}/>
+                    </TouchableOpacity>
+                    <DialogInput style={styles.dialoginput}
+                            isDialogVisible={visibleBirthDate}
+                            title={"Enter a new birth date"}
+                            hintInput ={"birth date"}
+                            submitInput={ (inputText) => {sendInputBirthDate(inputText)} }
+                            closeDialog={ () => {showDialog(false)}}>
+                    </DialogInput>
+                </View>
+
+                <View style={styles.events}>
+                <View style={styles.categorieEvents}>
+                  <Text style={styles.title_body}>Organized events</Text>
+                  <MaterialIcons name="event-available" color={COLORS.lightBlue} size={26}/>
+                </View>
+                <MyCarousel data={organizedEvents} type={{ event: "oui" }} />
+
+                <View style={styles.events}>
+                <View style={styles.categorieEvents}>
+                  <Text style={styles.title_body}>Upcoming events</Text>
+                  <MaterialIcons name="calendar-today" color={COLORS.lightBlue} size={26}/>
+                </View>
+                <MyCarousel data={upcomingEvents} type={{ event: "oui" }} />
+                </View>
+
+
+                <View style={styles.events}>
+                  <View style={styles.categorieEvents}>
+                    <Text style={styles.title_body}>Ratings</Text>
+                    <MaterialIcons name="star-rate" color={COLORS.lightBlue} size={26}/>
+                    
+                  </View>
+                  <Text>As a participant : {participantRating}</Text>
+                    <Text>As a creator : {creatorRating}</Text>
+                
+                </View>
+
+                <View style={styles.events}>
+                <View style={styles.categorieEvents}>
+                  <Text style={styles.title_body}>Reviews</Text>
+                  <MaterialIcons name="preview" color={COLORS.lightBlue} size={26}/>
+                </View>
+                <MyCarousel data={review} type={{ event: "oui" }} />
+                </View>
+                
+                </View>
+
+            </View>
+          </ScrollView>
           </View>
-      </View>
-
-      <View style= {{marginHorizontal:30}}>
-          <Text style={[styles.text_footer, styles.titleTextInput]}>
-              Surname
-          </Text>
-
-          <View style={styles.action}>
-              <Feather name="user" color={COLORS.midnightBlue} size={20} />
-              <TextInput style={styles.textInput}
-              defaultValue={userInfo.surname}
-              editable={false}
-              //onChangeText={onChangeEmail}
-              />
-              <TouchableOpacity onPress={editSurame}>
-                  <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
-              </TouchableOpacity>
-          </View>
-      </View>
-
-      <View style= {{marginHorizontal:30}}>
-          <Text style={[styles.text_footer, styles.titleTextInput]}>
-              Password
-          </Text>
-
-          <View style={styles.action}>
-              <Feather name="lock" color={COLORS.midnightBlue} size={20} />
-              <TextInput style={styles.textInput}
-              defaultValue={userInfo.password}
-              editable={false}
-              //onChangeText={onChangeEmail}
-              />
-
-              <TouchableOpacity onPress={editPassword}>
-                  <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
-              </TouchableOpacity>
-              <View>
-                 <DialogInput 
-                      isDialogVisible={visiblePassword}
-                      title={"Enter a new password"}
-                      //message={"Enter a new password"}
-                      hintInput ={"password"}
-                      submitInput={ (inputText) => {sendInputPassword(inputText)} }
-                      closeDialog={ () => {showDialog(false)}}>
-                  </DialogInput>
-              </View>
-          </View>
-
-          
-      </View>
-
-      <View style= {{marginHorizontal:30}}>
-          <Text style={[styles.text_footer, styles.titleTextInput]}>
-              Email
-          </Text>
-
-          <View style={styles.action}>
-              <Feather name="mail" color={COLORS.midnightBlue} size={20} />
-              <TextInput style={styles.textInput}
-              defaultValue={userInfo.email}
-              placeholder="Veillez entrer votre adresse mail"
-              placeholderTextColor={COLORS.greyBlue}
-              editable={false}
-              //onChangeText={onChangeEmail}
-              />
-              <TouchableOpacity onPress={editMail}>
-                  <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
-              </TouchableOpacity>
-          </View>
-      </View>
-
-      <View style= {{marginHorizontal:30}}>
-          <Text style={[styles.text_footer, styles.titleTextInput]}>
-              Phone number
-          </Text>
-
-          <View style={styles.action}>
-              <Feather name="phone" color={COLORS.midnightBlue} size={20} />
-              <TextInput style={styles.textInput}
-              defaultValue={userInfo.phoneNumber}
-              placeholder="Enter your phone number"
-              placeholderTextColor={COLORS.greyBlue}
-              editable={false}
-              //onChangeText={onChangeEmail}
-              />
-              <TouchableOpacity onPress={editPhoneNumber}>
-                  <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
-              </TouchableOpacity>
-              <View>
-                 <DialogInput 
-                      isDialogVisible={visiblePhoneNumber}
-                      title={"Enter a new phone number"}
-                      hintInput ={"Phone number"}
-                      submitInput={ (inputText) => {sendInputPhoneNumber(inputText)} }
-                      closeDialog={ () => {showDialog(false)}}>
-                  </DialogInput>
-              </View>
-          </View>
-      </View>
-
-      <View style= {{marginHorizontal:25}}>
-          <Text style={[styles.text_footer, styles.titleTextInput]}>
-              Address
-          </Text>
-      </View>
-      <ImageBackground style={{marginHorizontal:15, marginTop: 10,}}source={require('../assets/images/lightViolet.png')}>
-      
-
-      <View style={{flexDirection: "row",}}>
-      <View style= {{marginHorizontal:30}}>
-          <Text style={[styles.text_footer, styles.titleTextInput, ]}>
-              Street n°
-          </Text>
-
-          <View style={[styles.action,{width: (windowWidth/4)}]}>
-              <Feather name="home" color={COLORS.midnightBlue} size={20} />
-              <TextInput style={styles.textInput}
-              defaultValue={userInfo.streetNb}
-              placeholder="Enter your street number"
-              placeholderTextColor={COLORS.greyBlue}
-              editable={false}
-              //onChangeText={onChangeEmail}
-              />
-              <TouchableOpacity onPress={editStreetNumber}>
-                  <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
-              </TouchableOpacity>
-              <DialogInput 
-                      isDialogVisible={visibleStreetNumber}
-                      title={"Enter a new street n°"}
-                      hintInput ={"street n°"}
-                      submitInput={ (inputText) => {sendInputStreetNumber(inputText)} }
-                      closeDialog={ () => {showDialog(false)}}>
-              </DialogInput>
-          </View>
-      </View>
-
-      <View style= {{marginHorizontal:30}}>
-          <Text style={[styles.text_footer, styles.titleTextInput,{marginHorizontal:-50}]}>
-              Street
-          </Text>
-
-          <View style={[styles.action,{width: (windowWidth/2), marginHorizontal:-50}]}>
-              <TextInput style={styles.textInput}
-              defaultValue={userInfo.street}
-              placeholder="Enter your street"
-              placeholderTextColor={COLORS.greyBlue}
-              editable={false}
-
-              //onChangeText={onChangeEmail}
-              />
-              <TouchableOpacity onPress={editStreet}>
-                  <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
-              </TouchableOpacity>
-              <DialogInput 
-                      isDialogVisible={visibleStreet}
-                      title={"Enter a new street"}
-                      hintInput ={"street"}
-                      submitInput={ (inputText) => {sendInputStreet(inputText)} }
-                      closeDialog={ () => {showDialog(false)}}>
-              </DialogInput>
-          </View>
-      </View>
-      </View>
-      <View style={{flexDirection: "row",}}>
-      <View style= {{marginHorizontal:30}}>
-          <Text style={[styles.text_footer, styles.titleTextInput]}>
-              Address complement
-          </Text>
-
-          <View style={[styles.action,{width: (windowWidth/2),}]}>
-              <Feather name="home" color={COLORS.midnightBlue} size={20} />
-              <TextInput style={styles.textInput}
-              defaultValue={userInfo.addressComplement}
-              placeholder="Enter your address complement"
-              placeholderTextColor={COLORS.greyBlue}
-              editable={false}
-              //onChangeText={onChangeEmail}
-              />
-              <TouchableOpacity onPress={editAddressComplement}>
-                  <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
-              </TouchableOpacity>
-              <DialogInput 
-                      isDialogVisible={visibleAddressComplement}
-                      title={"Enter a new address complement"}
-                      hintInput ={"address complement"}
-                      submitInput={ (inputText) => {sendInputAddressComplement(inputText)} }
-                      closeDialog={ () => {showDialog(false)}}>
-              </DialogInput>
-          </View>
-      </View>
-
-      <View style= {{marginHorizontal:30}}>
-          <Text style={[styles.text_footer, styles.titleTextInput, {marginHorizontal:-50}]}>
-              Zip Code
-          </Text>
-
-          <View style={[styles.action,{width: (windowWidth/4), marginHorizontal:-50}]}>
-              <TextInput style={styles.textInput}
-              defaultValue={userInfo.zipCode}
-              placeholder="Enter your zip code"
-              placeholderTextColor={COLORS.greyBlue}
-              editable={false}
-              //onChangeText={onChangeEmail}
-              />
-              <TouchableOpacity onPress={editZipCode}>
-                  <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
-              </TouchableOpacity>
-              <DialogInput 
-                      isDialogVisible={visibleZipCode}
-                      title={"Enter a new zip code"}
-                      hintInput ={"zip code"}
-                      submitInput={ (inputText) => {sendInputZipCode(inputText)} }
-                      closeDialog={ () => {showDialog(false)}}>
-              </DialogInput>
-          </View>
-      </View>
-      </View>
-
-      <View style={{flexDirection: "row",}}>
-      <View style= {{marginHorizontal:30}}>
-          <Text style={[styles.text_footer, styles.titleTextInput]}>
-              City
-          </Text>
-
-          <View style={[styles.action,{width: (windowWidth/3)}]}>
-              <Feather name="home" color={COLORS.midnightBlue} size={20} />
-              <TextInput style={styles.textInput}
-              defaultValue={userInfo.city}
-              placeholder="Enter your city"
-              placeholderTextColor={COLORS.greyBlue}
-              editable={false}
-              //onChangeText={onChangeEmail}
-              />
-              <TouchableOpacity onPress={editCity}>
-                  <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
-              </TouchableOpacity>
-              <DialogInput 
-                      isDialogVisible={visibleCity}
-                      title={"Enter a new city"}
-                      hintInput ={"city"}
-                      submitInput={ (inputText) => {sendInputCity(inputText)} }
-                      closeDialog={ () => {showDialog(false)}}>
-              </DialogInput>
-          </View>
-      </View>
-
-      <View style= {{marginHorizontal:30}}>
-          <Text style={[styles.text_footer, styles.titleTextInput, {marginHorizontal:-40}]}>
-              Region
-          </Text>
-
-          <View style={[styles.action,{width: (windowWidth/2.5), marginHorizontal:-40}]}>
-              <TextInput style={styles.textInput}
-              defaultValue={userInfo.region}
-              placeholder="Enter your region"
-              placeholderTextColor={COLORS.greyBlue}
-              editable={false}
-              //onChangeText={onChangeEmail}
-              />
-              <TouchableOpacity onPress={editRegion}>
-                  <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
-              </TouchableOpacity>
-              <DialogInput 
-                      isDialogVisible={visibleRegion}
-                      title={"Enter a new region"}
-                      hintInput ={"region"}
-                      submitInput={ (inputText) => {sendInputRegion(inputText)} }
-                      closeDialog={ () => {showDialog(false)}}>
-              </DialogInput>
-          </View>
-      </View>
-      </View>
-      </ImageBackground>
-
-      
-      <View style= {{marginHorizontal:30}}>
-          <Text style={[styles.text_footer, styles.titleTextInput]}>
-              Gender
-          </Text>
-
-          <View style={styles.action}>
-              <Feather name="user" color={COLORS.midnightBlue} size={20} />
-              <TextInput style={styles.textInput}
-              defaultValue={userInfo.gender}
-              placeholder="Enter your gender"
-              placeholderTextColor={COLORS.greyBlue}
-              editable={false}
-              //onChangeText={onChangeEmail}
-              />
-              <TouchableOpacity onPress={editGender}>
-                  <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
-              </TouchableOpacity>
-              <DialogInput 
-                      isDialogVisible={visibleGender}
-                      title={"Enter a new gender"}
-                      hintInput ={"gender"}
-                      submitInput={ (inputText) => {sendInputGender(inputText)} }
-                      closeDialog={ () => {showDialog(false)}}>
-              </DialogInput>
-          </View>
-      </View>
-
-      <View style= {{marginHorizontal:30}}>
-          <Text style={[styles.text_footer, styles.titleTextInput]}>
-              Birth date
-          </Text>
-
-          <View style={styles.action}>
-              <Feather name="calendar" color={COLORS.midnightBlue} size={20} />
-              <TextInput style={styles.textInput}
-              defaultValue={userInfo.birthDate}
-              placeholder="Enter your birth date"
-              placeholderTextColor={COLORS.greyBlue}
-              editable={false}
-              //onChangeText={onChangeEmail}
-              />
-              <TouchableOpacity onPress={editBirthDate}>
-                  <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
-              </TouchableOpacity>
-              <DialogInput 
-                      isDialogVisible={visibleBirthDate}
-                      title={"Enter a new birth date"}
-                      hintInput ={"birth date"}
-                      submitInput={ (inputText) => {sendInputBirthDate(inputText)} }
-                      closeDialog={ () => {showDialog(false)}}>
-              </DialogInput>
-          </View>
-
-          <View style={styles.events}>
-          <View style={styles.categorieEvents}>
-            <Text style={styles.title_header}>Organized events</Text>
-            <MaterialIcons name="event-available" color={COLORS.greyBlue} size={26}/>
-          </View>
-          <MyCarousel data={organizedEvents} type={{ event: "oui" }} />
-
-          <View style={styles.events}>
-          <View style={styles.categorieEvents}>
-            <Text style={styles.title_header}>Upcoming events</Text>
-            <MaterialIcons name="calendar-today" color={COLORS.greyBlue} size={26}/>
-          </View>
-          <MyCarousel data={upcomingEvents} type={{ event: "oui" }} />
-          </View>
-
-
-          <View style={styles.events}>
-          <View style={styles.categorieEvents}>
-            <Text style={styles.title_header}>Ratings</Text>
-            <MaterialIcons name="star-rate" color={COLORS.greyBlue} size={26}/>
-            <MyCarousel data={review.score} type={{ event: "oui" }} />
-          </View>
-          
-          </View>
-
-          <View style={styles.events}>
-          <View style={styles.categorieEvents}>
-            <Text style={styles.title_header}>Review</Text>
-            <MaterialIcons name="preview" color={COLORS.greyBlue} size={26}/>
-          </View>
-          <MyCarousel data={review.review} type={{ event: "oui" }} />
-          </View>
-          
-          </View>
-
-      </View>
-      
+          </View>)}    
 
     </SafeAreaView>
-  </ScrollView>
   );
 }
 
@@ -660,20 +675,29 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 20,
-    paddingTop: 30,
+    paddingVertical: 10,
     flexDirection: "row",
-    justifyContent: "space-evenly" ,
-    //alignItems: "center",
-    backgroundColor: COLORS.mauve,
-    //textAlign : "center",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: COLORS.beige,
+    shadowColor: "#000",
+    shadowOpacity: 0.9,
+    shadowRadius: 7,
+    borderRadius: 10,
+   // flex:1
+  },
+  content_info:{
+    marginHorizontal:30,
+    marginTop:20
   },
   action: {
       flexDirection: "row",
       marginTop: 10,
       borderBottomWidth: 1,
-      borderBottomColor: COLORS.mauve,
+      borderBottomColor: COLORS.lightBlue,
       paddingBottom: 5,
       width: (windowWidth - 60),
+      alignItems: 'center'
     },
   title_header: {
     color: COLORS.greyBlue,
@@ -682,6 +706,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  title_body: {
+    color: COLORS.lightBlue,
+    fontSize: 23
+  },
+  
   profilImage: {
     width: 120,
     height: 120,
@@ -699,10 +728,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   body: {
-    flexDirection: "column",
-    padding: 20,
-    backgroundColor: COLORS.beige,
-    height: "100%",
+    backgroundColor: COLORS.greyBlue,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingHorizontal: 0,
+    paddingVertical: 20,
+    
   },
   events: {
     flexDirection: "column",
@@ -715,13 +746,13 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   titleTextInput : {
-      color: COLORS.mauve,
+      color: COLORS.lightBlue,
   },
   textInput: {
       flex: 1,
       marginTop: Platform.OS === "ios" ? 0 : -12,
       paddingLeft: 10,
-      color: COLORS.greyBlue,
+      color: COLORS.lightBlue,
       marginHorizontal: 1,
   },
   text_footer: {
