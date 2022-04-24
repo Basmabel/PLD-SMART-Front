@@ -71,7 +71,7 @@ export const markers = [
   },
 ];
 
-export default function SearchScreen() {
+const SearchScreen = ({ navigation }) => {
   const theme = useTheme();
   const initialMapState = {
     markers,
@@ -171,6 +171,7 @@ export default function SearchScreen() {
         style={styles.container}
         showsUserLocation={true}
         customMapStyle={mapDarkMode}
+        provider={PROVIDER_GOOGLE}
       >
         {state.markers.map((marker, index) => {
           const scaleStyle = {
@@ -197,40 +198,22 @@ export default function SearchScreen() {
           );
         })}
       </MapView>
-
-      <View style={styles.searchBox}>
-        <TextInput
-          placeholder="Search here"
-          placeholderTextColor="#000"
-          autoCapitalize="none"
-          style={{ flex: 1, padding: 0 }}
-        />
-        <Ionicons name="ios-search" size={20} />
+      <View style={styles.buttonView}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("FilterScreen")}
+          style={styles.filter}
+        >
+          <Ionicons name="ios-filter" size={20} />
+        </TouchableOpacity>
       </View>
-      <ScrollView
-        horizontal
-        scrollEventThrottle={1}
-        showsHorizontalScrollIndicator={false}
-        height={50}
-        style={styles.chipsScrollView}
-        contentInset={{
-          // iOS only
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 20,
-        }}
-        contentContainerStyle={{
-          paddingRight: Platform.OS === "android" ? 20 : 0,
-        }}
-      >
-        {state.categories.map((category, index) => (
-          <TouchableOpacity key={index} style={styles.chipsItem}>
-            {category.icon}
-            <Text>{category.name}</Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      <View>
+        <TouchableOpacity
+          onPress={console.log("heeeey")}
+          style={styles.filterButton}
+        >
+          <Text>I'm a button</Text>
+        </TouchableOpacity>
+      </View>
       <Animated.ScrollView
         ref={_scrollView}
         horizontal
@@ -307,26 +290,21 @@ export default function SearchScreen() {
       </Animated.ScrollView>
     </View>
   );
-}
+};
+export default SearchScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  searchBox: {
+  filter: {
     position: "absolute",
-    marginTop: Platform.OS === "ios" ? 40 : 20,
-    flexDirection: "row",
-    backgroundColor: "#fff",
-    width: "90%",
-    alignSelf: "center",
-    borderRadius: 5,
-    padding: 10,
-    shadowColor: "#ccc",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 10,
+    backgroundColor: COLORS.white,
+    width: "13.5%",
+    alignSelf: "flex-end",
+    justifyContent: "flex-end",
+    borderRadius: 100,
+    padding: 15,
   },
   chipsScrollView: {
     position: "absolute",
@@ -363,9 +341,9 @@ const styles = StyleSheet.create({
   card: {
     // padding: 10,
     elevation: 2,
-    backgroundColor: "#FFF",
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
+    backgroundColor: COLORS.nightBlue,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     marginHorizontal: 10,
     shadowColor: "#000",
     shadowRadius: 5,
@@ -418,5 +396,27 @@ const styles = StyleSheet.create({
   textSign: {
     fontSize: 14,
     fontWeight: "bold",
+  },
+  filterButton: {
+    position: "absolute",
+    margin: Platform.OS === "ios" ? 40 : 20,
+    flexDirection: "row",
+    backgroundColor: COLORS.white,
+    width: "10%",
+    alignSelf: "flex-end",
+    borderRadius: 100,
+    padding: 10,
+    elevation: 10,
+    flex: 1,
+  },
+  buttonView: {
+    position: "absolute",
+    marginTop: Platform.OS === "ios" ? 40 : 20,
+    //flexDirection: "row",
+    width: "100%",
+    alignContent: "flex-end",
+    alignSelf: "flex-end",
+    padding: 10,
+    flex: 1,
   },
 });

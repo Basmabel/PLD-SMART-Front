@@ -72,7 +72,7 @@ export const mapDarkMode = [
     elementType: "labels.text.fill",
     stylers: [
       {
-        color: COLORS.mauve,
+        color: "#757575",
       },
     ],
   },
@@ -126,7 +126,7 @@ export const mapDarkMode = [
     elementType: "geometry",
     stylers: [
       {
-        color: "#373737",
+        color: "#3c3c3c",
       },
     ],
   },

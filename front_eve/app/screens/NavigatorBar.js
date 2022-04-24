@@ -23,6 +23,8 @@ import {
 import HomePageScreen from "../screens/HomePageScreen";
 import SearchScreen from "../screens/SearchScreen";
 import MyEventsScreen from "../screens/MyEventsScreen";
+import MyAccountScreen from "./MyAccountScreen.js";
+
 const Tab = createBottomTabNavigator();
 
 export default function NavigatorBar() {
@@ -80,6 +82,21 @@ export default function NavigatorBar() {
               color={COLORS.mauve}
               size={25}
               style={{paddingTop:5}}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={MyAccountScreen}
+        options={{
+          headerShown: false,
+          component: { HomePageScreen },
+          tabBarIcon: () => (
+            <MaterialCommunityIcons
+              name="account"
+              color={COLORS.white}
+              size={24}
             />
           ),
         }}

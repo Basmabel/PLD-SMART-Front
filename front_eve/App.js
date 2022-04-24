@@ -12,6 +12,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import SearchScreen from "./app/screens/SearchScreen.js";
 import { TextField } from "native-base";
 import ValidationCode from './app/screens/ValidationCode'
+import FilterScreen from "./app/screens/FilterScreen.js";
 
 const Stack = createStackNavigator();
 
