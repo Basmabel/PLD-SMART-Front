@@ -32,9 +32,7 @@ const CARD_HEIGHT = 220;
 const CARD_WIDTH = width * 0.8;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
-Geocoder.init("AIzaSyCY2VFm6E1vB8lYpmhz2jGQawaCN5UY5D4");
-
-const Images = [
+/*const Images = [
   { image: require("../assets/images/mcdo.jpg") },
   { image: require("../assets/images/patinoire.jpg") },
   { image: require("../assets/images/tete_dor.jpg") },
@@ -74,28 +72,11 @@ export const markers = [
     rating: 4.5,
     reviews: 5,
   },
-];
+];*/
 
 const SearchScreen = ({ navigation }) => {
   const theme = useTheme();
   const initialMapState = {
-    markers,
-    categories: [
-      {
-        name: "Party",
-        icon: (
-          <MaterialCommunityIcons
-            style={styles.chipsIcon}
-            name="party-popper"
-            size={18}
-          />
-        ),
-      },
-      {
-        name: "Sports",
-        icon: <Ionicons name="basketball" style={styles.chipsIcon} size={18} />,
-      },
-    ],
     region: {
       latitude: 45.7603831,
       longitude: 4.849664,
@@ -104,15 +85,7 @@ const SearchScreen = ({ navigation }) => {
     },
   };
 
-  const [state, setState] = React.useState(initialMapState);
   const [popularEvents, setPopularEvents] = React.useState([]);
-  const [userInfo, setUserInfo] = React.useState(null);
-  const [isLoading, setLoading] = React.useState(true);
-  const [categories, setCategories] = React.useState(null);
-  const [eventPerCat, setEventPerCat] = React.useState([]);
-  const [retreive, setRetreive] = React.useState(false);
-  const [userId, setUserId] = React.useState("");
-  const [userToken, setUserToken] = React.useState("");
 
   let mapIndex = 0;
   let mapAnimation = new Animated.Value(0);
@@ -125,10 +98,6 @@ const SearchScreen = ({ navigation }) => {
 
         const tokenString = await AsyncStorage.getItem("token");
         const token = JSON.parse(tokenString);
-
-        setUserId(value);
-        setUserToken(token);
-        setRetreive(true);
       } catch (error) {
         console.log(error);
       }
@@ -162,12 +131,10 @@ const SearchScreen = ({ navigation }) => {
     });
 
     retreiveData();
-    if (retreive) {
+    if (true) {
       Promise.all([
-        fetch("http://169.254.3.246:3000/getPopular"),
-        fetch("http://169.254.3.246:3000/getUserInfo", {
-          //fetch('https://eve-back.herokuapp.com/getPopular'),
-          //fetch('https://eve-back.herokuapp.com/getUserInfo',{
+        //fetch("http://169.254.3.246:3000/getEvents"),
+        fetch("https://eve-back.herokuapp.com/getEvents", {
           method: "POST",
           headers: {
             "content-type": "application/json",
@@ -177,10 +144,6 @@ const SearchScreen = ({ navigation }) => {
             id: userId,
           }),
         }),
-        fetch("http://169.254.3.246:3000/getCategories"),
-        fetch("http://169.254.3.246:3000/getEventsByCategory"),
-        // fetch('https://eve-back.herokuapp.com/getCategories'),
-        // fetch('https://eve-back.herokuapp.com/getEventsByCategory')
       ])
         .then(function (responses) {
           // Get a JSON object from each of the responses
@@ -196,53 +159,17 @@ const SearchScreen = ({ navigation }) => {
           data.map((item, index) => {
             if (index == 0) {
               setPopularEvents(item);
-            } else if (index == 1) {
-              setUserInfo(item);
-            } else if (index == 2) {
-              setCategories(item);
-            } else if (index == 3) {
-              var cat_id = item[0].category_id;
-              var nexEv = [];
-              var iter = 0;
-              var stockEvent = [];
-              item.map((eve, i) => {
-                if (cat_id === eve.category_id) {
-                  nexEv = [...nexEv];
-                  nexEv[iter] = eve;
-                  iter++;
-                  // console.log(nexEv)
-                }
-                if (iter != 0 && cat_id != eve.category_id) {
-                  stockEvent = [...stockEvent, nexEv];
-                  iter = 0;
-                  cat_id = eve.category_id;
-                  nexEv = [];
-                  //console.log(stockEvent)
-                } else if (
-                  cat_id === eve.category_id &&
-                  i + 1 < item.length &&
-                  cat_id != item[i + 1].category_id
-                ) {
-                  stockEvent = [...stockEvent, nexEv];
-                  iter = 0;
-                  cat_id = item[i + 1].category_id;
-                  nexEv = [];
-                } else if (cat_id === eve.category_id && i + 1 == item.length) {
-                  stockEvent = [...stockEvent, nexEv];
-                }
-              });
-              setEventPerCat(stockEvent);
-              //console.log(stockEvent)
             }
           });
         })
         .catch(function (error) {
           // if there's an error, log it
           console.log(error);
-        })
-        .finally(() => setLoading(false));
+        });
     }
-  }, [retreive]);
+  });
+
+  const [state, setState] = React.useState(initialMapState);
 
   const interpolations = Object.keys({ popularEvents }).map((marker, index) => {
     const inputRange = [
@@ -370,7 +297,7 @@ const SearchScreen = ({ navigation }) => {
         {Object.keys({ popularEvents }).map((marker, index) => (
           <View style={styles.card} key={index}>
             <Image
-              source={marker.photo}
+              source={marker.ImageEvent}
               style={styles.cardImage}
               resizeMode="cover"
             />

@@ -30,9 +30,8 @@ const FilterScreen = ({ navigation }) => {
   const [isFocus, setIsFocus] = useState(false);
 
   const filterData = async () => {
-    //const response = await  fetch('https://eve-back.herokuapp.com/signup',
-    fetch("http://169.254.3.246:3000/filter", {
-      //  fetch("https://eve-back.herokuapp.com/login",{
+    fetch("http://169.254.3.246:3000/getFilteredEvents", {
+      //  fetch("https://eve-back.herokuapp.com/getFilteredEvents",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
