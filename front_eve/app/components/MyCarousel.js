@@ -9,7 +9,7 @@ import CategorieCard, { SLIDER_W, ITEM_W } from '../components/CategorieCard'
 
 
 const widthWind = Dimensions.get('window').width;
-const MyCarousel = ({data, type}) => {
+const MyCarousel = ({data, type,navigation}) => {
   const isCarousel = React.useRef(null);
   const [index, setIndex] = React.useState(0);
 
@@ -21,14 +21,24 @@ const MyCarousel = ({data, type}) => {
   }else{
        obj = {card:CategorieCard,sliderWidth:SLIDER_W, width:ITEM_W,margin:-120};
   }
-  
+
+  const Item = ({item,index})=>{
+    // Now you can use it
+    if(type.event==="non"){
+      return (<CategorieCard item={item} index={index} navigation={navigation}/>);
+    }else{
+      return (<CarouselCard item={item} index={index} />);
+    }
+    
+  }
+
   return (
     <View >
       <Carousel
         layout={'default'}
         ref={isCarousel}
         data={data}
-        renderItem={obj.card}
+        renderItem={Item}
         sliderWidth={widthWind}
         itemWidth={obj.width+20}
         inactiveSlideOpacity={1}

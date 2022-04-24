@@ -18,7 +18,82 @@ if(light==="light"){
   colorShadow=COLORS.black
 }
 
-const CarouselCard= ({ item, index }) => {
+const CarouselCard= ({ item, index, type }) => {
+ 
+  if(type===undefined){
+    type={"type":"nan"}
+  }
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: Colors.white,
+      borderRadius: (type.type==="category")? 0 :10,
+      width:  (type.type==="category")? '100%' :ITEM_WIDTH,
+      height: ITEM_HEIGHT,
+      paddingBottom: 40,
+      ...Platform.select({
+        ios:{
+          shadowOffset: {
+            width: 0,
+            height: 3,
+          },
+          shadowOpacity: 0.29,
+          shadowRadius: 4.65,
+        },
+        android:{
+          elevation: 5
+        }
+      }),
+      shadowColor: colorShadow,
+      margin:5
+    },
+    image: {
+      width: (type.type==="category")? '100%' :ITEM_WIDTH,
+      height: '75%',
+      marginBottom:10
+    }, 
+    header:{
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingLeft:10,
+      paddingRight:20,
+      paddingBottom:5
+    },
+    body:{
+      flexDirection: 'column',
+      paddingLeft:10,
+      paddingRight:20,
+    },
+    name: {
+      color: COLORS.greyBlue,
+      fontSize: 20,
+      fontWeight: "bold",
+      fontFamily: 'Montserrat_600SemiBold'
+    }, 
+    profil:{
+      width:34,
+      height:34,
+      borderRadius:17
+    },
+    infos:{
+      flexDirection:'row',
+      alignItems: 'center',
+      paddingBottom:5
+    },
+    date:{
+      color: COLORS.lightGrey,
+      fontSize: 15,
+      fontWeight: 'bold',
+      textTransform: 'uppercase',
+      paddingLeft:5
+    },
+    place: {
+      color: COLORS.mauve,
+      fontSize: 18,
+      fontWeight: 'bold'
+    }
+  })
+
   var date = new Date(item.date_timestamp);
   if(date.getMonth()>9 || date.getMonth()<2 || (date.getMonth()==9 && date.getDay()>20) || (date.getMonth()==2 && date.getDay()<=20) ){
     date.setTime( date.getTime() + 60*60*1000+date.getTimezoneOffset()*60*1000);
@@ -60,75 +135,6 @@ const CarouselCard= ({ item, index }) => {
     </View>
   )
 }
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Colors.white,
-    borderRadius: 10,
-    width: ITEM_WIDTH,
-    height: ITEM_HEIGHT,
-    paddingBottom: 40,
-    ...Platform.select({
-      ios:{
-        shadowOffset: {
-          width: 0,
-          height: 3,
-        },
-        shadowOpacity: 0.29,
-        shadowRadius: 4.65,
-      },
-      android:{
-        elevation: 5
-      }
-    }),
-    shadowColor: colorShadow,
-    margin:5
-  },
-  image: {
-    width: ITEM_WIDTH,
-    height: '75%',
-    marginBottom:10
-  }, 
-  header:{
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingLeft:10,
-    paddingRight:20,
-    paddingBottom:5
-  },
-  body:{
-    flexDirection: 'column',
-    paddingLeft:10,
-    paddingRight:20,
-  },
-  name: {
-    color: COLORS.greyBlue,
-    fontSize: 20,
-    fontWeight: "bold",
-    fontFamily: 'Montserrat_600SemiBold'
-  }, 
-  profil:{
-    width:34,
-    height:34,
-    borderRadius:17
-  },
-  infos:{
-    flexDirection:'row',
-    alignItems: 'center',
-    paddingBottom:5
-  },
-  date:{
-    color: COLORS.lightGrey,
-    fontSize: 15,
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
-    paddingLeft:5
-  },
-  place: {
-    color: COLORS.mauve,
-    fontSize: 18,
-    fontWeight: 'bold'
-  }
-})
+
 
 export default CarouselCard 

@@ -12,6 +12,7 @@ import {
   Montserrat_500Medium,
   Montserrat_600SemiBold
 } from '@expo-google-fonts/dev'
+import { useNavigation } from '@react-navigation/native';
 
 
 /*const popEvents = [
@@ -77,7 +78,7 @@ if(light==="light"){
 
 export default function HomePageScreen() {
   const tabBarHeight = useBottomTabBarHeight() * 2;
-
+  const navigation = useNavigation();
    const [popularEvents,setPopularEvents] = React.useState([]);
    const [userInfo, setUserInfo] = React.useState(null);
    const [isLoading, setLoading] = React.useState(true);
@@ -127,7 +128,7 @@ export default function HomePageScreen() {
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('https://eve-back.herokuapp.com/getCategories'),
+        fetch('http://169.254.3.246:3000/getCategories'),
         fetch('https://eve-back.herokuapp.com/getEventsByCategory')
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
@@ -232,7 +233,7 @@ export default function HomePageScreen() {
                                 <View style={styles.categorieEvents}>
                                     <Text style={[styles.title_body]}>Categories</Text>
                                 </View>  
-                                <MyCarousel data={categories} type={{"event":"non"}}/>                  
+                                <MyCarousel data={categories} type={{"event":"non"}} navigation={navigation}/>                  
                             </View>
                             <View style={styles.events}>
                                 <View style={styles.categorieEvents}>

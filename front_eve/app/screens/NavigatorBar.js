@@ -95,7 +95,7 @@ export default function NavigatorBar() {
           tabBarIcon: () => (
             <MaterialCommunityIcons
               name="account"
-              color={COLORS.white}
+              color={COLORS.mauve}
               size={24}
             />
           ),
