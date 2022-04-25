@@ -6,8 +6,19 @@ import Feather from "react-native-vector-icons/Feather";
 import * as ImagePicker from 'expo-image-picker';
 
 
-export default function UploadImage( {imgProfil}) {
- 
+export default function UploadImage( {imgProfil,id}) {
+
+  const [img, setImg] = React.useState(imgProfil)
+const uploadImg = (img)=>{
+  fetch('http://169.254.3.246:3000/editImageProfil',{
+      method: "POST",
+      headers: {'content-type': 'application/json'},
+      body: JSON.stringify({
+        "photo":img,
+        "id":id}
+      )}).then((response)=>{
+    }).catch((error)=>console.error(error))
+}
  //Image
  const addImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
@@ -19,7 +30,8 @@ export default function UploadImage( {imgProfil}) {
     console.log(JSON.stringify(_image));
 
    if (!_image.cancelled) {
-     imgProfil = _image.uri;
+     setImg(_image.uri);
+     uploadImg(_image.uri)
    }
   };
 //Gallery permissions
@@ -40,12 +52,12 @@ useEffect(() => {
  return (
 <View style={imageUploaderStyles.container}>
                {
-                   <Image source={{ uri: (imgProfil!=undefined) ? imgProfil : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}} style={{ width: 120, height: 120 }} />
+                  <Image source={{ uri: (img!=undefined) ? img : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}} style={{ width: 120, height: 120 }} />
                }
 
 <View style={imageUploaderStyles.uploadBtnContainer}>
 <TouchableOpacity onPress={addImage} style={imageUploaderStyles.uploadBtn} >
-<Text>{imgProfil ? 'Edit' : 'Upload'} Image</Text>
+<Text>{img ? 'Edit' : 'Upload'} Image</Text>
 <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
 </TouchableOpacity>
 </View>

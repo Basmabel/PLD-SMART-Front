@@ -227,14 +227,9 @@ export default function MyAccountScreen() {
   //Write data
 
   const editFecth = (i,val)=>{
-    console.log("eee")
     var edit=[];
-    const tab = [];
-    const values = Object.values( userInfo );
     const keys = Object.keys(userInfo);
-    console.log(keys)
     keys.map((item,index)=>{
-      tab.push(index)
       if(index>=3){
         if(index!=i){
           edit.push(null);
@@ -245,7 +240,6 @@ export default function MyAccountScreen() {
       
     })
 
-    console.log(edit)
     
     fetch('http://169.254.3.246:3000/editProfile',{
       method: "POST",
@@ -263,45 +257,53 @@ export default function MyAccountScreen() {
         "userPassword":edit[9],
         "id":userId}
       )}).then((response)=>{
-        console.log(response.text())
     }).catch((error)=>console.error(error))
   }
 
   const sendInputPhoneNumber =  (inputText) => {
-      console.log("zzzzzz");
       setuserInfo({ ...userInfo,phone: inputText});
       setVisiblePhoneNumber(false);
       editFecth(3,inputText)
   };
   const sendInputCity = (inputText) => {setuserInfo({ ...userInfo,city: inputText,});
       setVisibleCity(false);
+      editFecth(4,inputText)
   };
   const sendInputStreetNumber = (inputText) => {setuserInfo({ ...userInfo,street_number: inputText});
       setVisibleStreetNumber(false);
+      editFecth(5,inputText)
   };
   const sendInputStreet = (inputText) => {setuserInfo({ ...userInfo,street: inputText});
       setVisibleStreet(false);
+      editFecth(6,inputText)
   };
   const sendInputRegion = (inputText) => {setuserInfo({...userInfo,region: inputText});
       setVisibleRegion(false);
+      editFecth(7,inputText)
   };
   const sendInputZipCode = (inputText) => {setuserInfo({ ...userInfo,zip_code: inputText});
       setVisibleZipCode(false);
+      editFecth(8,inputText)
   };
   const sendInputAddressComplement = (inputText) => {setuserInfo({ ...userInfo,address_complement: inputText});
       setVisibleAddressComplement(false);
+      editFecth(9,inputText)
   };
   const sendInputPassword = (inputText) => {setuserInfo({ ...userInfo,password: inputText});
       setVisiblePassword(false);
+      editFecth(10,inputText)
   };
   const sendInputGender = (inputText) => {setuserInfo({ ...userInfo,gender: inputText});
       setVisibleGender(false);
+      editFecth(11,inputText)
   };
   const sendInputBirthDate = (inputText) => {setuserInfo({ ...userInfo,date_birth: inputText});
       setVisibleBirthDate(false);
+      editFecth(12,inputText)
   };
   const sendInputImgProfil = (inputText) => {setuserInfo({ ...userInfo,imgProfil: inputText});
       setVisibleImgProfil(false);
+      editFecth(13,inputText)
   };
   
   const showDialog = () => {
@@ -342,7 +344,7 @@ export default function MyAccountScreen() {
           <View style={styles.body}>
             <ScrollView style={{marginBottom: tabBarHeight*2}}>
               <View style={{paddingTop: 40,justifyContent: "center",alignItems: "center"}}>
-              <UploadImage imgProfil={userInfo.photo}/>
+              <UploadImage imgProfil={userInfo.photo} id={userId}/>
               </View>
 
               <View style= {styles.content_info}>
