@@ -33,6 +33,8 @@ export default function MyEventsScreen() {
    const [comingEvents, setComingEvents] = React.useState([]);
    const [historic, setHistoric] = React.useState([]);
    const [favorites, setFavorites] = React.useState([]);
+   const [comingCreatEve, setComingCreatEve] = React.useState([]);
+   const [historicCreatEve, setHistoricCreatEve] =React.useState([]);
 
   
 
@@ -94,6 +96,20 @@ export default function MyEventsScreen() {
             "id":userId
           })
         }),
+        fetch('http://169.254.3.246:3000/getUpcomingEvent',{
+          method: "POST",
+          headers: {'content-type': 'application/json'},
+          body: JSON.stringify({
+            "id":userId
+          })
+        }),
+        fetch('http://169.254.3.246:3000/getHistoric',{
+          method: "POST",
+          headers: {'content-type': 'application/json'},
+          body: JSON.stringify({
+            "id":userId
+          })
+        }),
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
         return Promise.all(responses.map(function (response) {
@@ -111,7 +127,11 @@ export default function MyEventsScreen() {
             setHistoric(item)
           } else if(index==3){
             setFavorites(item)
-          }          
+          } else if(index==4){
+            setComingCreatEve(item)
+          } else if(index==5){
+            setHistoricCreatEve(item)
+          }        
         });
       }).catch(function (error) {
         // if there's an error, log it
@@ -149,14 +169,21 @@ export default function MyEventsScreen() {
                             <View style={styles.events}>
                                 <View style={styles.categorieEvents}>
                                     <Text style={[styles.title_body]}>Upcoming Events</Text>
-                                </View>  
-                                <MyCarousel data={comingEvents} type={{"event":"oui"}}/>             
+                                </View> 
+                                <Text style={[styles.text_body]}>Participation</Text>
+                                <MyCarousel data={comingEvents} type={{"event":"oui"}}/>   
+                                <Text style={[styles.text_body]}>Organisation</Text>
+                                <MyCarousel data={comingCreatEve} type={{"event":"oui"}}/>            
                             </View>
                             <View style={styles.events}>
                                 <View style={styles.categorieEvents}>
                                     <Text style={[styles.title_body]}>Historic</Text>
                                 </View>  
-                                <MyCarousel data={historic} type={{"event":"oui"}}/>             
+                                <Text style={[styles.text_body]}>Participation</Text>
+                                <MyCarousel data={historic} type={{"event":"oui"}}/>   
+                                <Text style={[styles.text_body]}>Organisation</Text>
+                                <MyCarousel data={historicCreatEve} type={{"event":"oui"}}/> 
+
                             </View>
                             <View style={styles.events}>
                                 <View style={styles.categorieEvents}>
@@ -248,6 +275,12 @@ const styles = StyleSheet.create({
     color: colorText,
     fontFamily: 'Montserrat_600SemiBold',
     fontSize: 23
+  },
+  text_body:{
+    color: colorText,
+    fontFamily: "Montserrat_400Regular",
+    fontSize: 19,
+    marginBottom: 5
   },
   events: {
     flexDirection: "column",
