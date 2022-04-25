@@ -12,6 +12,7 @@ import {
   Montserrat_500Medium,
   Montserrat_600SemiBold
 } from '@expo-google-fonts/dev'
+import Spinner from 'react-native-loading-spinner-overlay';
 
 var light = "dark"
 var colorBack= COLORS.greyBlue
@@ -44,6 +45,12 @@ export default function MyEventsScreen() {
     Montserrat_600SemiBold
   });
 
+  const startLoading = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  };
 
    
 
@@ -151,10 +158,19 @@ export default function MyEventsScreen() {
         
         <SafeAreaView style={StyleSheet.container}>
 
-          {isLoading ? (<Text>Loading...</Text>) :
+          {isLoading ? (
+            <Spinner
+              //visibility of Overlay Loading Spinner
+              visible={isLoading}
+              //Text with the Spinner
+              textContent={'Loading...'}
+              //Text style of the Spinner Text
+              textStyle={styles.spinnerTextStyle}
+            />
+          ) :
             ( <View>
             <View style={styles.header}>
-                  <Text style={styles.title_header}>Home</Text>
+                  <Text style={styles.title_header}>My events</Text>
                   <View style={styles.infoView}>
                       <Image style={styles.profilImage} source={{uri: userInfo[0].photo}}/>
                   </View>

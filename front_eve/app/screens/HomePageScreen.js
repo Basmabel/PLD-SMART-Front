@@ -13,6 +13,8 @@ import {
   Montserrat_600SemiBold
 } from '@expo-google-fonts/dev'
 import { useNavigation } from '@react-navigation/native';
+import Spinner from 'react-native-loading-spinner-overlay';
+
 
 
 /*const popEvents = [
@@ -96,6 +98,12 @@ export default function HomePageScreen() {
     Montserrat_600SemiBold
   });
 
+  const startLoading = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  };
 
    
 
@@ -214,7 +222,16 @@ export default function HomePageScreen() {
         
         <SafeAreaView style={StyleSheet.container}>
 
-          {isLoading ? (<Text>Loading...</Text>) :
+          {isLoading ? (
+            <Spinner
+              //visibility of Overlay Loading Spinner
+              visible={isLoading}
+              //Text with the Spinner
+              textContent={'Loading...'}
+              //Text style of the Spinner Text
+              textStyle={styles.spinnerTextStyle}
+            />
+          ) :
             ( <View>
             <View style={styles.header}>
                   <Text style={styles.title_header}>Home</Text>

@@ -257,7 +257,7 @@ const SearchScreen = ({ navigation }) => {
               <Text numberOfLines={1} style={styles.cardtitle}>
                 {marker.name}
               </Text>
-              <StarRating ratings={marker.rating} reviews={marker.reviews} />
+              <StarRating ratings={marker.rating} reviews={marker.reviews} color={COLORS.mauve}/>
               <Text numberOfLines={1} style={styles.cardDescription}>
                 {marker.description}
               </Text>

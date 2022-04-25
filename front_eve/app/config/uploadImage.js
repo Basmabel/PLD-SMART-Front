@@ -5,8 +5,8 @@ import Feather from "react-native-vector-icons/Feather";
 
 import * as ImagePicker from 'expo-image-picker';
 
-export default function UploadImage() {
- const [image, setImage] = useState(null);
+
+export default function UploadImage( {imgProfil}) {
  
  //Image
  const addImage = async () => {
@@ -19,7 +19,7 @@ export default function UploadImage() {
     console.log(JSON.stringify(_image));
 
    if (!_image.cancelled) {
-     setImage(_image.uri);
+     imgProfil = _image.uri;
    }
   };
 //Gallery permissions
@@ -40,12 +40,12 @@ useEffect(() => {
  return (
 <View style={imageUploaderStyles.container}>
                {
-                   image  &&<Image source={{ uri: image }} style={{ width: 120, height: 120 }} />
+                   <Image source={{ uri: (imgProfil!=undefined) ? imgProfil : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}} style={{ width: 120, height: 120 }} />
                }
 
 <View style={imageUploaderStyles.uploadBtnContainer}>
 <TouchableOpacity onPress={addImage} style={imageUploaderStyles.uploadBtn} >
-<Text>{image ? 'Edit' : 'Upload'} Image</Text>
+<Text>{imgProfil ? 'Edit' : 'Upload'} Image</Text>
 <Feather name="edit-2" color={COLORS.midnightBlue} size={20}/>
 </TouchableOpacity>
 </View>
