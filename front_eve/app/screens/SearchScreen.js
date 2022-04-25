@@ -107,7 +107,7 @@ const SearchScreen = ({ navigation }) => {
       const regionTimeout = setTimeout(() => {
         if (mapIndex !== index) {
           mapIndex = index;
-          const { coordinate } = { popularEvents }.results[index];
+          const { coordinate } = markers[index].coordinate;
           _map.current.animateToRegion(
             {
               ...coordinate,
@@ -225,8 +225,8 @@ const SearchScreen = ({ navigation }) => {
                   <MapView.Marker
                     key={index}
                     coordinate={{
-                      latitude: marker.latitude,
-                      longitude: marker.latitude,
+                      latitude: 45.7758115,
+                      longitude: 4.8530063,
                     }}
                     onPress={(e) => onMarkerPress(e)}
                   >
