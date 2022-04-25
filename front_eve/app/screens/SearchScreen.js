@@ -284,7 +284,7 @@ const SearchScreen = ({ navigation }) => {
               {result.map((marker, index) => (
                 <View style={styles.card} key={index}>
                   <Image
-                    source={Images[index]}
+                    source={{ uri: marker.ImageEvent }}
                     style={styles.cardImage}
                     resizeMode="cover"
                   />
