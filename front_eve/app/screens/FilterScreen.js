@@ -28,6 +28,7 @@ const FilterScreen = ({ navigation }) => {
   const [value, setValue] = useState(null);
   const [categories, setCategories] = React.useState(data);
   const [isFocus, setIsFocus] = useState(false);
+  const [date, setDate] = useState(null);
 
   const filterData = async () => {
     fetch("http://169.254.3.246:3000/getFilteredEvents", {
@@ -35,8 +36,8 @@ const FilterScreen = ({ navigation }) => {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        category_id: data.value,
-        date: this.state.date,
+        category_id: { categories }.id,
+        date: { date },
       }),
     })
       .then((response) => {
@@ -52,8 +53,6 @@ const FilterScreen = ({ navigation }) => {
         if (status == 400 || status == 401) {
           alert(json);
         } else {
-          await AsyncStorage.setItem("key", JSON.stringify(json.id));
-          await AsyncStorage.setItem("token", JSON.stringify(json.token));
           navigation.navigate("SearchScreen");
         }
       })
@@ -82,6 +81,15 @@ const FilterScreen = ({ navigation }) => {
         console.log(error);
       });
   });
+
+  const tmp = { categories };
+
+  var categ = new Array(tmp.length);
+
+  for (var i = 0; i < tmp.categories.length; i++) {
+    var obj = tmp.categories[i];
+    categ[i] = obj;
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Category</Text>
@@ -91,11 +99,11 @@ const FilterScreen = ({ navigation }) => {
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
         iconStyle={styles.iconStyle}
-        data={data}
+        data={categ[0]}
         search
         maxHeight={300}
-        labelField="label"
-        valueField="value"
+        labelField="description"
+        valueField="id"
         placeholder={!isFocus ? "Select A category" : "..."}
         searchPlaceholder="Search..."
         value={"test"}
@@ -114,7 +122,6 @@ const FilterScreen = ({ navigation }) => {
           />
         )}
       />
-
       <Text style={styles.title}> Date</Text>
       <DatePicker
         style={{ width: "100%" }}
@@ -139,7 +146,7 @@ const FilterScreen = ({ navigation }) => {
           datePickerCon: { backgroundColor: "black" },
         }}
         onDateChange={(date) => {
-          this.setState({ date: date });
+          setDate(date);
         }}
       />
       <View style={styles.button}>
