@@ -30,10 +30,23 @@ const Tab = createBottomTabNavigator();
 export default function NavigatorBar() {
   return (
     <Tab.Navigator
-      screenOptions={{ tabBarStyle: { backgroundColor: COLORS.beige } }}
+      screenOptions={{ 
+        tabBarActiveTintColor:  COLORS.greyBlue,
+        tabBarInactiveTintColor: COLORS.mauve,
+        tabBarStyle: { backgroundColor: COLORS.beige } ,
+        tabBarLabelStyle: {
+          paddingBottom: 5,
+          fontSize: 12,
+          fontWeight: "bold"
+        },
+        tabBarStyle: [
+          {
+            display: "flex"
+          },
+          null
+        ]
+      }}
       tabBarOptions={{
-        activeTintColor: COLORS.mauve,
-        inactiveTintColor: COLORS.mauve,
         labelStyle: {paddingBottom:5,fontSize: 12, fontWeight:'bold' },
         style: { padding: 10, height: 70 },
       }}
@@ -44,11 +57,11 @@ export default function NavigatorBar() {
         options={{
           headerShown: false,
           component: { HomePageScreen },
-          tabBarIcon: () => (
+          tabBarIcon: ({color}) => (
             <MaterialCommunityIcons
               name="home"
-              color={COLORS.mauve}
               size={25}
+              color={color}
               style={{paddingTop:5}}
             />
           ),
@@ -60,11 +73,11 @@ export default function NavigatorBar() {
         options={{
           headerShown: false,
           component: { SearchScreen },
-          tabBarIcon: () => (
+          tabBarIcon: ({color}) => (
             <MaterialCommunityIcons
               name="map-outline"
-              color={COLORS.mauve}
               size={25}
+              color={color}
               style={{paddingTop:5}}
             />
           ),
@@ -76,11 +89,11 @@ export default function NavigatorBar() {
         options={{
           headerShown: false,
           component: { MyEventsScreen },
-          tabBarIcon: () => (
+          tabBarIcon: ({color}) => (
             <MaterialIcons
               name="event"
-              color={COLORS.mauve}
               size={25}
+              color={color}
               style={{paddingTop:5}}
             />
           ),
@@ -92,11 +105,11 @@ export default function NavigatorBar() {
         options={{
           headerShown: false,
           component: { HomePageScreen },
-          tabBarIcon: () => (
+          tabBarIcon: ({color}) => (
             <MaterialCommunityIcons
               name="account"
-              color={COLORS.mauve}
               size={24}
+              color={color}
             />
           ),
         }}
