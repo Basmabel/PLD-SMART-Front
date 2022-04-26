@@ -78,7 +78,7 @@ export default function EventPerCategoryScreen({route}) {
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('http://169.254.3.246:3000/getEventByCategory',{
+        fetch('https://eve-back.herokuapp.com/getEventByCategory',{
             method: "POST",
             headers: {'content-type': 'application/json',userToken},
             body: JSON.stringify({

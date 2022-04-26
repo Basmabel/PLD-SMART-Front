@@ -136,7 +136,7 @@ export default function HomePageScreen() {
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('http://169.254.3.246:3000/getCategories'),
+        fetch('https://eve-back.herokuapp.com/getCategories'),
         fetch('https://eve-back.herokuapp.com/getEventsByCategory')
       ]).then(function (responses) {
         // Get a JSON object from each of the responses

@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView} from 'react-native';
+import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView, Pressable, TouchableOpacity, Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS} from '../config/colors.js';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -22,7 +22,7 @@ if(light==="light"){
   colorText=COLORS.greyBlue
 }
 
-export default function ParticipationDemandScreen() {
+export default function ParticipationDemandScreen({notif_id}) {
 
    const [userInfo, setUserInfo] = React.useState(null);
    const [isLoading, setLoading] = React.useState(true);
@@ -46,6 +46,61 @@ export default function ParticipationDemandScreen() {
     }, 1000);
   };
 
+  const refuseDemand = async ()=>{
+    Alert.alert(
+      "Do you really want to refuse",
+      ``,
+      [
+        {
+          text: "Yes",
+          onPress: () => {refuseFetch()}
+        },
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel"
+        }
+      ],
+      { cancelable: false }
+    );
+  }
+
+  const refuseFetch = async()=>{
+    fetch("http://169.254.3.246:3000/refuseDemand",{
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ id: demandInfo.demand_id }),
+    }).catch((error)=>console.error(error));
+  }
+
+  const acceptFetch = async()=>{
+    fetch("http://169.254.3.246:3000/acceptDemand",{
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ demand_id: demandInfo.demand_id, user_id: demandInfo.user_id, event_id: demandInfo.event_id }),
+    }).catch((error)=>console.error(error));
+  }
+  
+
+  const acceptDemand = async ()=>{
+    Alert.alert(
+      "Do you really want to refuse",
+      ``,
+      [
+        {
+          text: "Yes",
+          onPress: () => {acceptFetch()}
+        },
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel"
+        }
+      ],
+      { cancelable: false }
+    );
+    
+  }
    
 
   
@@ -80,7 +135,7 @@ export default function ParticipationDemandScreen() {
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
-            "id":2
+            "id":notif_id
           })}),
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
@@ -94,7 +149,6 @@ export default function ParticipationDemandScreen() {
           if(index==0){
             setUserInfo(item)
           }else if(index==1){
-              console.log(item)
             setDemandInfo(item[0])
           }
                 
@@ -142,13 +196,29 @@ export default function ParticipationDemandScreen() {
                   </View>
                     <View style={styles.contentContainer}>
                             <View style={styles.info_event}>
+                                <Image style={styles.photo_event} source={{uri: demandInfo.event_photo}}/>
                                 <Text style={styles.title_info_event}>{demandInfo.event_name}</Text>
                                 <Text style={styles.text_info_event}>{formatageDate(demandInfo.date)}</Text>
                             </View>
 
                             <View style={styles.info_demander}>
-                                <Text style={styles.title_demand}>Who wants to participate?</Text>
-                                <Text style={styles.text_demand}>{demandInfo.surname} {demandInfo.name}</Text>
+                                <Pressable>
+                                  <Image style={styles.demanderImage} source={{uri: demandInfo.photo ? demandInfo.photo : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}}/>
+                                </Pressable>
+                                <Text style={styles.title_demand}>{demandInfo.surname} wants to participate</Text>
+                            </View>
+
+                            <View style={styles.buttons}>
+                              <TouchableOpacity style={styles.accept} onPress={acceptDemand} >
+                                  <Text style={[styles.textButton, {color:COLORS.greyBlue}]}>
+                                    Accept
+                                  </Text>
+                              </TouchableOpacity>
+                              <TouchableOpacity style={styles.refuse} onPress={refuseDemand}>
+                                  <Text style={[styles.textButton, {color:COLORS.lightBlue}]}>
+                                    Refuse
+                                  </Text>
+                              </TouchableOpacity>
                             </View>
                     </View>
                     
@@ -161,18 +231,6 @@ export default function ParticipationDemandScreen() {
 
     
 }
-
-/*
-
-<View style={styles.events}>
-                            <View style={styles.categorieEvents}>
-                                <Text style={styles.title_header}>Popular</Text>
-                                <MaterialCommunityIcons name="fire" color={COLORS.greyBlue} size={26}/>
-                            </View>  
-                            <MyCarousel data={popularEvents} type={{"event":"oui"}}/>                  
-                        </View>
-*/
-const windowHeight = Dimensions.get("window").height;
 
 
 const styles = StyleSheet.create({
@@ -231,7 +289,14 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   info_event:{
-
+    marginBottom: 10,
+    marginTop: 10
+  },
+  photo_event:{
+    width:'100%',
+    height: 0.6*Dimensions.get("window").width,
+    marginBottom:10,
+    borderRadius: 10
   },
   title_info_event: {
     color: COLORS.lightBlue,
@@ -245,19 +310,53 @@ const styles = StyleSheet.create({
     marginBottom: 5
   },
   info_demander:{
-
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   title_demand:{
-    fontFamily: "Montserrat_600SemiBold",
+    fontFamily: "Montserrat_400Regular",
     color: COLORS.lightBlue,
-    fontSize: 19
+    fontSize: 19,
+    textTransform: "capitalize",
+    paddingLeft: 20
   },
   text_demand:{
     color: COLORS.lightBlue,
     fontFamily: "Montserrat_400Regular",
     fontSize: 15,
     marginBottom: 5
-  }
+  },
+  demanderImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  buttons:{
+    marginTop: 20
+  },
+  accept:{
+    width: "100%",
+    backgroundColor: COLORS.lightBlue,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+  refuse:{
+    width: "100%",
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    borderColor: COLORS.lightBlue,
+    borderWidth: 1,
+    marginTop:20
+  },
+  textButton: {
+    fontSize: 18,
+    fontFamily: 'Montserrat_600SemiBold'
+  },
+
 });
 
  

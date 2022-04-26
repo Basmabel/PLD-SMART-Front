@@ -103,14 +103,14 @@ export default function MyEventsScreen() {
             "id":userId
           })
         }),
-        fetch('http://169.254.3.246:3000/getUpcomingEvent',{
+        fetch('https://eve-back.herokuapp.com/getUpcomingEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('http://169.254.3.246:3000/getHistoric',{
+        fetch('https://eve-back.herokuapp.com/getHistoric',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
