@@ -12,7 +12,7 @@ import {
   Montserrat_500Medium,
   Montserrat_600SemiBold
 } from '@expo-google-fonts/dev'
-import { Center, Column } from "native-base";
+import Spinner from 'react-native-loading-spinner-overlay';
 
 
 
@@ -44,7 +44,12 @@ export default function EventPerCategoryScreen({route}) {
     Montserrat_600SemiBold
   });
 
-
+  const startLoading = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  };
   
     useEffect(() => {
 
@@ -131,17 +136,26 @@ export default function EventPerCategoryScreen({route}) {
         
         <SafeAreaView style={StyleSheet.container}>
 
-          {isLoading ? (<Text>Loading...</Text>) :
+          {isLoading ? (
+            <Spinner
+              //visibility of Overlay Loading Spinner
+              visible={isLoading}
+              //Text with the Spinner
+              textContent={'Loading...'}
+              //Text style of the Spinner Text
+              textStyle={styles.spinnerTextStyle}
+            />
+          ) :
             ( <View>
             <View style={styles.header}>
                   <Text style={styles.title_header}>{eventPerCat[0].description}</Text>
                   <View style={styles.infoView}>
-                      <Image style={styles.profilImage} source={{uri: userInfo[0].photo}}/>
+                      <Image style={styles.profilImage} source={{uri: userInfo[0].photo ? userInfo[0].photo : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}}/>
                   </View>
             </View>
             <View style={styles.body}>
-              <ScrollView style={{marginBottom:200*2}}>
-                <View style={{flex:1}}>
+              <ScrollView style={{marginBottom:110}}>
+                
                   <View style={styles.locationView}>
                         <Text style={styles.text_header}> Lyon </Text>
                         <MaterialCommunityIcons name="map-marker" color={colorText} size={24}/>
@@ -149,7 +163,7 @@ export default function EventPerCategoryScreen({route}) {
                     <View style={styles.contentContainer}>
                             <DisplayEvents/>
                     </View>
-                </View>
+                
               </ScrollView>
             </View>
             
@@ -210,7 +224,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     paddingHorizontal: 20,
     paddingVertical: 20,
-    height:'100%'
+    height:Dimensions.get("window").height
     
   },
   contentContainer:{

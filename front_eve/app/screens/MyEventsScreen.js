@@ -49,7 +49,7 @@ export default function MyEventsScreen() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-    }, 3000);
+    }, 1000);
   };
 
    
@@ -172,7 +172,7 @@ export default function MyEventsScreen() {
             <View style={styles.header}>
                   <Text style={styles.title_header}>My events</Text>
                   <View style={styles.infoView}>
-                      <Image style={styles.profilImage} source={{uri: userInfo[0].photo}}/>
+                  <Image style={styles.profilImage} source={{uri: userInfo[0].photo ? userInfo[0].photo : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}}/>
                   </View>
             </View>
             <View style={styles.body}>
