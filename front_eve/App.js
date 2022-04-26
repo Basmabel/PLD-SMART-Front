@@ -32,6 +32,13 @@ export default function App() {
         <Stack.Screen name="CategorieCard" component={CategorieCard} />
         <Stack.Screen name="EventPerCategoryScreen" component={EventPerCategoryScreen}/>
         <Stack.Screen name="Demand" component={ParticipationDemandScreen}/>
+        <Stack.Screen
+          name="Previous"
+          component={NavigatorBar}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen name="FilterScreen" component={FilterScreen} />
+        <Stack.Screen name="SearchScreen" component={SearchScreen} />
       </Stack.Navigator>
     </NavigationContainer>
    // <ValidationCode/>
