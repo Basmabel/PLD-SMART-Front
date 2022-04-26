@@ -15,6 +15,7 @@ import { TextField } from "native-base";
 import ValidationCode from './app/screens/ValidationCode'
 import FilterScreen from "./app/screens/FilterScreen.js";
 import CategorieCard from './app/components/CategorieCard.js';
+import ParticipationDemandScreen from './app/screens/ParticipationDemandScreen.js';
 
 const Stack = createStackNavigator();
 
@@ -30,6 +31,7 @@ export default function App() {
         <Stack.Screen name="NavigatorBar" component={NavigatorBar} />
         <Stack.Screen name="CategorieCard" component={CategorieCard} />
         <Stack.Screen name="EventPerCategoryScreen" component={EventPerCategoryScreen}/>
+        <Stack.Screen name="Demand" component={ParticipationDemandScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
    // <ValidationCode/>

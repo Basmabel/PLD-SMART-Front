@@ -3,8 +3,6 @@ import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView} from
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS} from '../config/colors.js';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import MyCarousel from '../components/MyCarousel';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import {useFonts} from "@expo-google-fonts/dev";
 import AppLoading from "expo-app-loading";
 import { 
@@ -13,6 +11,7 @@ import {
   Montserrat_600SemiBold
 } from '@expo-google-fonts/dev'
 import Spinner from 'react-native-loading-spinner-overlay';
+import formatageDate from '../utils/date_formatage';
 
 var light = "dark"
 var colorBack= COLORS.greyBlue
@@ -30,7 +29,7 @@ export default function ParticipationDemandScreen() {
    const [retreive, setRetreive] = React.useState(false);
    const [userId, setUserId] = React.useState("")
    const [userToken, setUserToken] = React.useState("")
-   const [demandingUser, setDemandingUser] = React.useState(null)
+   const [demandInfo, setDemandInfo] = React.useState(null)
 
   
 
@@ -77,6 +76,12 @@ export default function ParticipationDemandScreen() {
           body: JSON.stringify({
             "id":userId
           })}),
+        fetch('http://169.254.3.246:3000/getInfoDemanderNotif',{
+          method: "POST",
+          headers: {'content-type': 'application/json'},
+          body: JSON.stringify({
+            "id":2
+          })}),
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
         return Promise.all(responses.map(function (response) {
@@ -88,6 +93,9 @@ export default function ParticipationDemandScreen() {
         data.map((item,index)=>{
           if(index==0){
             setUserInfo(item)
+          }else if(index==1){
+              console.log(item)
+            setDemandInfo(item[0])
           }
                 
         });
@@ -127,13 +135,21 @@ export default function ParticipationDemandScreen() {
                   </View>
             </View>
             <View style={styles.body}>
-              <ScrollView style={[{marginBottom:tabBarHeight*2}]}>
+              <ScrollView style={[{marginBottom:100}]}>
                   <View style={styles.locationView}>
                         <Text style={styles.text_header}> Lyon </Text>
                         <MaterialCommunityIcons name="map-marker" color={colorText} size={24}/>
                   </View>
                     <View style={styles.contentContainer}>
-                            
+                            <View style={styles.info_event}>
+                                <Text style={styles.title_info_event}>{demandInfo.event_name}</Text>
+                                <Text style={styles.text_info_event}>{formatageDate(demandInfo.date)}</Text>
+                            </View>
+
+                            <View style={styles.info_demander}>
+                                <Text style={styles.title_demand}>Who wants to participate?</Text>
+                                <Text style={styles.text_demand}>{demandInfo.surname} {demandInfo.name}</Text>
+                            </View>
                     </View>
                     
               </ScrollView>
@@ -214,26 +230,34 @@ const styles = StyleSheet.create({
     paddingTop:5,
     height: "100%",
   },
-  title_body: {
-    color: colorText,
-    fontFamily: 'Montserrat_600SemiBold',
+  info_event:{
+
+  },
+  title_info_event: {
+    color: COLORS.lightBlue,
+    fontFamily: "Montserrat_600SemiBold",
     fontSize: 23
   },
-  text_body:{
-    color: colorText,
+  text_info_event:{
+    color: COLORS.lightBlue,
     fontFamily: "Montserrat_400Regular",
     fontSize: 19,
     marginBottom: 5
   },
-  events: {
-    flexDirection: "column",
-    marginBottom: 20,
+  info_demander:{
+
   },
-  categorieEvents: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 15,
+  title_demand:{
+    fontFamily: "Montserrat_600SemiBold",
+    color: COLORS.lightBlue,
+    fontSize: 19
   },
+  text_demand:{
+    color: COLORS.lightBlue,
+    fontFamily: "Montserrat_400Regular",
+    fontSize: 15,
+    marginBottom: 5
+  }
 });
 
  

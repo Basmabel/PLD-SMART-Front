@@ -50,7 +50,7 @@ const SignInScreen = ({ navigation }) => {
         }else{
           await AsyncStorage.setItem('key',JSON.stringify(json.id));
           await AsyncStorage.setItem('token',JSON.stringify(json.token));
-          navigation.navigate("NavigatorBar")
+          navigation.navigate("Demand")
         }
       })
       .catch((error)=>console.error(error))
