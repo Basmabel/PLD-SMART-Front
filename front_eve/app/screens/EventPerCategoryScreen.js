@@ -140,7 +140,7 @@ export default function EventPerCategoryScreen({route}) {
                   </View>
             </View>
             <View style={styles.body}>
-              <ScrollView style={{flexGrow:1}}>
+              <ScrollView style={{marginBottom:200*2}}>
                 <View style={{flex:1}}>
                   <View style={styles.locationView}>
                         <Text style={styles.text_header}> Lyon </Text>
