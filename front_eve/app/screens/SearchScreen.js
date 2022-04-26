@@ -119,10 +119,11 @@ const SearchScreen = ({ navigation }) => {
         }
       }, 10);
     });
+    
     if (true) {
       Promise.all([
         //fetch("http://169.254.3.246:3000/getMapEvents"),
-        fetch("https://eve-back.herokuapp.com/getMapEvents"),
+        fetch("http://169.254.3.246:3000/getMapEvents"),
       ])
         .then(function (responses) {
           // Get a JSON object from each of the responses
@@ -149,26 +150,9 @@ const SearchScreen = ({ navigation }) => {
     }
   });
 
-  /*const result = Object.keys({ popularEvents }).map((key) => ({
-    [key]: { popularEvents }[key],
-  }));*/
 
-  const tmp = { popularEvents };
 
-  var result = new Array(tmp.length);
-
-  var count = Object.keys({ popularEvents }).length;
-
-  //console.log({ popularEvents });
-
-  for (var i = 0; i < tmp.popularEvents.length; i++) {
-    var obj = tmp.popularEvents[i];
-    result[i] = obj;
-
-    //console.log(obj);
-  }
-
-  const interpolations = result.map((marker, index) => {
+  const interpolations = popularEvents.map((marker, index) => {
     const inputRange = [
       (index - 1) * CARD_WIDTH,
       index * CARD_WIDTH,
@@ -213,7 +197,7 @@ const SearchScreen = ({ navigation }) => {
               customMapStyle={mapDarkMode}
               provider={PROVIDER_GOOGLE}
             >
-              {result.map((marker, index) => {
+              {popularEvents.map((marker, index) => {
                 const scaleStyle = {
                   transform: [
                     {
@@ -225,8 +209,8 @@ const SearchScreen = ({ navigation }) => {
                   <MapView.Marker
                     key={index}
                     coordinate={{
-                      latitude: 45.7758115,
-                      longitude: 4.8530063,
+                      latitude: marker.latitude,
+                      longitude: marker.longitude,
                     }}
                     onPress={(e) => onMarkerPress(e)}
                   >
@@ -281,7 +265,7 @@ const SearchScreen = ({ navigation }) => {
                 { useNativeDriver: true }
               )}
             >
-              {result.map((marker, index) => (
+              {popularEvents.map((marker, index) => (
                 <View style={styles.card} key={index}>
                   <Image
                     source={{ uri: marker.ImageEvent }}
@@ -293,8 +277,8 @@ const SearchScreen = ({ navigation }) => {
                       {marker.name}
                     </Text>
                     <StarRating
-                      ratings={marker.rating}
-                      reviews={marker.reviews}
+                      ratings={marker.score}
+                      reviews={marker.score}
                     />
                     <Text numberOfLines={1} style={styles.cardDescription}>
                       {marker.description}

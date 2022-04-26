@@ -4,6 +4,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import DatePicker from "react-native-datepicker";
 import { COLORS } from "../config/colors";
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const data = [
   { label: "Sports", value: 1 },
@@ -30,6 +31,14 @@ const FilterScreen = ({ navigation }) => {
   const [categories, setCategories] = React.useState(data);
   const [isFocus, setIsFocus] = useState(false);
   const [date, setDate] = useState(getCurrentDate());
+  const [isLoading, setLoading] = React.useState(true);
+
+  const startLoading = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  };
 
   const filterData = async () => {
     fetch("http://169.254.3.246:3000/getFilteredEvents", {
@@ -37,25 +46,17 @@ const FilterScreen = ({ navigation }) => {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        category_id: { value },
-        date: { date },
+        category_id: value,
+        date: date,
       }),
     })
       .then((response) => {
-        status = response.status;
-        console.log(response.status);
-        if (status == 400 || status == 401) {
-          return response.text();
-        } else {
           return response.json();
-        }
       })
       .then(async (json) => {
-        if (status == 400 || status == 401) {
-          alert(json);
-        } else {
+        console.log(json)
           navigation.navigate("SearchScreen");
-        }
+        
       })
       .catch((error) => console.error(error));
   };
@@ -80,93 +81,97 @@ const FilterScreen = ({ navigation }) => {
       .catch(function (error) {
         // if there's an error, log it
         console.log(error);
-      });
+      }).finally(()=> setLoading(false));
   });
 
-  const tmp = { categories };
-
-  var categ = new Array(tmp.length);
-
-  for (var i = 0; i < tmp.categories.length; i++) {
-    var obj = tmp.categories[i];
-    categ[i] = obj;
-  }
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Category</Text>
-      <Dropdown
-        style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
-        inputSearchStyle={styles.inputSearchStyle}
-        iconStyle={styles.iconStyle}
-        data={categ[0]}
-        search
-        maxHeight={300}
-        labelField="description"
-        valueField="id"
-        placeholder={value === null ? "Select a Category" : category}
-        searchPlaceholder="Search..."
-        value={"test"}
-        onFocus={() => setIsFocus(true)}
-        onBlur={() => setIsFocus(false)}
-        onChange={(item) => {
-          setValue(item.id);
-          setCategory(item.description);
-          setIsFocus(false);
-        }}
-        renderLeftIcon={() => (
-          <AntDesign
-            style={styles.icon}
-            color={isFocus ? "blue" : "black"}
-            name="Safety"
-            size={20}
-          />
-        )}
-      />
-      <Text style={styles.title}> Date</Text>
-      <DatePicker
-        style={{ width: "100%" }}
-        date={date}
-        mode="date"
-        placeholder="select date"
-        format="DD/MM/YYYY"
-        minDate="01/01/2016"
-        maxDate="01/01/2026"
-        confirmBtnText="Confirm"
-        cancelBtnText="Cancel"
-        customStyles={{
-          dateIcon: {
-            position: "absolute",
-            left: 0,
-            top: 4,
-            marginLeft: 0,
-          },
-          dateInput: {
-            marginLeft: 36,
-          },
-          datePickerCon: { backgroundColor: "black" },
-        }}
-        onDateChange={(date) => {
-          setDate(date);
-        }}
-      />
-      <View style={styles.button}>
-        <TouchableOpacity style={styles.Filter} onPress={filterData}>
-          <View style={styles.signIn}>
-            <Text
-              style={[
-                styles.textFilter,
-                {
-                  color: COLORS.greyBlue,
+      {isLoading ? (
+            <Spinner
+              //visibility of Overlay Loading Spinner
+              visible={isLoading}
+              //Text with the Spinner
+              textContent={'Loading...'}
+              //Text style of the Spinner Text
+              textStyle={styles.spinnerTextStyle}
+            />
+      ) :
+         (<View>
+            <Text style={styles.title}>Category</Text>
+            <Dropdown
+              style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              data={categories[0]}
+              search
+              maxHeight={300}
+              labelField="description"
+              valueField="id"
+              placeholder={value === null ? "Select a Category" : category}
+              searchPlaceholder="Search..."
+              value={"test"}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={(item) => {
+                setValue(item.id);
+                setCategory(item.description);
+                setIsFocus(false);
+              }}
+              renderLeftIcon={() => (
+                <AntDesign
+                  style={styles.icon}
+                  color={isFocus ? "blue" : "black"}
+                  name="Safety"
+                  size={20}
+                />
+              )}
+            />
+            <Text style={styles.title}> Date</Text>
+            <DatePicker
+              style={{ width: "100%" }}
+              date={date}
+              mode="date"
+              placeholder="select date"
+              format="DD/MM/YYYY"
+              minDate="01/01/2016"
+              maxDate="01/01/2026"
+              confirmBtnText="Confirm"
+              cancelBtnText="Cancel"
+              customStyles={{
+                dateIcon: {
+                  position: "absolute",
+                  left: 0,
+                  top: 4,
+                  marginLeft: 0,
                 },
-              ]}
-            >
-              Filter
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+                dateInput: {
+                  marginLeft: 36,
+                },
+                datePickerCon: { backgroundColor: "black" },
+              }}
+              onDateChange={(date) => {
+                setDate(date);
+              }}
+            />
+            <View style={styles.button}>
+              <TouchableOpacity style={styles.Filter} onPress={filterData}>
+                <View style={styles.signIn}>
+                  <Text
+                    style={[
+                      styles.textFilter,
+                      {
+                        color: COLORS.greyBlue,
+                      },
+                    ]}
+                  >
+                    Filter
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>)}
     </View>
   );
 };

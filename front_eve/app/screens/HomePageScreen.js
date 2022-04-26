@@ -191,7 +191,6 @@ export default function HomePageScreen() {
       }).finally(()=> setLoading(false));
     }
       
-      
 
   }, [retreive]);
 
