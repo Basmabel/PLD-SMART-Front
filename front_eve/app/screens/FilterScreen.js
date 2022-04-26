@@ -26,9 +26,10 @@ const getCurrentDate = () => {
 
 const FilterScreen = ({ navigation }) => {
   const [value, setValue] = useState(null);
+  const [category, setCategory] = useState(null);
   const [categories, setCategories] = React.useState(data);
   const [isFocus, setIsFocus] = useState(false);
-  const [date, setDate] = useState(null);
+  const [date, setDate] = useState(getCurrentDate());
 
   const filterData = async () => {
     fetch("http://169.254.3.246:3000/getFilteredEvents", {
@@ -36,7 +37,7 @@ const FilterScreen = ({ navigation }) => {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        category_id: { categories }.id,
+        category_id: { value },
         date: { date },
       }),
     })
@@ -104,13 +105,14 @@ const FilterScreen = ({ navigation }) => {
         maxHeight={300}
         labelField="description"
         valueField="id"
-        placeholder={!isFocus ? "Select A category" : "..."}
+        placeholder={value === null ? "Select a Category" : category}
         searchPlaceholder="Search..."
         value={"test"}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={(item) => {
-          setValue(item.value);
+          setValue(item.id);
+          setCategory(item.description);
           setIsFocus(false);
         }}
         renderLeftIcon={() => (
@@ -125,7 +127,7 @@ const FilterScreen = ({ navigation }) => {
       <Text style={styles.title}> Date</Text>
       <DatePicker
         style={{ width: "100%" }}
-        date={getCurrentDate()}
+        date={date}
         mode="date"
         placeholder="select date"
         format="DD/MM/YYYY"
