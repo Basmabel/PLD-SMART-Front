@@ -130,7 +130,6 @@ export default function ParticipationDemandScreen({route}) {
 
         const tokenString = await AsyncStorage.getItem('token');
         const token = JSON.parse(tokenString);
-        console.log(" l : "+notif_id)
         setUserId(value)
         setUserToken(token)
         setRetreive(true)

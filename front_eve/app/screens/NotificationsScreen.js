@@ -93,7 +93,6 @@ export default function HomePageScreen({navigation}) {
    }
 
    const redirection = (id,type) =>{
-     console.log("e "+id)
      if(type===1){
         var out = 0
        // var id = selectedNotif.id
@@ -155,8 +154,6 @@ export default function HomePageScreen({navigation}) {
             setUserInfo(item)
           }else if(index==1){
             setNotifContent(item)
-            
-            console.log(item)
           }
             
         });
