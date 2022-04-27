@@ -12,6 +12,7 @@ import {
 } from '@expo-google-fonts/dev'
 import Spinner from 'react-native-loading-spinner-overlay';
 import formatageDate from '../utils/date_formatage';
+import { id } from "date-fns/esm/locale";
 
 var light = "dark"
 var colorBack= COLORS.greyBlue
@@ -22,7 +23,7 @@ if(light==="light"){
   colorText=COLORS.greyBlue
 }
 
-export default function ParticipationDemandScreen({notif_id}) {
+export default function ParticipationDemandScreen({route}) {
 
    const [userInfo, setUserInfo] = React.useState(null);
    const [isLoading, setLoading] = React.useState(true);
@@ -30,7 +31,8 @@ export default function ParticipationDemandScreen({notif_id}) {
    const [userId, setUserId] = React.useState("")
    const [userToken, setUserToken] = React.useState("")
    const [demandInfo, setDemandInfo] = React.useState(null)
-
+  const out = route.params.out
+  const notif_id = route.params.notif_id
   
 
    var [fontsLoaded] = useFonts({
@@ -80,16 +82,31 @@ export default function ParticipationDemandScreen({notif_id}) {
       body: JSON.stringify({ demand_id: demandInfo.demand_id, user_id: demandInfo.user_id, event_id: demandInfo.event_id }),
     }).catch((error)=>console.error(error));
   }
+
+  const signoutFetch = async ()=>{
+    fetch("http://169.254.3.246:3000/signoutDemand",{
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ demand_id: demandInfo.demand_id, participation_id: demandInfo.particip_id}),
+    }).catch((error)=>console.error(error));
+  }
   
+  const checkText = ()=>{
+    if(out===0){
+      return "participate"
+    }else{
+      return "signout"
+    }
+  }
 
   const acceptDemand = async ()=>{
     Alert.alert(
-      "Do you really want to refuse",
+      "Do you really want to accept",
       ``,
       [
         {
           text: "Yes",
-          onPress: () => {acceptFetch()}
+          onPress: () => {(out===0)?acceptFetch():signoutFetch()}
         },
         {
           text: "Cancel",
@@ -113,7 +130,7 @@ export default function ParticipationDemandScreen({notif_id}) {
 
         const tokenString = await AsyncStorage.getItem('token');
         const token = JSON.parse(tokenString);
-
+        console.log(" l : "+notif_id)
         setUserId(value)
         setUserToken(token)
         setRetreive(true)
@@ -205,16 +222,16 @@ export default function ParticipationDemandScreen({notif_id}) {
                                 <Pressable>
                                   <Image style={styles.demanderImage} source={{uri: demandInfo.photo ? demandInfo.photo : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}}/>
                                 </Pressable>
-                                <Text style={styles.title_demand}>{demandInfo.surname} wants to participate</Text>
+                                <Text style={styles.title_demand}>{demandInfo.surname} wants to {checkText()}</Text>
                             </View>
 
                             <View style={styles.buttons}>
                               <TouchableOpacity style={styles.accept} onPress={acceptDemand} >
                                   <Text style={[styles.textButton, {color:COLORS.greyBlue}]}>
-                                    Accept
+                                    {buttonText()}
                                   </Text>
                               </TouchableOpacity>
-                              <TouchableOpacity style={styles.refuse} onPress={refuseDemand}>
+                              <TouchableOpacity style={[styles.refuse, {display: (out===1)? 'none':'flex'}]} onPress={refuseDemand}>
                                   <Text style={[styles.textButton, {color:COLORS.lightBlue}]}>
                                     Refuse
                                   </Text>

@@ -24,6 +24,8 @@ import HomePageScreen from "../screens/HomePageScreen";
 import SearchScreen from "../screens/SearchScreen";
 import MyEventsScreen from "../screens/MyEventsScreen";
 import MyAccountScreen from "./MyAccountScreen.js";
+import NotificationsScreen from "./NotificationsScreen.js"
+import { Ionicons } from '@expo/vector-icons'; 
 
 const Tab = createBottomTabNavigator();
 
@@ -95,6 +97,21 @@ export default function NavigatorBar() {
               size={25}
               color={color}
               style={{paddingTop:5}}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Notifications"
+        component={NotificationsScreen}
+        options={{
+          headerShown: false,
+          component: { NotificationsScreen },
+          tabBarIcon: ({color}) => (
+            <Ionicons
+              name="notifications"
+              size={24}
+              color={color}
             />
           ),
         }}

@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView} from 'react-native';
+import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView, Pressable} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS} from '../config/colors.js';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -22,7 +22,7 @@ if(light==="light"){
   colorText=COLORS.greyBlue
 }
 
-export default function HomePageScreen() {
+export default function HomePageScreen({navigation}) {
 
    const [userInfo, setUserInfo] = React.useState(null);
    const [isLoading, setLoading] = React.useState(true);
@@ -32,7 +32,7 @@ export default function HomePageScreen() {
    const [userToken, setUserToken] = React.useState("")
    const [image,setImage] = React.useState("")
    const [notifContent, setNotifContent] =React.useState(null)
-
+   const [selectedNotif, setSelectedNotif] = React.useState({id:"",type:""})
   
 
    var [fontsLoaded] = useFonts({
@@ -92,6 +92,22 @@ export default function HomePageScreen() {
        }
    }
 
+   const redirection = (id,type) =>{
+     console.log("e "+id)
+     if(type===1){
+        var out = 0
+       // var id = selectedNotif.id
+        navigation.navigate("Demand",{notif_id:id,out:out});
+     }else if(type===8){
+       var out=1
+      // var id = selectedNotif.id
+       navigation.navigate("Demand",{notif_id:id,out:out})
+     }else if(type===5){
+       navigation.navigate("Profile")
+     }
+   }
+   
+  
   
   useEffect(() => {
 
@@ -158,14 +174,17 @@ export default function HomePageScreen() {
         
         <View style={styles.notification}>
                 <Image source={{uri: returnImg(item.type_id,item.userPhoto,item.event_photo)}} style={styles.profil}/>
-                <View style={styles.contentNotif}>
+                <Pressable style={styles.contentNotif} onPress={()=>{setSelectedNotif(
+                  {...selectedNotif,
+                    id: item.id,
+                    type: item.type_id}); redirection(item.id,item.type_id)}}>
                     <View style={{flexDirection:"row", width:"90%"}}>
                         <Text style={[styles.text_notif]} numberOfLines={2} ellipsizeMode="middle">{returnText(item.type_id, item.surname, item.event_name, item.type)}</Text>
                     </View>
-                    <ReturnReview review={item.review  }/>                
+                    <ReturnReview review={item.review}/>                
                     
                     <Text style={styles.date}>{formatageDate(item.date)}</Text>
-                </View>
+                </Pressable>
         </View>
     );
     if(!fontsLoaded){

@@ -17,6 +17,7 @@ import FilterScreen from "./app/screens/FilterScreen.js";
 import CategorieCard from './app/components/CategorieCard.js';
 import ParticipationDemandScreen from './app/screens/ParticipationDemandScreen.js';
 import NotificationsScreen from './app/screens/NotificationsScreen.js'
+import MyAccountScreen from './app/screens/MyAccountScreen.js';
 
 const Stack = createStackNavigator();
 
@@ -34,6 +35,7 @@ export default function App() {
         <Stack.Screen name="EventPerCategoryScreen" component={EventPerCategoryScreen}/>
         <Stack.Screen name="Demand" component={ParticipationDemandScreen}/>
         <Stack.Screen name="Notifications" component={NotificationsScreen}/>
+        <Stack.Screen name="Profile" component={MyAccountScreen}/>
         <Stack.Screen
           name="Previous"
           component={NavigatorBar}
