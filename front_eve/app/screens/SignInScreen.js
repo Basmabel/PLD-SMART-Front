@@ -31,7 +31,7 @@ const SignInScreen = ({ navigation }) => {
   var status =0;
   const loginData = async () => {
     if(data.isValidUser && data.isValidPassword && data.password!="" && data.email!=""){
-      fetch("https://eve-back.herokuapp.com/login",{
+      fetch("http://192.168.56.1:3000/login",{
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: data.email, password: data.password }),
@@ -50,7 +50,7 @@ const SignInScreen = ({ navigation }) => {
         }else{
           await AsyncStorage.setItem('key',JSON.stringify(json.id));
           await AsyncStorage.setItem('token',JSON.stringify(json.token));
-          navigation.navigate("NavigatorBar")
+          navigation.navigate("EventScreen",{eventId: 2})
         }
       })
       .catch((error)=>console.error(error))
