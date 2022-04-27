@@ -125,7 +125,7 @@ export default function ParticipationDemandScreen({notif_id}) {
     retreiveData();
     if(retreive){      
       Promise.all([
-        fetch('https://eve-back.herokuapp.com/getUserInfo',{
+        fetch('http://192.168.1.107:3000/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({

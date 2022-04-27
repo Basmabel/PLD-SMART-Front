@@ -116,22 +116,7 @@ export default function NavigatorBar() {
           ),
         }}
       />
-      <Tab.Screen
-        name="test"
-        component={ProfileScreen}
-        options={{
-          headerShown: false,
-          component: { ProfileScreen },
-          tabBarIcon: ({color}) => (
-            <MaterialCommunityIcons
-              name="map-outline"
-              size={25}
-              color={color}
-              style={{paddingTop:5}}
-            />
-          ),
-        }}
-      />
+
     </Tab.Navigator>
   );
 }

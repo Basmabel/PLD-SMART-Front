@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import LandingScreen from './app/screens/LandingScreen.js';
 import SignInScreen from './app/screens/SignInScreen.js';
 import SignUpScreen from './app/screens/SignUpScreen.js';
+import ProfileScreen from './app/screens/ProfileScreen.js';
 import HomePageScreen from './app/screens/HomePageScreen.js';
 import EventPerCategoryScreen from './app/screens/EventPerCategoryScreen.js';
 import NavigatorBar from './app/screens/NavigatorBar.js';
@@ -15,6 +16,8 @@ import { TextField } from "native-base";
 import ValidationCode from './app/screens/ValidationCode'
 import FilterScreen from "./app/screens/FilterScreen.js";
 import CategorieCard from './app/components/CategorieCard.js';
+import CarouselCard from './app/components/CarouselCard';
+
 import ParticipationDemandScreen from './app/screens/ParticipationDemandScreen.js';
 
 const Stack = createStackNavigator();
@@ -32,6 +35,8 @@ export default function App() {
         <Stack.Screen name="CategorieCard" component={CategorieCard} />
         <Stack.Screen name="EventPerCategoryScreen" component={EventPerCategoryScreen}/>
         <Stack.Screen name="Demand" component={ParticipationDemandScreen}/>
+        <Stack.Screen name="CarousselCard" component={CarouselCard}/>
+        <Stack.Screen name="ProfileScreen" component={ProfileScreen}/>
         <Stack.Screen
           name="Previous"
           component={NavigatorBar}

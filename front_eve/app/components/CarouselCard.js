@@ -7,6 +7,7 @@ import { Montserrat_600SemiBold } from '@expo-google-fonts/dev';
 import { Entypo } from '@expo/vector-icons'; 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import formatageDate from '../utils/date_formatage';
+import { useNavigation } from '@react-navigation/native';
 
 export const SLIDER_WIDTH = Dimensions.get('window').width
 export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.75)
@@ -19,11 +20,12 @@ if(light==="light"){
   colorShadow=COLORS.black
 }
 
-const CarouselCard= ({ item, index, type }) => {
+const CarouselCard= ({item, index, navigation, type }) => {
  
   if(type===undefined){
     type={"type":"nan"}
   }
+
   const styles = StyleSheet.create({
     container: {
       backgroundColor: Colors.white,
@@ -113,7 +115,7 @@ const CarouselCard= ({ item, index, type }) => {
       />
        <View style={styles.header}>
          <Text style={styles.name}>{item.name}</Text>
-         <TouchableOpacity onPress={()=> console.log("clicked on "+JSON.stringify(item))}>
+         <TouchableOpacity onPress={()=> navigation.navigate("ProfileScreen",{profile_id:item.CreatorId})}>
          <Image source={{uri: isImage? item.ImageProfil : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}} style={styles.profil} />
          </TouchableOpacity>
          </View>

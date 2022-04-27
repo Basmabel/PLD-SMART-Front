@@ -129,15 +129,15 @@ export default function HomePageScreen() {
     retreiveData();
     if(retreive){      
       Promise.all([
-        fetch('https://eve-back.herokuapp.com/getPopular'),
-        fetch('https://eve-back.herokuapp.com/getUserInfo',{
+        fetch('http://192.168.1.107:3000/getPopular'),
+        fetch('http://192.168.1.107:3000/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('https://eve-back.herokuapp.com/getCategories'),
-        fetch('https://eve-back.herokuapp.com/getEventsByCategory')
+        fetch('http://192.168.1.107:3000/getCategories'),
+        fetch('http://192.168.1.107:3000/getEventsByCategory')
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
         return Promise.all(responses.map(function (response) {
@@ -148,7 +148,6 @@ export default function HomePageScreen() {
         // You would do something with both sets of data here
         data.map((item,index)=>{
           if(index==0){
-            console.log(item)
             setPopularEvents(item)
           }else if(index==1){
             setUserInfo(item)

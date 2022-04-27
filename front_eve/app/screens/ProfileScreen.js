@@ -27,9 +27,11 @@ import {
     Montserrat_600SemiBold
   } from '@expo-google-fonts/dev'
   import Spinner from 'react-native-loading-spinner-overlay';
+import { TouchableOpacity } from "react-native-gesture-handler";
   
-  export default function MyAccountScreen() {
+  export default function ProfileScreen({route}) {
     const tabBarHeight = useBottomTabBarHeight() * 2;
+    //const {profile_id}=route.params;
   
     var [fontsLoaded] = useFonts({
       Montserrat_400Regular,
@@ -76,15 +78,16 @@ import {
           }
         }
         retreiveData();
+        //setUserId(profile_id);
         if(retreive){      
           Promise.all([
-            fetch('https://eve-back.herokuapp.com/getMyAccountInfo',{
+            fetch('http://192.168.1.107:3000/getMyAccountInfo',{
               method: "POST",
               headers: {'content-type': 'application/json'},
               body: JSON.stringify({
                 "id":userId,
               })}),
-            fetch('https://eve-back.herokuapp.com/getReviewUser',{
+            fetch('http://192.168.1.107:3000/getReviewUser',{
               method: "POST",
               headers: {'content-type': 'application/json'},
               body: JSON.stringify({
@@ -136,48 +139,22 @@ import {
                 <View style={{paddingTop: 40,justifyContent: "center",alignItems: "center"}}>
                 
                 <Image
-                  source={{ uri: (userInfo.photo)? userInfo.photo : 'https://reactnative.dev/img/tiny_logo.png'}}
+                  source={{ uri: (userInfo.photo)? userInfo.photo : 'https://cdn-icons-png.flaticon.com/128/1946/1946429.png'}}
                   style={styles.profilImage}/>
                 </View>
   
-                <View style= {styles.content_info}>
+                <View style= {styles.content_info_name}>
                     <Text style={[styles.text_footer, styles.titleTextInput]}>
-                        Name
+                    {userInfo.name} {userInfo.surname}
                     </Text>
-  
-                    <View style={styles.action}>
-                        <Feather name="user" color={COLORS.white} size={20} />
-                        <TextInput style={styles.textInput}
-                        defaultValue={userInfo.name}
-                        editable={false}
-                        />
-                    </View>
                 </View>
   
                 <View style= {styles.content_info}>
-                    <Text style={[styles.text_footer, styles.titleTextInput]}>
-                        Surname
-                    </Text>
-  
-                    <View style={styles.action}>
-                        <Feather name="user" color={COLORS.white} size={20} />
-                        <TextInput style={styles.textInput}
-                        defaultValue={userInfo.surname}
-                        editable={false}
-                        />
-                    </View>
-                </View>
-  
-                <View style= {styles.content_info}>
-                    <Text style={[styles.text_footer, styles.titleTextInput]}>
-                        Email
-                    </Text>
-  
                     <View style={styles.action}>
                         <Feather name="mail" color={COLORS.white} size={20} />
                         <TextInput style={styles.textInput}
                         defaultValue={userInfo.mail}
-                        placeholder="Veillez entrer votre adresse mail"
+                        placeholder="No email"
                         placeholderTextColor={COLORS.lightBlue}
                         editable={false}
                         />
@@ -185,15 +162,11 @@ import {
                 </View>
   
                 <View style= {styles.content_info}>
-                    <Text style={[styles.text_footer, styles.titleTextInput]}>
-                        Phone number
-                    </Text>
-  
                     <View style={styles.action}>
                         <Feather name="phone" color={COLORS.white} size={20} />
                         <TextInput style={styles.textInput}
                         defaultValue={userInfo.phone}
-                        placeholder="No phone number"
+                        placeholder="No phone number filled in"
                         placeholderTextColor={COLORS.lightBlue}
                         editable={false}
                         />
@@ -202,15 +175,11 @@ import {
   
                 <View style={{flexDirection: "row",}}>
                 <View style= {styles.content_info}>
-                    <Text style={[styles.text_footer, styles.titleTextInput]}>
-                        City
-                    </Text>
-  
                     <View style={[styles.action,{width: (windowWidth/3)}]}>
                         <Feather name="home" color={COLORS.white} size={20} />
                         <TextInput style={styles.textInput}
                         defaultValue={userInfo.city}
-                        placeholder="city"
+                        placeholder="No city filled in"
                         placeholderTextColor={COLORS.lightBlue}
                         editable={false}
                         />
@@ -218,14 +187,10 @@ import {
                 </View>
   
                 <View style= {styles.content_info}>
-                    <Text style={[styles.text_footer, styles.titleTextInput, {marginHorizontal:-40}]}>
-                        Region
-                    </Text>
-  
                     <View style={[styles.action,{width: (windowWidth/2.5), marginHorizontal:-40}]}>
                         <TextInput style={styles.textInput}
                         defaultValue={userInfo.region}
-                        placeholder="Enter your region"
+                        placeholder="No region filled in"
                         placeholderTextColor={COLORS.lightBlue}
                         editable={false}
                         />
@@ -235,15 +200,13 @@ import {
   
                 
                 <View style= {styles.content_info}>
-                    <Text style={[styles.text_footer, styles.titleTextInput]}>
-                        Gender
-                    </Text>
+                    
   
                     <View style={styles.action}>
                         <Feather name="user" color={COLORS.white} size={20} />
                         <TextInput style={styles.textInput}
                         defaultValue={userInfo.gender}
-                        placeholder="Enter your gender"
+                        placeholder="No gender filled in"
                         placeholderTextColor={COLORS.lightBlue}
                         editable={false}
                         />
@@ -251,15 +214,11 @@ import {
                 </View>
   
                 <View style= {styles.content_info}>
-                    <Text style={[styles.text_footer, styles.titleTextInput]}>
-                        Birth date
-                    </Text>
-  
                     <View style={styles.action}>
                         <Feather name="calendar" color={COLORS.white} size={20} />
                         <TextInput style={styles.textInput}
                         defaultValue={formatageDate(userInfo.date_birth)}
-                        placeholder="Enter your birth date"
+                        placeholder="No birth date filled in "
                         placeholderTextColor={COLORS.greyBlue}
                         editable={false}
                         />
@@ -284,8 +243,23 @@ import {
                     </View>
                     <MyCarousel data={review} type={{ event: "review" }} />
                     </View>
-  
-                </View>
+                    </View>
+
+                    <View style= {styles.content_info_name}>
+                    <View style={styles.events}>
+                    <View style={styles.categorieEvents}>
+                      <TouchableOpacity onPress={console.log("report user")}>
+                      <Text style={styles.report}>Report {userInfo.name} {userInfo.surname}</Text>
+                      </TouchableOpacity>
+                    </View>
+                    </View>
+                    </View>
+
+                    
+
+                    
+                    
+
               </ScrollView>
               </View>
               </View>)}    
@@ -317,7 +291,12 @@ import {
     },
     content_info:{
       marginHorizontal:30,
-      marginTop:20
+      marginTop:20, 
+    },
+    content_info_name:{
+      marginHorizontal:30,
+      marginTop:10,
+      alignItems: "center" 
     },
     action: {
         flexDirection: "row",
@@ -338,6 +317,11 @@ import {
     title_body: {
       color: COLORS.lightBlue,
       fontSize: 23
+    },
+    report: {
+      color: COLORS.lightBlue,
+      fontSize: 23,
+      textDecorationLine: "underline",
     },
     
     profilImage: {
@@ -381,6 +365,7 @@ import {
     },
     titleTextInput : {
         color: COLORS.lightBlue,
+        fontSize: 25,
     },
     textInput: {
         flex: 1,
