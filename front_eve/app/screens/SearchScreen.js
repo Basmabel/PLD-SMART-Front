@@ -74,7 +74,13 @@ export const markers = [
   },
 ];
 
-const SearchScreen = ({ navigation }) => {
+const SearchScreen = ({ navigation, route }) => {
+  let isFiltered = route.params?.isFiltered;
+  let filteredEvents = route.params?.filteredEvents;
+
+  //console.log(route.params?.isFiltered);
+  /*const isFiltered = React.useContext(FilterContext);
+  console.log(isFiltered);*/
   const theme = useTheme();
   const initialMapState = {
     region: {
@@ -88,6 +94,7 @@ const SearchScreen = ({ navigation }) => {
   const [popularEvents, setPopularEvents] = React.useState([]);
   const [isLoading, setLoading] = React.useState(true);
   const [state, setState] = React.useState(initialMapState);
+  //const { isFiltered, filteredEvents } = route.params;
 
   let mapIndex = 0;
   let mapAnimation = new Animated.Value(0);
@@ -119,11 +126,11 @@ const SearchScreen = ({ navigation }) => {
         }
       }, 10);
     });
-    
+
     if (true) {
       Promise.all([
-        //fetch("http://169.254.3.246:3000/getMapEvents"),
-        fetch("http://169.254.3.246:3000/getMapEvents"),
+        //fetch("http://192.168.56.1:3000/getMapEvents"),
+        fetch("http://eve-back.herokuapp.com/getMapEvents"),
       ])
         .then(function (responses) {
           // Get a JSON object from each of the responses
@@ -139,6 +146,7 @@ const SearchScreen = ({ navigation }) => {
           data.map((item, index) => {
             if (index == 0) {
               setPopularEvents(item);
+              //console.log(item);
             }
           });
         })
@@ -150,171 +158,350 @@ const SearchScreen = ({ navigation }) => {
     }
   });
 
+  var result = null;
 
+  if (isFiltered) {
+    const interpolations = filteredEvents.map((marker, index) => {
+      const inputRange = [
+        (index - 1) * CARD_WIDTH,
+        index * CARD_WIDTH,
+        (index + 1) * CARD_WIDTH,
+      ];
 
-  const interpolations = popularEvents.map((marker, index) => {
-    const inputRange = [
-      (index - 1) * CARD_WIDTH,
-      index * CARD_WIDTH,
-      (index + 1) * CARD_WIDTH,
-    ];
+      const scale = mapAnimation.interpolate({
+        inputRange,
+        outputRange: [1, 1.5, 1],
+        extrapolate: "clamp",
+      });
 
-    const scale = mapAnimation.interpolate({
-      inputRange,
-      outputRange: [1, 1.5, 1],
-      extrapolate: "clamp",
+      return { scale };
     });
 
-    return { scale };
-  });
+    const onMarkerPress = (mapEventData) => {
+      const markerID = mapEventData._targetInst.return.key;
 
-  const onMarkerPress = (mapEventData) => {
-    const markerID = mapEventData._targetInst.return.key;
+      let x = markerID * CARD_WIDTH + markerID * 20;
+      if (Platform.OS === "ios") {
+        x = x - SPACING_FOR_CARD_INSET;
+      }
 
-    let x = markerID * CARD_WIDTH + markerID * 20;
-    if (Platform.OS === "ios") {
-      x = x - SPACING_FOR_CARD_INSET;
-    }
+      _scrollView.current.scrollTo({ x: x, y: 0, animated: true });
+    };
 
-    _scrollView.current.scrollTo({ x: x, y: 0, animated: true });
-  };
+    const _map = React.useRef(null);
+    const _scrollView = React.useRef(null);
 
-  const _map = React.useRef(null);
-  const _scrollView = React.useRef(null);
-
-  return (
-    <View style={StyleSheet.container}>
-      {isLoading ? (
-        <Text>Loading...</Text>
-      ) : (
-        <View>
-          <View style={styles.body}>
-            <MapView
-              ref={_map}
-              initialRegion={state.region}
-              style={styles.container}
-              showsUserLocation={true}
-              customMapStyle={mapDarkMode}
-              provider={PROVIDER_GOOGLE}
-            >
-              {popularEvents.map((marker, index) => {
-                const scaleStyle = {
-                  transform: [
-                    {
-                      scale: interpolations[index].scale,
-                    },
-                  ],
-                };
-                return (
-                  <MapView.Marker
-                    key={index}
-                    coordinate={{
-                      latitude: marker.latitude,
-                      longitude: marker.longitude,
-                    }}
-                    onPress={(e) => onMarkerPress(e)}
-                  >
-                    <Animated.View style={[styles.markerWrap]}>
-                      <Animated.Image
-                        source={require("../assets/images/Map_pin.png")}
-                        style={[styles.marker, scaleStyle]}
-                        resizeMode="cover"
-                      />
-                    </Animated.View>
-                  </MapView.Marker>
-                );
-              })}
-            </MapView>
-            <View style={styles.buttonView}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("FilterScreen")}
-                style={styles.filter}
+    return (
+      <View style={StyleSheet.container}>
+        {isLoading ? (
+          <Text>Loading...</Text>
+        ) : (
+          <View>
+            <View style={styles.body}>
+              <MapView
+                ref={_map}
+                initialRegion={state.region}
+                style={styles.container}
+                showsUserLocation={true}
+                customMapStyle={mapDarkMode}
+                provider={PROVIDER_GOOGLE}
               >
-                <Ionicons name="ios-filter" size={20} />
-              </TouchableOpacity>
-            </View>
-            <Animated.ScrollView
-              ref={_scrollView}
-              horizontal
-              pagingEnabled
-              scrollEventThrottle={1}
-              showsHorizontalScrollIndicator={false}
-              snapToInterval={CARD_WIDTH + 20}
-              snapToAlignment="center"
-              style={styles.scrollView}
-              contentInset={{
-                top: 0,
-                left: SPACING_FOR_CARD_INSET,
-                bottom: 0,
-                right: SPACING_FOR_CARD_INSET,
-              }}
-              contentContainerStyle={{
-                paddingHorizontal:
-                  Platform.OS === "android" ? SPACING_FOR_CARD_INSET : 0,
-              }}
-              onScroll={Animated.event(
-                [
-                  {
-                    nativeEvent: {
-                      contentOffset: {
-                        x: mapAnimation,
+                {filteredEvents.map((marker, index) => {
+                  const scaleStyle = {
+                    transform: [
+                      {
+                        scale: interpolations[index].scale,
+                      },
+                    ],
+                  };
+                  return (
+                    <MapView.Marker
+                      key={index}
+                      coordinate={{
+                        latitude: marker.latitude,
+                        longitude: marker.longitude,
+                      }}
+                      onPress={(e) => onMarkerPress(e)}
+                    >
+                      <Animated.View style={[styles.markerWrap]}>
+                        <Animated.Image
+                          source={require("../assets/images/Map_pin.png")}
+                          style={[styles.marker, scaleStyle]}
+                          resizeMode="cover"
+                        />
+                      </Animated.View>
+                    </MapView.Marker>
+                  );
+                })}
+              </MapView>
+              <View style={styles.buttonView}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("FilterScreen")}
+                  style={styles.filter}
+                >
+                  <Ionicons name="ios-filter" size={20} />
+                </TouchableOpacity>
+              </View>
+              <Animated.ScrollView
+                ref={_scrollView}
+                horizontal
+                pagingEnabled
+                scrollEventThrottle={1}
+                showsHorizontalScrollIndicator={false}
+                snapToInterval={CARD_WIDTH + 20}
+                snapToAlignment="center"
+                style={styles.scrollView}
+                contentInset={{
+                  top: 0,
+                  left: SPACING_FOR_CARD_INSET,
+                  bottom: 0,
+                  right: SPACING_FOR_CARD_INSET,
+                }}
+                contentContainerStyle={{
+                  paddingHorizontal:
+                    Platform.OS === "android" ? SPACING_FOR_CARD_INSET : 0,
+                }}
+                onScroll={Animated.event(
+                  [
+                    {
+                      nativeEvent: {
+                        contentOffset: {
+                          x: mapAnimation,
+                        },
                       },
                     },
-                  },
-                ],
-                { useNativeDriver: true }
-              )}
-            >
-              {popularEvents.map((marker, index) => (
-                <View style={styles.card} key={index}>
-                  <Image
-                    source={{ uri: marker.ImageEvent }}
-                    style={styles.cardImage}
-                    resizeMode="cover"
-                  />
-                  <View style={styles.textContent}>
-                    <Text numberOfLines={1} style={styles.cardtitle}>
-                      {marker.name}
-                    </Text>
-                    <StarRating
-                      ratings={marker.score}
-                      reviews={marker.score}
+                  ],
+                  { useNativeDriver: true }
+                )}
+              >
+                {filteredEvents.map((marker, index) => (
+                  <View style={styles.card} key={index}>
+                    <Image
+                      source={{ uri: marker.ImageEvent }}
+                      style={styles.cardImage}
+                      resizeMode="cover"
                     />
-                    <Text numberOfLines={1} style={styles.cardDescription}>
-                      {marker.description}
-                    </Text>
-                    <View style={styles.button}>
-                      <TouchableOpacity
-                        onPress={() => {}}
-                        style={[
-                          styles.signIn,
-                          {
-                            borderColor: COLORS.greyBlue,
-                            borderWidth: 1,
-                          },
-                        ]}
-                      >
-                        <Text
+                    <View style={styles.textContent}>
+                      <Text numberOfLines={1} style={styles.cardtitle}>
+                        {marker.name}
+                      </Text>
+                      <StarRating
+                        ratings={marker.score}
+                        reviews={marker.score}
+                      />
+                      <Text numberOfLines={1} style={styles.cardDescription}>
+                        {marker.description}
+                      </Text>
+                      <View style={styles.button}>
+                        <TouchableOpacity
+                          onPress={() => {}}
                           style={[
-                            styles.textSign,
+                            styles.signIn,
                             {
-                              color: COLORS.greyBlue,
+                              borderColor: COLORS.greyBlue,
+                              borderWidth: 1,
                             },
                           ]}
                         >
-                          Participate!
-                        </Text>
-                      </TouchableOpacity>
+                          <Text
+                            style={[
+                              styles.textSign,
+                              {
+                                color: COLORS.greyBlue,
+                              },
+                            ]}
+                          >
+                            Participate!
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
                     </View>
                   </View>
-                </View>
-              ))}
-            </Animated.ScrollView>
+                ))}
+              </Animated.ScrollView>
+            </View>
           </View>
-        </View>
-      )}
-    </View>
-  );
+        )}
+      </View>
+    );
+  } else {
+    const interpolations = popularEvents.map((marker, index) => {
+      const inputRange = [
+        (index - 1) * CARD_WIDTH,
+        index * CARD_WIDTH,
+        (index + 1) * CARD_WIDTH,
+      ];
+
+      const scale = mapAnimation.interpolate({
+        inputRange,
+        outputRange: [1, 1.5, 1],
+        extrapolate: "clamp",
+      });
+
+      return { scale };
+    });
+
+    const onMarkerPress = (mapEventData) => {
+      const markerID = mapEventData._targetInst.return.key;
+
+      let x = markerID * CARD_WIDTH + markerID * 20;
+      if (Platform.OS === "ios") {
+        x = x - SPACING_FOR_CARD_INSET;
+      }
+
+      _scrollView.current.scrollTo({ x: x, y: 0, animated: true });
+    };
+
+    const _map = React.useRef(null);
+    const _scrollView = React.useRef(null);
+
+    //console.log(route.params?.isFiltered);
+
+    /*let isFiltered = false;
+    console.log(route.params?.isFiltered);
+    if (route.params != null) {
+      console.log("in hereee");
+      isFiltered = route.params.isFiltered;
+    }
+    if (isFiltered) {
+      result = route.params.filteredEvents;
+      console.log(route.params.isFiltered);
+    }*/
+
+    return (
+      <View style={StyleSheet.container}>
+        {isLoading ? (
+          <Text>Loading...</Text>
+        ) : (
+          <View>
+            <View style={styles.body}>
+              <MapView
+                ref={_map}
+                initialRegion={state.region}
+                style={styles.container}
+                showsUserLocation={true}
+                customMapStyle={mapDarkMode}
+                provider={PROVIDER_GOOGLE}
+              >
+                {popularEvents.map((marker, index) => {
+                  const scaleStyle = {
+                    transform: [
+                      {
+                        scale: interpolations[index].scale,
+                      },
+                    ],
+                  };
+                  return (
+                    <MapView.Marker
+                      key={index}
+                      coordinate={{
+                        latitude: marker.latitude,
+                        longitude: marker.longitude,
+                      }}
+                      onPress={(e) => onMarkerPress(e)}
+                    >
+                      <Animated.View style={[styles.markerWrap]}>
+                        <Animated.Image
+                          source={require("../assets/images/Map_pin.png")}
+                          style={[styles.marker, scaleStyle]}
+                          resizeMode="cover"
+                        />
+                      </Animated.View>
+                    </MapView.Marker>
+                  );
+                })}
+              </MapView>
+              <View style={styles.buttonView}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("FilterScreen")}
+                  style={styles.filter}
+                >
+                  <Ionicons name="ios-filter" size={20} />
+                </TouchableOpacity>
+              </View>
+              <Animated.ScrollView
+                ref={_scrollView}
+                horizontal
+                pagingEnabled
+                scrollEventThrottle={1}
+                showsHorizontalScrollIndicator={false}
+                snapToInterval={CARD_WIDTH + 20}
+                snapToAlignment="center"
+                style={styles.scrollView}
+                contentInset={{
+                  top: 0,
+                  left: SPACING_FOR_CARD_INSET,
+                  bottom: 0,
+                  right: SPACING_FOR_CARD_INSET,
+                }}
+                contentContainerStyle={{
+                  paddingHorizontal:
+                    Platform.OS === "android" ? SPACING_FOR_CARD_INSET : 0,
+                }}
+                onScroll={Animated.event(
+                  [
+                    {
+                      nativeEvent: {
+                        contentOffset: {
+                          x: mapAnimation,
+                        },
+                      },
+                    },
+                  ],
+                  { useNativeDriver: true }
+                )}
+              >
+                {popularEvents.map((marker, index) => (
+                  <View style={styles.card} key={index}>
+                    <Image
+                      source={{ uri: marker.ImageEvent }}
+                      style={styles.cardImage}
+                      resizeMode="cover"
+                    />
+                    <View style={styles.textContent}>
+                      <Text numberOfLines={1} style={styles.cardtitle}>
+                        {marker.name}
+                      </Text>
+                      <StarRating
+                        ratings={marker.score}
+                        reviews={marker.score}
+                      />
+                      <Text numberOfLines={1} style={styles.cardDescription}>
+                        {marker.description}
+                      </Text>
+                      <View style={styles.button}>
+                        <TouchableOpacity
+                          onPress={() => {}}
+                          style={[
+                            styles.signIn,
+                            {
+                              borderColor: COLORS.greyBlue,
+                              borderWidth: 1,
+                            },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.textSign,
+                              {
+                                color: COLORS.greyBlue,
+                              },
+                            ]}
+                          >
+                            Participate!
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                ))}
+              </Animated.ScrollView>
+            </View>
+          </View>
+        )}
+      </View>
+    );
+  }
 };
 export default SearchScreen;
 

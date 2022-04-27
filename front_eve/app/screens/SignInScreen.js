@@ -13,7 +13,7 @@ import {
 import * as Animatable from "react-native-animatable";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Feather from "react-native-vector-icons/Feather";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "react-native-paper";
 
 const SignInScreen = ({ navigation }) => {
@@ -28,44 +28,49 @@ const SignInScreen = ({ navigation }) => {
     isValidPassword: true,
   });
 
-  var status =0;
+  var status = 0;
   const loginData = async () => {
-    if(data.isValidUser && data.isValidPassword && data.password!="" && data.email!=""){
-      fetch("https://eve-back.herokuapp.com/login",{
+    if (
+      data.isValidUser &&
+      data.isValidPassword &&
+      data.password != "" &&
+      data.email != ""
+    ) {
+      fetch("http://eve-back.herokuapp.com/login", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: data.email, password: data.password }),
-      }).then((response)=>{
+      })
+        .then((response) => {
           status = response.status;
-          console.log(response.status)
-          if(status==400 || status==401){
-            return response.text()
-          }else{
+          console.log(response.status);
+          if (status == 400 || status == 401) {
+            return response.text();
+          } else {
             return response.json();
           }
-      })
-      .then(async (json)=>{
-        if(status==400 || status==401){
-          alert(json)
-        }else{
-          await AsyncStorage.setItem('key',JSON.stringify(json.id));
-          await AsyncStorage.setItem('token',JSON.stringify(json.token));
-          navigation.navigate("NavigatorBar")
-        }
-      })
-      .catch((error)=>console.error(error))
-    }else{
-      if(!data.isValidUser){
-        alert("Your email is not valid")
-      }else if(!data.isValidPassword){
-        alert("Your password is not valid")
-      }else if(data.email==="" || data.password===""){
-        alert("Please fill in every field")
+        })
+        .then(async (json) => {
+          if (status == 400 || status == 401) {
+            alert(json);
+          } else {
+            await AsyncStorage.setItem("key", JSON.stringify(json.id));
+            await AsyncStorage.setItem("token", JSON.stringify(json.token));
+            navigation.navigate("NavigatorBar");
+          }
+        })
+        .catch((error) => console.error(error));
+    } else {
+      if (!data.isValidUser) {
+        alert("Your email is not valid");
+      } else if (!data.isValidPassword) {
+        alert("Your password is not valid");
+      } else if (data.email === "" || data.password === "") {
+        alert("Please fill in every field");
       }
     }
-     
-   
-      //const response = await fetch("https://eve-back.herokuapp.com/login"
+
+    //const response = await fetch("https://eve-back.herokuapp.com/login"
   };
 
   const { colors } = useTheme();
@@ -175,9 +180,7 @@ const SignInScreen = ({ navigation }) => {
         </View>
         {data.isValidUser ? null : (
           <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>
-              Invalid email.
-            </Text>
+            <Text style={styles.errorMsg}>Invalid email.</Text>
           </Animatable.View>
         )}
 
