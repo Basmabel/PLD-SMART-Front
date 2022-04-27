@@ -15,7 +15,7 @@ const StarRating = (props) => {
       color: props.color,
     },
     text: {
-      fontSize: 12,
+      fontSize: 20,
       marginLeft: 5,
       color: props.color,
     },
@@ -33,7 +33,7 @@ const StarRating = (props) => {
       name = "ios-star-outline";
     }
 
-    stars.push(<Ionicons name={name} size={15} style={styles.star} key={i} />);
+    stars.push(<Ionicons name={name} size={20} style={styles.star} key={i} />);
   }
 
   return (

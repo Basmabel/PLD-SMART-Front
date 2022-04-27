@@ -147,93 +147,28 @@ import { TouchableOpacity } from "react-native-gesture-handler";
                     <Text style={[styles.text_footer, styles.titleTextInput]}>
                     {userInfo.name} {userInfo.surname}
                     </Text>
-                </View>
-  
-                <View style= {styles.content_info}>
-                    <View style={styles.action}>
-                        <Feather name="mail" color={COLORS.white} size={20} />
-                        <TextInput style={styles.textInput}
-                        defaultValue={userInfo.mail}
-                        placeholder="No email"
-                        placeholderTextColor={COLORS.lightBlue}
-                        editable={false}
-                        />
-                    </View>
-                </View>
-  
-                <View style= {styles.content_info}>
-                    <View style={styles.action}>
-                        <Feather name="phone" color={COLORS.white} size={20} />
-                        <TextInput style={styles.textInput}
-                        defaultValue={userInfo.phone}
-                        placeholder="No phone number filled in"
-                        placeholderTextColor={COLORS.lightBlue}
-                        editable={false}
-                        />
-                    </View>
-                </View>              
-  
-                <View style={{flexDirection: "row",}}>
-                <View style= {styles.content_info}>
-                    <View style={[styles.action,{width: (windowWidth/3)}]}>
-                        <Feather name="home" color={COLORS.white} size={20} />
-                        <TextInput style={styles.textInput}
-                        defaultValue={userInfo.city}
-                        placeholder="No city filled in"
-                        placeholderTextColor={COLORS.lightBlue}
-                        editable={false}
-                        />
-                    </View>
-                </View>
-  
-                <View style= {styles.content_info}>
-                    <View style={[styles.action,{width: (windowWidth/2.5), marginHorizontal:-40}]}>
-                        <TextInput style={styles.textInput}
-                        defaultValue={userInfo.region}
-                        placeholder="No region filled in"
-                        placeholderTextColor={COLORS.lightBlue}
-                        editable={false}
-                        />
-                    </View>
-                </View>
+                    <Text style={[styles.text_footer, styles.titleInfos]}>
+                    {userInfo.mail}
+                    </Text>
+                    <Text style={[styles.text_footer, styles.titleInfos]}>
+                    {userInfo.phone}
+                    </Text>
                 </View>
   
                 
-                <View style= {styles.content_info}>
-                    
+               
+            
   
-                    <View style={styles.action}>
-                        <Feather name="user" color={COLORS.white} size={20} />
-                        <TextInput style={styles.textInput}
-                        defaultValue={userInfo.gender}
-                        placeholder="No gender filled in"
-                        placeholderTextColor={COLORS.lightBlue}
-                        editable={false}
-                        />
-                    </View>
-                </View>
-  
-                <View style= {styles.content_info}>
-                    <View style={styles.action}>
-                        <Feather name="calendar" color={COLORS.white} size={20} />
-                        <TextInput style={styles.textInput}
-                        defaultValue={formatageDate(userInfo.date_birth)}
-                        placeholder="No birth date filled in "
-                        placeholderTextColor={COLORS.greyBlue}
-                        editable={false}
-                        />
-                    </View>
-  
-                    
+                <View style= {styles.content_info}>  
                     <View style={styles.events}>
-                      <View style={styles.categorieEvents}>
-                        <Text style={styles.title_body}>Ratings</Text>
-                        <MaterialIcons name="star-rate" color={COLORS.lightBlue} size={26}/>
+                      <View style={[{flexDirection: "row"}]}>
+                      <Text style={styles.text_body}>Participation</Text>
+                      <StarRating ratings={participantRating} reviews={participantRating} color={COLORS.lightYellow}/>
                       </View>
-                      <Text style={styles.text_body}>Participation rating</Text>
-                      <StarRating ratings={participantRating} reviews={participantRating} color={COLORS.lightYellow} />
-                      <Text style={styles.text_body}>Organisation rating</Text>
+                      <View style={[{flexDirection: "row"}]}>
+                      <Text style={styles.text_body}>Organisation </Text>
                       <StarRating ratings={creatorRating} reviews={creatorRating} color={COLORS.lightYellow} />
+                      </View>
                     </View>
   
                     <View style={styles.events}>
@@ -254,11 +189,6 @@ import { TouchableOpacity } from "react-native-gesture-handler";
                     </View>
                     </View>
                     </View>
-
-                    
-
-                    
-                    
 
               </ScrollView>
               </View>
@@ -292,6 +222,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
     content_info:{
       marginHorizontal:30,
       marginTop:20, 
+      
     },
     content_info_name:{
       marginHorizontal:30,
@@ -307,6 +238,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
         width: (windowWidth - 60),
         alignItems: 'center'
       },
+    
     title_header: {
       color: COLORS.greyBlue,
       fontSize: 25,
@@ -316,7 +248,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
     },
     title_body: {
       color: COLORS.lightBlue,
-      fontSize: 23
+      fontSize: 23,
     },
     report: {
       color: COLORS.lightBlue,
@@ -329,17 +261,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
       height: 120,
       borderRadius: 100,
     },
-    dialogStyle: {
-        width: '20%',
-        height: '20%',
-        borderRadius: 25,
-      },
-    locationView: {
-      flexDirection: "row",
-    },
-    text_header: {
-      fontSize: 20,
-    },
+    
     body: {
       backgroundColor: COLORS.greyBlue,
       borderTopLeftRadius: 30,
@@ -352,7 +274,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
       color: COLORS.lightBlue,
       fontFamily: "Montserrat_400Regular",
       fontSize: 19,
-      marginBottom: 5
+      marginBottom: 5,
     },
     events: {
       flexDirection: "column",
@@ -365,8 +287,13 @@ import { TouchableOpacity } from "react-native-gesture-handler";
     },
     titleTextInput : {
         color: COLORS.lightBlue,
-        fontSize: 25,
+        fontSize: 35,
     },
+    titleInfos : {
+      color: COLORS.lightBlue,
+      fontSize: 20,
+      marginHorizontal: 1,
+  },
     textInput: {
         flex: 1,
         marginTop: Platform.OS === "ios" ? 0 : -12,
