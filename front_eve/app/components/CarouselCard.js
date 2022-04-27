@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, StyleSheet, Dimensions, Image } from "react-native"
+import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity } from "react-native"
 import { Colors } from 'react-native-paper';
 import {COLORS} from '../config/colors.js';
 import { format } from "date-fns";
@@ -74,7 +74,7 @@ const CarouselCard= ({ item, index, type }) => {
     profil:{
       width:34,
       height:34,
-      borderRadius:17
+      borderRadius:100
     },
     infos:{
       flexDirection:'row',
@@ -113,8 +113,10 @@ const CarouselCard= ({ item, index, type }) => {
       />
        <View style={styles.header}>
          <Text style={styles.name}>{item.name}</Text>
-         <Image source={{uri: isImage? item.ImageProfil : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}} style={styles.profil}/>
-       </View>
+         <TouchableOpacity onPress={()=> console.log("clicked on "+JSON.stringify(item))}>
+         <Image source={{uri: isImage? item.ImageProfil : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}} style={styles.profil} />
+         </TouchableOpacity>
+         </View>
       <View style={styles.body}>
         <View style={styles.infos}>
           <Entypo name="clock" size={15} color={COLORS.lightGrey} />

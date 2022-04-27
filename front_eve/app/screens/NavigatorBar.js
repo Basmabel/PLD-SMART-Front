@@ -24,6 +24,8 @@ import HomePageScreen from "../screens/HomePageScreen";
 import SearchScreen from "../screens/SearchScreen";
 import MyEventsScreen from "../screens/MyEventsScreen";
 import MyAccountScreen from "./MyAccountScreen.js";
+import ProfileScreen from "./ProfileScreen.js";
+
 
 const Tab = createBottomTabNavigator();
 
@@ -110,6 +112,22 @@ export default function NavigatorBar() {
               name="account"
               size={24}
               color={color}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="test"
+        component={ProfileScreen}
+        options={{
+          headerShown: false,
+          component: { ProfileScreen },
+          tabBarIcon: ({color}) => (
+            <MaterialCommunityIcons
+              name="map-outline"
+              size={25}
+              color={color}
+              style={{paddingTop:5}}
             />
           ),
         }}

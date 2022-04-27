@@ -148,6 +148,7 @@ export default function HomePageScreen() {
         // You would do something with both sets of data here
         data.map((item,index)=>{
           if(index==0){
+            console.log(item)
             setPopularEvents(item)
           }else if(index==1){
             setUserInfo(item)
