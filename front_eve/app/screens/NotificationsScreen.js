@@ -11,6 +11,7 @@ import {
   Montserrat_600SemiBold
 } from '@expo-google-fonts/dev';
 import Spinner from 'react-native-loading-spinner-overlay';
+import formatageDate from '../utils/date_formatage';
 
 var light = "dark"
 var colorBack= COLORS.greyBlue
@@ -163,7 +164,7 @@ export default function HomePageScreen() {
                     </View>
                     <ReturnReview review={item.review  }/>                
                     
-                    <Text style={styles.date}>25 Apr 2022</Text>
+                    <Text style={styles.date}>{formatageDate(item.date)}</Text>
                 </View>
         </View>
     );
