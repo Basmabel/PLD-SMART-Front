@@ -228,7 +228,7 @@ export default function ParticipationDemandScreen({route}) {
                             <View style={styles.buttons}>
                               <TouchableOpacity style={styles.accept} onPress={acceptDemand} >
                                   <Text style={[styles.textButton, {color:COLORS.greyBlue}]}>
-                                    {buttonText()}
+                                    Accept
                                   </Text>
                               </TouchableOpacity>
                               <TouchableOpacity style={[styles.refuse, {display: (out===1)? 'none':'flex'}]} onPress={refuseDemand}>
