@@ -132,7 +132,7 @@ export default function HomePageScreen() {
 
     socketRef.current = io("http://169.254.3.246:3000");
      socketRef.current.on('message', (message)=>{
-       console.log(message)
+       console.log("You received a notification")
      })
      socketRef.current.emit('userId',(userId))
  

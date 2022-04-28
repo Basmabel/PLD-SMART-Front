@@ -1,5 +1,5 @@
 import React, {useEffect,useRef} from "react";
-import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView, Pressable} from 'react-native';
+import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView, Pressable, Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS} from '../config/colors.js';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -220,7 +220,7 @@ export default function HomePageScreen({navigation}) {
                     
                     <Text style={styles.date}>{formatageDate(item.date)}</Text>
                 </Pressable>
-                <Pressable  onPress={()=>{askForsure(item.id)} }>
+                <Pressable  style={{marginLeft:-20}} onPress={()=>{askForsure(item.id)} }>
                  <Ionicons name="checkmark-circle" size={24} color="black"/>
                 </Pressable>
 
@@ -360,12 +360,12 @@ const styles = StyleSheet.create({
   },
   text_notif:{
       fontFamily: "Montserrat_600SemiBold",
-      fontSize: 14,
-      width:'100%'
+      fontSize: 12,
+      width:'90%'
   },
   date:{
       fontFamily: "Montserrat_600SemiBold",
-      fontSize: 13,
+      fontSize: 10,
       color: COLORS.grey
   }
 });
