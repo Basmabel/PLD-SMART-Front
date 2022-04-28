@@ -44,6 +44,7 @@ export default function NavigatorBar() {
           fontSize: 12,
           fontWeight: "bold"
         },
+        unmountOnBlur: true,
         tabBarStyle: [
           {
             display: "flex"

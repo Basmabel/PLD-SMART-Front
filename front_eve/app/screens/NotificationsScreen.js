@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect,useRef} from "react";
 import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView, Pressable} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS} from '../config/colors.js';
@@ -12,6 +12,8 @@ import {
 } from '@expo-google-fonts/dev';
 import Spinner from 'react-native-loading-spinner-overlay';
 import formatageDate from '../utils/date_formatage';
+import {io} from "socket.io-client"
+import { Ionicons } from '@expo/vector-icons';  
 
 var light = "dark"
 var colorBack= COLORS.greyBlue
@@ -34,6 +36,7 @@ export default function HomePageScreen({navigation}) {
    const [notifContent, setNotifContent] =React.useState(null)
    const [selectedNotif, setSelectedNotif] = React.useState({id:"",type:""})
   
+   const socketRef = useRef();
 
    var [fontsLoaded] = useFonts({
     Montserrat_400Regular,
@@ -105,6 +108,33 @@ export default function HomePageScreen({navigation}) {
        navigation.navigate("Profile")
      }
    }
+
+   const askForsure = (id) =>{
+    Alert.alert(
+      "Do you really want to mark as viewed notification?",
+      ``,
+      [
+        {
+          text: "Yes",
+          onPress: () => {deleteNotifFetch(id)}
+        },
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel"
+        }
+      ],
+      { cancelable: false }
+    );
+   }
+
+   const deleteNotifFetch = async(id)=>{
+    fetch("http://169.254.3.246:3000/setNotifDone",{
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ id: id }),
+    }).catch((error)=>console.error(error));
+   }
    
   
   
@@ -127,6 +157,14 @@ export default function HomePageScreen({navigation}) {
     }
     //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
     retreiveData();
+    
+    socketRef.current = io("http://169.254.3.246:3000");
+    socketRef.current.emit('userId',(userId))
+     socketRef.current.on('message', (message)=>{
+       console.log("You received a notification")
+     })
+     
+
     if(retreive){      
       Promise.all([
         fetch('https://eve-back.herokuapp.com/getUserInfo',{
@@ -182,6 +220,10 @@ export default function HomePageScreen({navigation}) {
                     
                     <Text style={styles.date}>{formatageDate(item.date)}</Text>
                 </Pressable>
+                <Pressable  onPress={()=>{askForsure(item.id)} }>
+                 <Ionicons name="checkmark-circle" size={24} color="black"/>
+                </Pressable>
+
         </View>
     );
     if(!fontsLoaded){

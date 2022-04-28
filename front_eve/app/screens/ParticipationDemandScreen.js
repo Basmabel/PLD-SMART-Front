@@ -26,7 +26,7 @@ if(light==="light"){
   colorText=COLORS.greyBlue
 }
 
-export default function ParticipationDemandScreen({route}) {
+export default function ParticipationDemandScreen({route,navigation}) {
 
    const [userInfo, setUserInfo] = React.useState(null);
    const [isLoading, setLoading] = React.useState(true);
@@ -93,6 +93,8 @@ export default function ParticipationDemandScreen({route}) {
     const event_id = demandInfo.event_id
     const user_id = demandInfo.user_id
     socketRef.current.emit('message',{message,type,event_id,user_id})
+
+    navigation.navigate("NavigatorBar")
   }
 
   const signoutFetch = async ()=>{
@@ -156,7 +158,7 @@ export default function ParticipationDemandScreen({route}) {
     socketRef.current = io("http://169.254.3.246:3000");
       
     socketRef.current.on('message', (message)=>{
-      console.log(socketRef.id)
+      console.log("You received a notification")
     })
     socketRef.current.emit('userId',(userId))
     if(retreive){      
@@ -195,9 +197,6 @@ export default function ParticipationDemandScreen({route}) {
       }).finally(()=> setLoading(false));
     }
       
-      return ()=>{
-        socketRef.current.disconnect();
-      }
 
   }, [retreive]);
 

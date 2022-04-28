@@ -131,7 +131,6 @@ export default function HomePageScreen() {
     retreiveData();
 
     socketRef.current = io("http://169.254.3.246:3000");
-    console.log("im here")
      socketRef.current.on('message', (message)=>{
        console.log(message)
      })
@@ -202,9 +201,9 @@ export default function HomePageScreen() {
     }
       
 
-    return ()=>{
+    /*return ()=>{
       socketRef.current.disconnect();
-    }
+    }*/
   }, [retreive]);
 
   
