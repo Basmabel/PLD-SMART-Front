@@ -6,7 +6,7 @@ import SignInScreen from './app/screens/SignInScreen.js';
 import SignUpScreen from './app/screens/SignUpScreen.js';
 import HomePageScreen from './app/screens/HomePageScreen.js';
 import EventPerCategoryScreen from './app/screens/EventPerCategoryScreen.js';
-//import EventScreen from './app/screens/EventScreen.js';
+import EventScreen from './app/screens/EventScreen.js';
 import NavigatorBar from './app/screens/NavigatorBar.js';
 import { NavigationContainer } from '@react-navigation/native';
 import "react-native-gesture-handler";
@@ -40,7 +40,7 @@ export default function App() {
         />
         <Stack.Screen name="FilterScreen" component={FilterScreen} />
         <Stack.Screen name="SearchScreen" component={SearchScreen} />
-        {/* <Stack.Screen name="EventScreen" component={EventScreen} /> */}
+        <Stack.Screen name="EventScreen" component={EventScreen} />
       
       </Stack.Navigator>
     </NavigationContainer>
