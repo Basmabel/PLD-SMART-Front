@@ -18,6 +18,7 @@ import CategorieCard from './app/components/CategorieCard.js';
 import ParticipationDemandScreen from './app/screens/ParticipationDemandScreen.js';
 import NotificationsScreen from './app/screens/NotificationsScreen.js'
 import MyAccountScreen from './app/screens/MyAccountScreen.js';
+import {io} from "socket.io-client"
 
 const Stack = createStackNavigator();
 

@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView, Pressable, TouchableOpacity, Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS} from '../config/colors.js';
@@ -12,7 +12,10 @@ import {
 } from '@expo-google-fonts/dev'
 import Spinner from 'react-native-loading-spinner-overlay';
 import formatageDate from '../utils/date_formatage';
-import { id } from "date-fns/esm/locale";
+import {io} from "socket.io-client"
+
+
+
 
 var light = "dark"
 var colorBack= COLORS.greyBlue
@@ -31,9 +34,11 @@ export default function ParticipationDemandScreen({route}) {
    const [userId, setUserId] = React.useState("")
    const [userToken, setUserToken] = React.useState("")
    const [demandInfo, setDemandInfo] = React.useState(null)
-  const out = route.params.out
+ const out = route.params.out
   const notif_id = route.params.notif_id
-  
+ /*  const out =0
+  const notif_id =2*/
+  const socketRef = useRef();
 
    var [fontsLoaded] = useFonts({
     Montserrat_400Regular,
@@ -73,6 +78,7 @@ export default function ParticipationDemandScreen({route}) {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ id: demandInfo.demand_id }),
     }).catch((error)=>console.error(error));
+
   }
 
   const acceptFetch = async()=>{
@@ -81,6 +87,12 @@ export default function ParticipationDemandScreen({route}) {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ demand_id: demandInfo.demand_id, user_id: demandInfo.user_id, event_id: demandInfo.event_id }),
     }).catch((error)=>console.error(error));
+
+    const message = "hello"
+    const type = 2
+    const event_id = demandInfo.event_id
+    const user_id = demandInfo.user_id
+    socketRef.current.emit('message',{message,type,event_id,user_id})
   }
 
   const signoutFetch = async ()=>{
@@ -123,6 +135,7 @@ export default function ParticipationDemandScreen({route}) {
   
   useEffect(() => {
     
+    
     const retreiveData = async ()=>{
       try {
         const valueString = await AsyncStorage.getItem('key');
@@ -139,6 +152,13 @@ export default function ParticipationDemandScreen({route}) {
     }
     
     retreiveData();
+
+    socketRef.current = io("http://169.254.3.246:3000");
+      
+    socketRef.current.on('message', (message)=>{
+      console.log(socketRef.id)
+    })
+    socketRef.current.emit('userId',(userId))
     if(retreive){      
       Promise.all([
         fetch('https://eve-back.herokuapp.com/getUserInfo',{
@@ -175,11 +195,13 @@ export default function ParticipationDemandScreen({route}) {
       }).finally(()=> setLoading(false));
     }
       
-      
+      return ()=>{
+        socketRef.current.disconnect();
+      }
 
   }, [retreive]);
 
-    
+  
     if(!fontsLoaded){
       return(<AppLoading/>)
     }else{

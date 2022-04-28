@@ -27,9 +27,12 @@ import MyAccountScreen from "./MyAccountScreen.js";
 import NotificationsScreen from "./NotificationsScreen.js"
 import { Ionicons } from '@expo/vector-icons'; 
 
+
 const Tab = createBottomTabNavigator();
 
 export default function NavigatorBar() {
+  
+
   return (
     <Tab.Navigator
       screenOptions={{ 

@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS} from '../config/colors.js';
@@ -14,6 +14,7 @@ import {
 } from '@expo-google-fonts/dev'
 import { useNavigation } from '@react-navigation/native';
 import Spinner from 'react-native-loading-spinner-overlay';
+import {io} from "socket.io-client"
 
 
 
@@ -90,7 +91,8 @@ export default function HomePageScreen() {
    const [userId, setUserId] = React.useState("")
    const [userToken, setUserToken] = React.useState("")
 
-  
+   const socketRef = useRef();
+
 
    var [fontsLoaded] = useFonts({
     Montserrat_400Regular,
@@ -127,6 +129,14 @@ export default function HomePageScreen() {
     }
     //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
     retreiveData();
+
+    socketRef.current = io("http://169.254.3.246:3000");
+    console.log("im here")
+     socketRef.current.on('message', (message)=>{
+       console.log(message)
+     })
+     socketRef.current.emit('userId',(userId))
+ 
     if(retreive){      
       Promise.all([
         fetch('https://eve-back.herokuapp.com/getPopular'),
@@ -192,7 +202,12 @@ export default function HomePageScreen() {
     }
       
 
+    return ()=>{
+      socketRef.current.disconnect();
+    }
   }, [retreive]);
+
+  
 
    const DisplayEvents=()=>{
       const listEvents = eventPerCat.map((item)=>
