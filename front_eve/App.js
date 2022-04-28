@@ -13,6 +13,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import SearchScreen from "./app/screens/SearchScreen.js";
 import { TextField } from "native-base";
 import ValidationCode from './app/screens/ValidationCode'
+import CreateEventScreen from "./app/screens/CreateEventScreen.js";
 
 const Stack = createStackNavigator();
 
@@ -21,15 +22,16 @@ export default function App() {
     //<SignUpScreen/>
     //<NavigatorBar/>
     //<LandingScreen/>
-    <NavigationContainer>
+    /*<NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="SignInScreen" component={SignInScreen} />
         <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
         <Stack.Screen name="NavigatorBar" component={NavigatorBar} />
       </Stack.Navigator>
-    </NavigationContainer>
+    </NavigationContainer>*/
    // <ValidationCode/>
    // <SearchScreen />
+   <CreateEventScreen/>
   );
 }
 
