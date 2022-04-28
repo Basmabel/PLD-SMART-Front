@@ -76,41 +76,41 @@ export default function MyEventsScreen() {
     retreiveData();
     if(retreive){      
       Promise.all([
-        fetch('https://eve-back.herokuapp.com/getComingEvents',{
+        fetch('http://192.168.1.107:3000/getComingEvents',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('https://eve-back.herokuapp.com/getUserInfo',{
+        fetch('http://192.168.1.107:3000/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-          fetch('https://eve-back.herokuapp.com/getMyHistoric',{
+          fetch('http://192.168.1.107:3000/getMyHistoric',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('https://eve-back.herokuapp.com/getMyFavorite',{
+        fetch('http://192.168.1.107:3000/getMyFavorite',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('https://eve-back.herokuapp.com/getUpcomingEvent',{
+        fetch('http://192.168.1.107:3000/getUpcomingEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('https://eve-back.herokuapp.com/getHistoric',{
+        fetch('http://192.168.1.107:3000/getHistoric',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({

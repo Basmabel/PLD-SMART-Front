@@ -150,13 +150,13 @@ export default function MyAccountScreen() {
       retreiveData();
       if(retreive){      
         Promise.all([
-          fetch('https://eve-back.herokuapp.com/getMyAccountInfo',{
+          fetch('http://192.168.1.107:3000/getMyAccountInfo',{
             method: "POST",
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({
               "id":userId,
             })}),
-          fetch('https://eve-back.herokuapp.com/getReviewUser',{
+          fetch('http://192.168.1.107:3000/getReviewUser',{
             method: "POST",
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({
@@ -241,7 +241,7 @@ export default function MyAccountScreen() {
     })
 
     
-    fetch('https://eve-back.herokuapp.com/editProfile',{
+    fetch('http://192.168.1.107:3000/editProfile',{
       method: "POST",
       headers: {'content-type': 'application/json'},
       body: JSON.stringify({

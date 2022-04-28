@@ -72,13 +72,13 @@ export default function EventPerCategoryScreen({route}) {
     retreiveData();
     if(retreive){      
       Promise.all([
-        fetch('https://eve-back.herokuapp.com/getUserInfo',{
+        fetch('http://192.168.1.107:3000/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('https://eve-back.herokuapp.com/getEventByCategory',{
+        fetch('http://192.168.1.107:3000/getEventByCategory',{
             method: "POST",
             headers: {'content-type': 'application/json',userToken},
             body: JSON.stringify({

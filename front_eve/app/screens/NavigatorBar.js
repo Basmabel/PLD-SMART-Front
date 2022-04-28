@@ -135,6 +135,7 @@ export default function NavigatorBar() {
           ),
         }}
       />
+
     </Tab.Navigator>
   );
 }
