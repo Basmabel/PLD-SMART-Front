@@ -1,5 +1,6 @@
+
 import React from 'react'
-import { View, Text, StyleSheet, Dimensions, Image, Platform } from "react-native"
+import { View, Text, StyleSheet, Dimensions, Image, Platform,TouchableOpacity } from "react-native"
 import {COLORS} from '../config/colors.js';
 export const SLIDER_W = Dimensions.get('window').width
 export const ITEM_W = Math.round(SLIDER_W * 0.3)
@@ -13,7 +14,10 @@ if(light==="light"){
   colorShadow=COLORS.black
 }
 
-const CategorieCard= ({ item, index }) => {
+
+
+const CategorieCard= ({ item, index, navigation}) => {
+
 
   var colorBack="";
   if(index%3===0){
@@ -68,7 +72,7 @@ const CategorieCard= ({ item, index }) => {
 
 
     return (
-      <View style={styles.container} key={index}>
+      <TouchableOpacity style={styles.container} key={index} onPress={()=>navigation.navigate("EventPerCategoryScreen",{cat_id:item.id})}>
           <View style={styles.containerIcon}>
               <Image
                   source={{uri: item.img}}
@@ -76,7 +80,7 @@ const CategorieCard= ({ item, index }) => {
               />
           </View>  
           <Text style={styles.name}>{item.description}</Text>    
-      </View>
+      </TouchableOpacity>
     )
   
   

@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, {useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 //import { useDimensions, useDeviceOrientation } from '@react-native-community/hooks';
+
 import { COLORS } from "../config/colors";
 import {
   StyleSheet,
@@ -69,10 +70,9 @@ export default function SignUpScreen({ navigation }) {
   }
 
   const fetchSignUpVal = async () =>{
-    if(data.isValidUser && data.isValidPassword && !data.isCompatiblePassword && valuesNotNul()){
-      try{
-       // const response = await  fetch('https://eve-back.herokuapp.com/signup',
-       const response = await  fetch('http://169.254.3.246:3000/signup',
+    var status=0
+    if(data.isValidUser && data.isValidPassword && !data.isCompatiblePassword && valuesNotNul() && validPhone() && ((validZip() && zip_code!="")||zip_code==="")){
+      fetch('https://eve-back.herokuapp.com/signup',
         {method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({"name": name,
@@ -85,35 +85,25 @@ export default function SignUpScreen({ navigation }) {
                               "zipCode":zip_code,
                               "addressComplement":address_complement,
                               "password":data.password, 
+                              "confirmedPassword":"",
                               "phone":phone, 
                               "address":address_complement, 
                               "gender":gender,
                               "birthDate":birthDate,
                               "description":description
                   })
-              });
-
-              const resp= await response.text();
-              const status = response.status;
-              console.log(status)
-              console.log(resp)
-              if(status===401 || status===400){
-                alert(resp)
-              }else{
-                console.log(email)
-                /*await AsyncStorage.setItem('email',JSON.stringify(email));
-                sendEmail(email,'hello').then(() => {
-                  console.log('Your message was successfully sent!');
-                 }).catch((error)=>console.error(error))*/
-                
-              }
+          }).then((response)=>{
+              status = response.status;
+              return response.text()
+              
+          }).then(async (json)=>{
+            if(status===401 || status===400){
+              alert(json)
+            }else{
               navigation.navigate("SignInScreen");
-
-              
-              
-        } catch (error) {
-          console.error(error);
-        }
+            }  
+          }).catch((error)=>console.error(error))
+           
     }else{
       if(!data.isValidUser){
         alert("Your email is not valid");
@@ -123,6 +113,10 @@ export default function SignUpScreen({ navigation }) {
         alert("The two passwords do not match")
       }else if(!valuesNotNul()){
         alert("You didn't fill every mandatory field")
+      }else if(!validPhone()){
+        alert("Phone number has to contain 10 digits")
+      }else if(!validZip() && zip_code!=""){
+        alert("Zip code number has to contain 5 digits")
       }
     }
     
@@ -184,6 +178,20 @@ const handlePasswordChange = (val) => {
   }
 };
 
+const validPhone =()=>{
+  if(phone.length!=10){
+    return false
+  }
+  return true
+}
+
+const validZip =()=>{
+  if(zip_code.length!=5){
+    return false
+  }
+  return true
+}
+
 
   //(in)compatible passwords
   const confirmPasswordChange = (val, pswd) => {
@@ -200,7 +208,6 @@ const handlePasswordChange = (val) => {
         isCompatiblePassword: false,
       });
     }
-    console.log(data.isCompatiblePassword)
   };
 
   return (
@@ -366,6 +373,7 @@ const handlePasswordChange = (val) => {
                     placeholder="Please enter your phone number"
                     placeholderTextColor={COLORS.lightBlue}
                     onChangeText={onChangePhone}
+                    maxLength={10}
                 />  
           </View>
 
@@ -489,7 +497,7 @@ const handlePasswordChange = (val) => {
           </Text>
           <View style={styles.action}>
             <Feather name="home" color={COLORS.lightBlue} size={20} />
-              <TextInput style={styles.textInput}
+              <TextInput keyboardType="numeric" style={styles.textInput}
                     placeholder="Please enter your zip code"
                     placeholderTextColor={COLORS.lightBlue}
                     onChangeText={onChangeZipCode}

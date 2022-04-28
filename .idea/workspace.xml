@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="faa6ff4b-fdc4-4282-9604-a9f8a11f4ec6" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front_eve/app/screens/SignUpScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/front_eve/app/screens/SignUpScreen.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front_eve/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/front_eve/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front_eve/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/front_eve/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front_eve/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/front_eve/yarn.lock" afterDir="false" />
-    </list>
+    <list default="true" id="faa6ff4b-fdc4-4282-9604-a9f8a11f4ec6" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

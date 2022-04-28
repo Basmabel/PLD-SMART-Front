@@ -3,7 +3,7 @@ import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView} from
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS} from '../config/colors.js';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import MyCarousel from '../components/MyCarousel';
+import CarouselCard from '../components/CarouselCard';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import {useFonts} from "@expo-google-fonts/dev";
 import AppLoading from "expo-app-loading";
@@ -14,6 +14,10 @@ import {
 } from '@expo-google-fonts/dev'
 import Spinner from 'react-native-loading-spinner-overlay';
 
+
+
+const windowHeight = Dimensions.get("window").height;
+
 var light = "dark"
 var colorBack= COLORS.greyBlue
 var colorText=COLORS.lightBlue
@@ -23,19 +27,14 @@ if(light==="light"){
   colorText=COLORS.greyBlue
 }
 
-export default function MyEventsScreen() {
-  const tabBarHeight = useBottomTabBarHeight() * 2;
-
+export default function EventPerCategoryScreen({route}) {
    const [userInfo, setUserInfo] = React.useState(null);
    const [isLoading, setLoading] = React.useState(true);
+   const [eventPerCat, setEventPerCat] = React.useState([]);
    const [retreive, setRetreive] = React.useState(false);
    const [userId, setUserId] = React.useState("")
    const [userToken, setUserToken] = React.useState("")
-   const [comingEvents, setComingEvents] = React.useState([]);
-   const [historic, setHistoric] = React.useState([]);
-   const [favorites, setFavorites] = React.useState([]);
-   const [comingCreatEve, setComingCreatEve] = React.useState([]);
-   const [historicCreatEve, setHistoricCreatEve] =React.useState([]);
+   const {cat_id}=route.params;
 
   
 
@@ -51,12 +50,9 @@ export default function MyEventsScreen() {
       setLoading(false);
     }, 1000);
   };
-
-   
-
   
-  useEffect(() => {
-    
+    useEffect(() => {
+
     const retreiveData = async ()=>{
       try {
         const valueString = await AsyncStorage.getItem('key');
@@ -64,7 +60,7 @@ export default function MyEventsScreen() {
 
         const tokenString = await AsyncStorage.getItem('token');
         const token = JSON.parse(tokenString);
-
+        
         setUserId(value)
         setUserToken(token)
         setRetreive(true)
@@ -76,47 +72,18 @@ export default function MyEventsScreen() {
     retreiveData();
     if(retreive){      
       Promise.all([
-        fetch('https://eve-back.herokuapp.com/getComingEvents',{
-          method: "POST",
-          headers: {'content-type': 'application/json'},
-          body: JSON.stringify({
-            "id":userId
-          })
-        }),
         fetch('https://eve-back.herokuapp.com/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-          fetch('https://eve-back.herokuapp.com/getMyHistoric',{
-          method: "POST",
-          headers: {'content-type': 'application/json'},
-          body: JSON.stringify({
-            "id":userId
-          })
-        }),
-        fetch('https://eve-back.herokuapp.com/getMyFavorite',{
-          method: "POST",
-          headers: {'content-type': 'application/json'},
-          body: JSON.stringify({
-            "id":userId
-          })
-        }),
-        fetch('https://eve-back.herokuapp.com/getUpcomingEvent',{
-          method: "POST",
-          headers: {'content-type': 'application/json'},
-          body: JSON.stringify({
-            "id":userId
-          })
-        }),
-        fetch('https://eve-back.herokuapp.com/getHistoric',{
-          method: "POST",
-          headers: {'content-type': 'application/json'},
-          body: JSON.stringify({
-            "id":userId
-          })
-        }),
+        fetch('https://eve-back.herokuapp.com/getEventByCategory',{
+            method: "POST",
+            headers: {'content-type': 'application/json',userToken},
+            body: JSON.stringify({
+              "id":cat_id
+            })}),
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
         return Promise.all(responses.map(function (response) {
@@ -127,18 +94,11 @@ export default function MyEventsScreen() {
         // You would do something with both sets of data here
         data.map((item,index)=>{
           if(index==0){
-            setComingEvents(item)
-          }else if(index==1){
             setUserInfo(item)
-          }else if(index==2){
-            setHistoric(item)
-          } else if(index==3){
-            setFavorites(item)
-          } else if(index==4){
-            setComingCreatEve(item)
-          } else if(index==5){
-            setHistoricCreatEve(item)
-          }        
+          }else if(index==1){
+            setEventPerCat(item);
+          }
+            
         });
       }).catch(function (error) {
         // if there's an error, log it
@@ -148,9 +108,27 @@ export default function MyEventsScreen() {
       
       
 
-  }, [retreive]);
-
+  }, [retreive]);      
     
+  const DisplayEvents=()=>{
+    
+    const listEvents = eventPerCat.map((item)=>
+    
+        <View style={styles.events}>
+                       <View style={styles.card}>
+                                <CarouselCard item={item} type={{"type":"category"}}/>
+                       </View>                 
+        </View>
+    );
+    if(!fontsLoaded){
+      return(<AppLoading/>)
+    }else{
+      return(
+        <View>{listEvents}</View>
+      );
+    }
+    
+  }
     if(!fontsLoaded){
       return(<AppLoading/>)
     }else{
@@ -170,45 +148,22 @@ export default function MyEventsScreen() {
           ) :
             ( <View>
             <View style={styles.header}>
-                  <Text style={styles.title_header}>My events</Text>
+                  <Text style={styles.title_header}>{eventPerCat[0].description}</Text>
                   <View style={styles.infoView}>
-                  <Image style={styles.profilImage} source={{uri: userInfo[0].photo ? userInfo[0].photo : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}}/>
+                      <Image style={styles.profilImage} source={{uri: userInfo[0].photo ? userInfo[0].photo : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}}/>
                   </View>
             </View>
             <View style={styles.body}>
-              <ScrollView style={[{marginBottom:tabBarHeight*2}]}>
+              <ScrollView style={{marginBottom:110}}>
+                
                   <View style={styles.locationView}>
                         <Text style={styles.text_header}> Lyon </Text>
                         <MaterialCommunityIcons name="map-marker" color={colorText} size={24}/>
                   </View>
                     <View style={styles.contentContainer}>
-                            <View style={styles.events}>
-                                <View style={styles.categorieEvents}>
-                                    <Text style={[styles.title_body]}>Upcoming Events</Text>
-                                </View> 
-                                <Text style={[styles.text_body]}>Participation</Text>
-                                <MyCarousel data={comingEvents} type={{"event":"oui"}}/>   
-                                <Text style={[styles.text_body]}>Organisation</Text>
-                                <MyCarousel data={comingCreatEve} type={{"event":"oui"}}/>            
-                            </View>
-                            <View style={styles.events}>
-                                <View style={styles.categorieEvents}>
-                                    <Text style={[styles.title_body]}>Historic</Text>
-                                </View>  
-                                <Text style={[styles.text_body]}>Participation</Text>
-                                <MyCarousel data={historic} type={{"event":"oui"}}/>   
-                                <Text style={[styles.text_body]}>Organisation</Text>
-                                <MyCarousel data={historicCreatEve} type={{"event":"oui"}}/> 
-
-                            </View>
-                            <View style={styles.events}>
-                                <View style={styles.categorieEvents}>
-                                    <Text style={[styles.title_body]}>Favorites Events</Text>
-                                </View>  
-                                <MyCarousel data={favorites} type={{"event":"oui"}}/>             
-                            </View>
+                            <DisplayEvents/>
                     </View>
-                    
+                
               </ScrollView>
             </View>
             
@@ -219,17 +174,6 @@ export default function MyEventsScreen() {
     
 }
 
-/*
-
-<View style={styles.events}>
-                            <View style={styles.categorieEvents}>
-                                <Text style={styles.title_header}>Popular</Text>
-                                <MaterialCommunityIcons name="fire" color={COLORS.greyBlue} size={26}/>
-                            </View>  
-                            <MyCarousel data={popularEvents} type={{"event":"oui"}}/>                  
-                        </View>
-*/
-const windowHeight = Dimensions.get("window").height;
 
 
 const styles = StyleSheet.create({
@@ -280,33 +224,20 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     paddingHorizontal: 20,
     paddingVertical: 20,
+    height:Dimensions.get("window").height
     
   },
   contentContainer:{
     flexDirection: "column",
-    paddingTop:5,
+    paddingTop:10,
     height: "100%",
   },
-  title_body: {
-    color: colorText,
-    fontFamily: 'Montserrat_600SemiBold',
-    fontSize: 23
-  },
-  text_body:{
-    color: colorText,
-    fontFamily: "Montserrat_400Regular",
-    fontSize: 19,
-    marginBottom: 5
-  },
-  events: {
-    flexDirection: "column",
-    marginBottom: 20,
-  },
-  categorieEvents: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 15,
-  },
+  card:{
+    alignItems: 'center',
+    width:'100%',
+    paddingBottom:20
+  }
+  
 });
 
  

@@ -12,6 +12,9 @@ import {
   Montserrat_500Medium,
   Montserrat_600SemiBold
 } from '@expo-google-fonts/dev'
+import { useNavigation } from '@react-navigation/native';
+import Spinner from 'react-native-loading-spinner-overlay';
+
 
 
 /*const popEvents = [
@@ -77,7 +80,7 @@ if(light==="light"){
 
 export default function HomePageScreen() {
   const tabBarHeight = useBottomTabBarHeight() * 2;
-
+  const navigation = useNavigation();
    const [popularEvents,setPopularEvents] = React.useState([]);
    const [userInfo, setUserInfo] = React.useState(null);
    const [isLoading, setLoading] = React.useState(true);
@@ -95,6 +98,12 @@ export default function HomePageScreen() {
     Montserrat_600SemiBold
   });
 
+  const startLoading = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  };
 
    
 
@@ -108,8 +117,7 @@ export default function HomePageScreen() {
 
         const tokenString = await AsyncStorage.getItem('token');
         const token = JSON.parse(tokenString);
-
-
+        
         setUserId(value)
         setUserToken(token)
         setRetreive(true)
@@ -121,19 +129,15 @@ export default function HomePageScreen() {
     retreiveData();
     if(retreive){      
       Promise.all([
-        fetch('http://169.254.3.246:3000/getPopular'),
-        fetch('http://169.254.3.246:3000/getUserInfo',{
-          //fetch('https://eve-back.herokuapp.com/getPopular'),
-          //fetch('https://eve-back.herokuapp.com/getUserInfo',{
+        fetch('https://eve-back.herokuapp.com/getPopular'),
+        fetch('https://eve-back.herokuapp.com/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-          fetch('http://169.254.3.246:3000/getCategories'),
-          fetch('http://169.254.3.246:3000/getEventsByCategory')
-         // fetch('https://eve-back.herokuapp.com/getCategories'),
-         // fetch('https://eve-back.herokuapp.com/getEventsByCategory')
+        fetch('https://eve-back.herokuapp.com/getCategories'),
+        fetch('https://eve-back.herokuapp.com/getEventsByCategory')
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
         return Promise.all(responses.map(function (response) {
@@ -187,7 +191,6 @@ export default function HomePageScreen() {
       }).finally(()=> setLoading(false));
     }
       
-      
 
   }, [retreive]);
 
@@ -218,12 +221,21 @@ export default function HomePageScreen() {
         
         <SafeAreaView style={StyleSheet.container}>
 
-          {isLoading ? (<Text>Loading...</Text>) :
+          {isLoading ? (
+            <Spinner
+              //visibility of Overlay Loading Spinner
+              visible={isLoading}
+              //Text with the Spinner
+              textContent={'Loading...'}
+              //Text style of the Spinner Text
+              textStyle={styles.spinnerTextStyle}
+            />
+          ) :
             ( <View>
             <View style={styles.header}>
                   <Text style={styles.title_header}>Home</Text>
                   <View style={styles.infoView}>
-                      <Image style={styles.profilImage} source={{uri: userInfo[0].photo}}/>
+                  <Image style={styles.profilImage} source={{uri: userInfo[0].photo ? userInfo[0].photo : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}}/>
                   </View>
             </View>
             <View style={styles.body}>
@@ -237,7 +249,7 @@ export default function HomePageScreen() {
                                 <View style={styles.categorieEvents}>
                                     <Text style={[styles.title_body]}>Categories</Text>
                                 </View>  
-                                <MyCarousel data={categories} type={{"event":"non"}}/>                  
+                                <MyCarousel data={categories} type={{"event":"non"}} navigation={navigation}/>                  
                             </View>
                             <View style={styles.events}>
                                 <View style={styles.categorieEvents}>

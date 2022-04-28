@@ -5,6 +5,22 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { COLORS } from "../config/colors";
 
 const StarRating = (props) => {
+
+  const styles = StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    star: {
+      color: props.color,
+    },
+    text: {
+      fontSize: 12,
+      marginLeft: 5,
+      color: props.color,
+    },
+  });
+
   // This array will contain our star tags. We will include this
   // array between the view tag.
   let stars = [];
@@ -30,17 +46,4 @@ const StarRating = (props) => {
 
 export default StarRating;
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  star: {
-    color: COLORS.mauve,
-  },
-  text: {
-    fontSize: 12,
-    marginLeft: 5,
-    color: COLORS.mauve,
-  },
-});
+
