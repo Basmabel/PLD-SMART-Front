@@ -95,7 +95,7 @@ export default function HomePageScreen({navigation}) {
        }
    }
 
-   const redirection = (id,type) =>{
+   const redirection = (id,type,user_id) =>{
      if(type===1){
         var out = 0
        // var id = selectedNotif.id
@@ -106,6 +106,8 @@ export default function HomePageScreen({navigation}) {
        navigation.navigate("Demand",{notif_id:id,out:out})
      }else if(type===5){
        navigation.navigate("Profile")
+     }else if(type===9 || type===10 || type===11 || type===12){
+       navigation.navigate("ProfileScreen",{profile_id:user_id})
      }
    }
 
@@ -167,7 +169,7 @@ export default function HomePageScreen({navigation}) {
 
     if(retreive){      
       Promise.all([
-        fetch('https://eve-back.herokuapp.com/getUserInfo',{
+        fetch('http://169.254.3.246:3000/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
@@ -190,6 +192,7 @@ export default function HomePageScreen({navigation}) {
         data.map((item,index)=>{
           if(index==0){
             setUserInfo(item)
+            console.log(item)
           }else if(index==1){
             setNotifContent(item)
           }
@@ -212,7 +215,7 @@ export default function HomePageScreen({navigation}) {
                 <Pressable style={styles.contentNotif} onPress={()=>{setSelectedNotif(
                   {...selectedNotif,
                     id: item.id,
-                    type: item.type_id}); redirection(item.id,item.type_id)}}>
+                    type: item.type_id}); redirection(item.id,item.type_id,item.user_targeted_id)}}>
                     <View style={{flexDirection:"row", width:"90%"}}>
                         <Text style={[styles.text_notif]} numberOfLines={2} ellipsizeMode="middle">{returnText(item.type_id, item.surname, item.event_name, item.type)}</Text>
                     </View>

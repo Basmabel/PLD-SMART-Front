@@ -27,7 +27,7 @@ if(light==="light"){
   colorText=COLORS.greyBlue
 }
 
-export default function EventPerCategoryScreen({route}) {
+export default function EventPerCategoryScreen({route, navigation}) {
    const [userInfo, setUserInfo] = React.useState(null);
    const [isLoading, setLoading] = React.useState(true);
    const [eventPerCat, setEventPerCat] = React.useState([]);
@@ -72,13 +72,13 @@ export default function EventPerCategoryScreen({route}) {
     retreiveData();
     if(retreive){      
       Promise.all([
-        fetch('http://192.168.1.107:3000/getUserInfo',{
+        fetch('http://169.254.3.246:3000/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('http://192.168.1.107:3000/getEventByCategory',{
+        fetch('http://169.254.3.246:3000/getEventByCategory',{
             method: "POST",
             headers: {'content-type': 'application/json',userToken},
             body: JSON.stringify({
@@ -116,7 +116,7 @@ export default function EventPerCategoryScreen({route}) {
     
         <View style={styles.events}>
                        <View style={styles.card}>
-                                <CarouselCard item={item} type={{"type":"category"}}/>
+                                <CarouselCard item={item} type={{"type":"category"} } navigation={navigation}/>
                        </View>                 
         </View>
     );

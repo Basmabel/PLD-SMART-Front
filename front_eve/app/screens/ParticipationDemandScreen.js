@@ -70,6 +70,7 @@ export default function ParticipationDemandScreen({route,navigation}) {
       ],
       { cancelable: false }
     );
+
   }
 
   const refuseFetch = async()=>{
@@ -78,7 +79,14 @@ export default function ParticipationDemandScreen({route,navigation}) {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ id: demandInfo.demand_id }),
     }).catch((error)=>console.error(error));
-
+    const message = "hello"
+    const type = 3
+    const event_id = demandInfo.event_id
+    const user_id = demandInfo.user_id
+    const review_id = null
+    const user_targeted_id = null
+    const participation_demand_id = null
+    socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
   }
 
   const acceptFetch = async()=>{
@@ -92,7 +100,10 @@ export default function ParticipationDemandScreen({route,navigation}) {
     const type = 2
     const event_id = demandInfo.event_id
     const user_id = demandInfo.user_id
-    socketRef.current.emit('message',{message,type,event_id,user_id})
+    const review_id = null
+      const user_targeted_id = null
+      const participation_demand_id = null
+      socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
 
     navigation.navigate("NavigatorBar")
   }
@@ -163,7 +174,7 @@ export default function ParticipationDemandScreen({route,navigation}) {
     socketRef.current.emit('userId',(userId))
     if(retreive){      
       Promise.all([
-        fetch('http://192.168.1.107:3000/getUserInfo',{
+        fetch('http://169.254.3.246:3000/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({

@@ -23,7 +23,7 @@ if(light==="light"){
   colorText=COLORS.greyBlue
 }
 
-export default function MyEventsScreen() {
+export default function MyEventsScreen({navigation}) {
   const tabBarHeight = useBottomTabBarHeight() * 2;
 
    const [userInfo, setUserInfo] = React.useState(null);
@@ -76,41 +76,41 @@ export default function MyEventsScreen() {
     retreiveData();
     if(retreive){      
       Promise.all([
-        fetch('http://192.168.1.107:3000/getComingEvents',{
+        fetch('http://169.254.3.246:3000/getComingEvents',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('http://192.168.1.107:3000/getUserInfo',{
+        fetch('http://169.254.3.246:3000/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-          fetch('http://192.168.1.107:3000/getMyHistoric',{
+          fetch('http://169.254.3.246:3000/getMyHistoric',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('http://192.168.1.107:3000/getMyFavorite',{
+        fetch('http://169.254.3.246:3000/getMyFavorite',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('http://192.168.1.107:3000/getUpcomingEvent',{
+        fetch('http://169.254.3.246:3000/getUpcomingEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('http://192.168.1.107:3000/getHistoric',{
+        fetch('http://169.254.3.246:3000/getHistoric',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
@@ -187,25 +187,25 @@ export default function MyEventsScreen() {
                                     <Text style={[styles.title_body]}>Upcoming Events</Text>
                                 </View> 
                                 <Text style={[styles.text_body]}>Participation</Text>
-                                <MyCarousel data={comingEvents} type={{"event":"oui"}}/>   
+                                <MyCarousel data={comingEvents} type={{"event":"oui"}} navigation={navigation}/>   
                                 <Text style={[styles.text_body]}>Organisation</Text>
-                                <MyCarousel data={comingCreatEve} type={{"event":"oui"}}/>            
+                                <MyCarousel data={comingCreatEve} type={{"event":"oui"}} navigation={navigation}/>            
                             </View>
                             <View style={styles.events}>
                                 <View style={styles.categorieEvents}>
                                     <Text style={[styles.title_body]}>Historic</Text>
                                 </View>  
                                 <Text style={[styles.text_body]}>Participation</Text>
-                                <MyCarousel data={historic} type={{"event":"oui"}}/>   
+                                <MyCarousel data={historic} type={{"event":"oui"}} navigation={navigation}/>   
                                 <Text style={[styles.text_body]}>Organisation</Text>
-                                <MyCarousel data={historicCreatEve} type={{"event":"oui"}}/> 
+                                <MyCarousel data={historicCreatEve} type={{"event":"oui"}} navigation={navigation}/> 
 
                             </View>
                             <View style={styles.events}>
                                 <View style={styles.categorieEvents}>
                                     <Text style={[styles.title_body]}>Favorites Events</Text>
                                 </View>  
-                                <MyCarousel data={favorites} type={{"event":"oui"}}/>             
+                                <MyCarousel data={favorites} type={{"event":"oui"}} navigation={navigation}/>             
                             </View>
                     </View>
                     

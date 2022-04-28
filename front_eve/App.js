@@ -21,7 +21,7 @@ import CarouselCard from './app/components/CarouselCard';
 import ParticipationDemandScreen from './app/screens/ParticipationDemandScreen.js';
 import NotificationsScreen from './app/screens/NotificationsScreen.js'
 import MyAccountScreen from './app/screens/MyAccountScreen.js';
-import {io} from "socket.io-client"
+import MyEventsScreen from './app/screens/MyEventsScreen'
 
 const Stack = createStackNavigator();
 
@@ -42,6 +42,7 @@ export default function App() {
         <Stack.Screen name="Profile" component={MyAccountScreen}/>
         <Stack.Screen name="CarousselCard" component={CarouselCard}/>
         <Stack.Screen name="ProfileScreen" component={ProfileScreen}/>
+        <Stack.Screen name="MyEventsScreen" component={MyEventsScreen}/>
         <Stack.Screen
           name="Previous"
           component={NavigatorBar}

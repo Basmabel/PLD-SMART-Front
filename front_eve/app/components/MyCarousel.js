@@ -29,7 +29,7 @@ const MyCarousel = ({data, type,navigation}) => {
     if(type.event==="non"){
       return (<CategorieCard item={item} index={index} navigation={navigation}/>);
     }else if (type.event==="oui"){
-      return (<CarouselCard item={item} index={index} />);
+      return (<CarouselCard item={item} index={index} navigation={navigation}/>);
     }else if(type.event==="review"){
       return (<ReviewCard item={item} index={index} width={Dimensions.get("window").width*0.75}/>);
     }

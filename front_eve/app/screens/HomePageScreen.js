@@ -138,15 +138,15 @@ export default function HomePageScreen() {
  
     if(retreive){      
       Promise.all([
-        fetch('http://192.168.1.107:3000/getPopular'),
-        fetch('http://192.168.1.107:3000/getUserInfo',{
+        fetch('http://169.254.3.246:3000/getPopular'),
+        fetch('http://169.254.3.246:3000/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('http://192.168.1.107:3000/getCategories'),
-        fetch('http://192.168.1.107:3000/getEventsByCategory')
+        fetch('http://169.254.3.246:3000/getCategories'),
+        fetch('http://169.254.3.246:3000/getEventsByCategory')
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
         return Promise.all(responses.map(function (response) {
@@ -215,7 +215,7 @@ export default function HomePageScreen() {
                           <View style={styles.categorieEvents}>
                               <Text style={[styles.title_body]}>{item[0].description}</Text>
                           </View>  
-                          <MyCarousel data={item} type={{"event":"oui"}}/>                  
+                          <MyCarousel data={item} type={{"event":"oui"}} navigation={navigation}/>                  
           </View>
       );
       if(!fontsLoaded){
@@ -269,7 +269,7 @@ export default function HomePageScreen() {
                                 <View style={styles.categorieEvents}>
                                     <Text style={[styles.title_body]}>Popular</Text>
                                 </View>  
-                                <MyCarousel data={popularEvents} type={{"event":"oui"}}/>             
+                                <MyCarousel data={popularEvents} type={{"event":"oui"}} navigation={navigation}/>             
                             </View>
                            
                             <DisplayEvents/>

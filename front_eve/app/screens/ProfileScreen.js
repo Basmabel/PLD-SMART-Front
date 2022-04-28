@@ -6,17 +6,16 @@ import {
     SafeAreaView,
     ScrollView,
     TextInput,
-    Image
+    Image,
+    Alert
   } from "react-native";
-  import React from 'react';
+  import React, { useRef } from 'react';
   import AsyncStorage from '@react-native-async-storage/async-storage';
   import {useEffect} from "react";
   import { COLORS } from "../config/colors.js";
   import {  MaterialIcons } from "@expo/vector-icons";
   import MyCarousel from "../components/MyCarousel";
-  import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-  import Feather from "react-native-vector-icons/Feather";
-  import UploadImage from '../config/uploadImage.js';
+  import { Dropdown } from "react-native-element-dropdown";
   import formatageDate from '../utils/date_formatage';
   import StarRating from '../components/StarRating';
   import {useFonts} from "@expo-google-fonts/dev";
@@ -28,11 +27,13 @@ import {
   } from '@expo-google-fonts/dev'
   import Spinner from 'react-native-loading-spinner-overlay';
 import { TouchableOpacity } from "react-native-gesture-handler";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import {io} from "socket.io-client"
+
   
-  export default function ProfileScreen({route}) {
-    const tabBarHeight = useBottomTabBarHeight() * 2;
-    //const {profile_id}=route.params;
-  
+  export default function ProfileScreen({route,navigation}) {
+    const profile_id=route.params.profile_id;
+   
     var [fontsLoaded] = useFonts({
       Montserrat_400Regular,
       Montserrat_500Medium,
@@ -46,6 +47,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
       }, 1000);
     };
   
+    
   
     //Recup les infos d'inscription ET imgProfil
     const [retreive, setRetreive] = React.useState(false);
@@ -56,8 +58,33 @@ import { TouchableOpacity } from "react-native-gesture-handler";
     const [participantRating, setParticipantRating]= React.useState(0);
     const [creatorRating, setCreatorRating]= React.useState(0);
     const [review, setReviewUser] = React.useState(null);
-    const [birthDate, setBirthDate] = React.useState("")
-  
+    const [birthDate, setBirthDate] = React.useState("");
+    const [reportTypes, setReportTypes] = React.useState(null);
+    const [reportType, setReportType] = React.useState(null)
+    const [isFocus, setIsFocus] = React.useState(false);
+    const [causeVisible, setCauseVisible] = React.useState(false);
+    const [causeId, setCauseId] =  React.useState(1);
+    const [isRported, setReported] =  React.useState(false);
+    const socketRef = useRef();
+
+    const fetchReport = async ()=>{
+      setCauseVisible(false)
+      fetch("http://169.254.3.246:3000/createReport",{
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ user_id: profile_id, type_id: causeId}),
+      }).catch((error)=>console.error(error));
+      const message = "hello"
+      const type = 6
+      const event_id = null
+      const user_id = profile_id
+      const review_id = null
+      const user_targeted_id = null
+      const participation_demand_id = null
+      socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
+      alert("User has been reported")
+      setReported(true)
+    }
       
       //Recuperation des données
       useEffect(() => {
@@ -81,18 +108,19 @@ import { TouchableOpacity } from "react-native-gesture-handler";
         //setUserId(profile_id);
         if(retreive){      
           Promise.all([
-            fetch('http://192.168.1.107:3000/getMyAccountInfo',{
+            fetch('http://169.254.3.246:3000/getMyAccountInfo',{
               method: "POST",
               headers: {'content-type': 'application/json'},
               body: JSON.stringify({
-                "id":userId,
+                "id":profile_id,
               })}),
-            fetch('http://192.168.1.107:3000/getReviewUser',{
+            fetch('http://169.254.3.246:3000/getReviewUser',{
               method: "POST",
               headers: {'content-type': 'application/json'},
               body: JSON.stringify({
-                "id":userId,
+                "id":profile_id,
               })}),
+            fetch('http://169.254.3.246:3000/getReportTypes'),
           ]).then(function (responses) {
             // Get a JSON object from each of the responses
             return Promise.all(responses.map(function (response) {
@@ -106,8 +134,10 @@ import { TouchableOpacity } from "react-native-gesture-handler";
                 setuserInfo(item.global_infos[0])
                 setCreatorRating(item.creator_rating[0].score)
                 setParticipantRating(item.participant_rating[0].score)
-              }if(index===1){
+              }else if(index===1){
                 setReviewUser(item)
+              }else if(index===2){
+                setReportTypes(item)
               }
             });
           }).catch(function (error) {
@@ -116,7 +146,14 @@ import { TouchableOpacity } from "react-native-gesture-handler";
           }).finally(()=> setLoading(false));
         }
       }, [retreive]);
-  
+      
+      socketRef.current = io("http://169.254.3.246:3000");
+      
+      socketRef.current.on('message', (message)=>{
+        console.log("You received a notification")
+      })
+      socketRef.current.emit('userId',(userId))
+
     if(!fontsLoaded){
       return(<AppLoading/>)
     }else{
@@ -135,7 +172,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
                       <Text style={styles.title_header}>Profile</Text>
             </View>
             <View style={styles.body}>
-              <ScrollView style={{marginBottom: tabBarHeight*2}}>
+              <ScrollView style={{marginBottom: '40%'}}>
                 <View style={{paddingTop: 40,justifyContent: "center",alignItems: "center"}}>
                 
                 <Image
@@ -144,49 +181,86 @@ import { TouchableOpacity } from "react-native-gesture-handler";
                 </View>
   
                 <View style= {styles.content_info_name}>
-                    <Text style={[styles.text_footer, styles.titleTextInput]}>
+                    <Text style={[styles.text_footer]}>
                     {userInfo.name} {userInfo.surname}
                     </Text>
-                    <Text style={[styles.text_footer, styles.titleInfos]}>
+                    <Text style={[styles.subtext_footer]}>
                     {userInfo.mail}
                     </Text>
-                    <Text style={[styles.text_footer, styles.titleInfos]}>
+                    <Text style={[styles.subtext_footer]}>
                     {userInfo.phone}
                     </Text>
-                </View>
-  
-                
-               
-            
+                </View>            
   
                 <View style= {styles.content_info}>  
                     <View style={styles.events}>
                       <View style={[{flexDirection: "row"}]}>
-                      <Text style={styles.text_body}>Participation</Text>
-                      <StarRating ratings={participantRating} reviews={participantRating} color={COLORS.lightYellow}/>
+                        <Text style={styles.text_body}><Text style={{fontWeight: "bold"}}>Birthdate :  </Text> {formatageDate(userInfo.date_birth)}</Text>
                       </View>
                       <View style={[{flexDirection: "row"}]}>
-                      <Text style={styles.text_body}>Organisation </Text>
+                        <Text style={styles.text_body}><Text style={{fontWeight: "bold"}}>School :  </Text> {userInfo.school_name}</Text>
+                      </View>
+                      <View style={[{flexDirection: "row"}]}>
+                      <Text style={styles.text_body}><Text style={{fontWeight: "bold"}}>Participation : </Text></Text>
+                        <StarRating ratings={participantRating} reviews={participantRating} color={COLORS.lightYellow}/>
+                      </View>
+                      <View style={[{flexDirection: "row"}]}>
+                      <Text style={styles.text_body}><Text style={{fontWeight: "bold"}}>Organisation : </Text></Text>
                       <StarRating ratings={creatorRating} reviews={creatorRating} color={COLORS.lightYellow} />
                       </View>
                     </View>
   
                     <View style={styles.events}>
-                    <View style={styles.categorieEvents}>
-                      <Text style={styles.title_body}>Reviews</Text>
-                      <MaterialIcons name="preview" color={COLORS.lightBlue} size={26}/>
-                    </View>
-                    <MyCarousel data={review} type={{ event: "review" }} />
-                    </View>
+                        <View style={styles.categorieEvents}>
+                          <Text style={styles.title_body}>Reviews</Text>
+                          <MaterialIcons name="preview" color={COLORS.lightBlue} size={26}/>
+                        </View>
+                        <MyCarousel data={review} type={{ event: "review" }} />
+                      </View>
                     </View>
 
-                    <View style= {styles.content_info_name}>
-                    <View style={styles.events}>
-                    <View style={styles.categorieEvents}>
-                      <TouchableOpacity onPress={console.log("report user")}>
-                      <Text style={styles.report}>Report {userInfo.name} {userInfo.surname}</Text>
-                      </TouchableOpacity>
+                    <View style= {[styles.content_report,{ display: (!isRported)? "flex" : "none"}]}>
+                          <TouchableOpacity style={styles.button_report} onPress={()=>{setCauseVisible(true)}}>
+                           <Text style={styles.text_report}>Report {userInfo.name} {userInfo.surname}</Text>
+                          </TouchableOpacity>
                     </View>
+                    <View style={[styles.reportCause,{ display: (causeVisible)? "flex" : "none"}]}>
+                      <Text style={styles.text_cause}>Select a cause for the report</Text>
+                      <Dropdown
+                        style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
+                        placeholderStyle={styles.placeholderStyle}
+                        selectedTextStyle={styles.selectedTextStyle}
+                        inputSearchStyle={styles.inputSearchStyle}
+                        iconStyle={styles.iconStyle}
+                        data={reportTypes}
+                        maxHeight={100}
+                        labelField="report_type"
+                        placeholder={reportType === null ? "Select a report type" : reportType}
+                        onFocus={() => setIsFocus(true)}
+                        onBlur={() => setIsFocus(false)}
+                        onChange={(item) => {
+                          setCauseId(item.id)
+                          setReportType(item.report_type);
+                          setIsFocus(false);
+                        }}
+                        renderLeftIcon={() => (
+                          <AntDesign
+                            style={styles.icon}
+                            color={isFocus ? "blue" : "black"}
+                            name="Safety"
+                            size={20}
+                          />
+                        )}
+                      />
+                      <View style= {styles.content_report}>
+                          <TouchableOpacity style={styles.button_report} onPress={()=>{fetchReport()}}>
+                           <Text style={styles.text_report}>Validate</Text>
+                          </TouchableOpacity>
+                    </View>
+                    <View style= {styles.content_report}>
+                          <TouchableOpacity style={styles.button_report} onPress={()=>{setCauseVisible(false)}}>
+                           <Text style={styles.text_report}>Cancel</Text>
+                          </TouchableOpacity>
                     </View>
                     </View>
 
@@ -220,13 +294,12 @@ import { TouchableOpacity } from "react-native-gesture-handler";
       borderRadius: 10,
     },
     content_info:{
-      marginHorizontal:30,
       marginTop:20, 
       
     },
     content_info_name:{
-      marginHorizontal:30,
       marginTop:10,
+      flexDirection: "column",
       alignItems: "center" 
     },
     action: {
@@ -250,12 +323,23 @@ import { TouchableOpacity } from "react-native-gesture-handler";
       color: COLORS.lightBlue,
       fontSize: 23,
     },
-    report: {
-      color: COLORS.lightBlue,
-      fontSize: 23,
-      textDecorationLine: "underline",
+    content_report:{
+      marginTop:30,
+      width:'100%',
     },
-    
+    button_report: {
+      width: "100%",
+      backgroundColor: COLORS.lightBlue,
+      height: 50,
+      justifyContent: "center",
+      alignItems: "center",
+      borderRadius: 10,
+    },
+    text_report:{
+        fontSize: 18,
+        fontWeight: "bold",
+        color:COLORS.greyBlue
+    },    
     profilImage: {
       width: 120,
       height: 120,
@@ -266,7 +350,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
       backgroundColor: COLORS.greyBlue,
       borderTopLeftRadius: 30,
       borderTopRightRadius: 30,
-      paddingHorizontal: 0,
+      paddingHorizontal: 20,
       paddingVertical: 20,
       
     },
@@ -275,6 +359,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
       fontFamily: "Montserrat_400Regular",
       fontSize: 19,
       marginBottom: 5,
+      marginRight: 10
     },
     events: {
       flexDirection: "column",
@@ -289,11 +374,6 @@ import { TouchableOpacity } from "react-native-gesture-handler";
         color: COLORS.lightBlue,
         fontSize: 35,
     },
-    titleInfos : {
-      color: COLORS.lightBlue,
-      fontSize: 20,
-      marginHorizontal: 1,
-  },
     textInput: {
         flex: 1,
         marginTop: Platform.OS === "ios" ? 0 : -12,
@@ -304,8 +384,52 @@ import { TouchableOpacity } from "react-native-gesture-handler";
     text_footer: {
         marginTop: Platform.OS === "ios" ? 5 : 6,
         marginHorizontal : 10,
-        color: "#05375a",
-        fontSize: 18,
+        color: COLORS.lightBlue,
+        fontFamily: "Montserrat_600SemiBold",
+        fontSize: 25,
     },
+    subtext_footer:{
+        marginTop: Platform.OS === "ios" ? 5 : 6,
+        marginHorizontal : 10,
+        color: COLORS.lightBlue,
+        fontFamily: "Montserrat_500Medium",
+        fontSize: 15,
+    },dropdown: {
+      height: 50,
+      borderBottomColor: "gray",
+      borderBottomWidth: 0.5,
+      marginBottom: 15,
+      color:COLORS.black
+    },
+    placeholderStyle: {
+      fontSize: 16,
+      color:COLORS.black
+    },
+    selectedTextStyle: {
+      fontSize: 14,
+      color:COLORS.black
+    },
+    iconStyle: {
+      width: 20,
+      height: 20,
+    },
+    inputSearchStyle: {
+      height: 40,
+      fontSize: 16,
+      color:COLORS.black
+    },
+    reportCause:{
+      backgroundColor: COLORS.white,
+      paddingHorizontal: 10,
+      paddingVertical:20,
+      marginVertical: 30,
+     
+    },
+    text_cause:{
+      color:COLORS.black,
+      fontFamily: "Montserrat_500Medium",
+      fontSize: 18,
+      paddingBottom: 20
+    }
   });
   

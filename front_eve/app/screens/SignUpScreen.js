@@ -72,7 +72,7 @@ export default function SignUpScreen({ navigation }) {
   const fetchSignUpVal = async () =>{
     var status=0
     if(data.isValidUser && data.isValidPassword && !data.isCompatiblePassword && valuesNotNul() && validPhone() && ((validZip() && zip_code!="")||zip_code==="")){
-      fetch('http://192.168.1.107:3000/signup',
+      fetch('http://169.254.3.246:3000/signup',
         {method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({"name": name,
