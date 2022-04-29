@@ -22,6 +22,7 @@ import EvilIcons from "react-native-vector-icons/EvilIcons";
 import DatePicker from "react-native-datepicker";
 import Feather from "react-native-vector-icons/Feather";
 import Fontisto from "react-native-vector-icons/Fontisto";
+import UploadImageEvent from "../config/uploadImageEvent.js";
 import * as Animatable from "react-native-animatable";
 import { Picker } from "@react-native-picker/picker";
 
@@ -340,6 +341,26 @@ const CreateEventScreen = ({ navigation }) => {
             />
 
             <Text style={styles.label}>Paid admission</Text>
+          </View>
+          <Text
+            style={[
+              styles.text_footer,
+              {
+                color: COLORS.lightBlue,
+                marginTop: 35,
+              },
+            ]}
+          >
+            Image*
+          </Text>
+          <View
+            style={{
+              paddingTop: 40,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <UploadImageEvent />
           </View>
           <Text
             style={[
