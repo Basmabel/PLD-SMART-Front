@@ -4,7 +4,7 @@ import Carousel from 'react-native-snap-carousel'
 import CarouselCard, { SLIDER_WIDTH, ITEM_WIDTH } from '../components/CarouselCard'
 import CategorieCard, { SLIDER_W, ITEM_W } from '../components/CategorieCard'
 import ReviewCard from '../components/ReviewCard'
-
+import ParticipantCard from '../components/ParticipantCard';
 
 
 
@@ -22,6 +22,8 @@ const MyCarousel = ({data, type,navigation}) => {
        obj = {card:CategorieCard,sliderWidth:SLIDER_W, width:ITEM_W,margin:-120};
   }else if(type.event==="review"){
       obj = {card:ReviewCard,sliderWidth:SLIDER_W, width:Dimensions.get("window").width*0.75,margin:0};
+  }else if(type.event==="participant"){
+      obj={card:ParticipantCard, sliderWidth:SLIDER_W, width:Dimensions.get("window").width*0.75,margin:0}
   }
 
   const Item = ({item,index})=>{
@@ -32,6 +34,8 @@ const MyCarousel = ({data, type,navigation}) => {
       return (<CarouselCard item={item} index={index} />);
     }else if(type.event==="review"){
       return (<ReviewCard item={item} index={index} width={Dimensions.get("window").width*0.75}/>);
+    }else if(type.event==="participant"){
+      return (<ParticipantCard item={item} index={index} width={Dimensions.get("window").width*0.3}/>);
     }
     
   }
