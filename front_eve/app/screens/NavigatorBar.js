@@ -37,25 +37,25 @@ export default function NavigatorBar() {
 
   return (
     <Tab.Navigator
-      screenOptions={{ 
-        tabBarActiveTintColor:  COLORS.greyBlue,
+      screenOptions={{
+        tabBarActiveTintColor: COLORS.greyBlue,
         tabBarInactiveTintColor: COLORS.mauve,
-        tabBarStyle: { backgroundColor: COLORS.beige } ,
+        tabBarStyle: { backgroundColor: COLORS.beige },
         tabBarLabelStyle: {
           paddingBottom: 5,
           fontSize: 12,
-          fontWeight: "bold"
+          fontWeight: "bold",
         },
         //unmountOnBlur: true,
         tabBarStyle: [
           {
-            display: "flex"
+            display: "flex",
           },
-          null
-        ]
+          null,
+        ],
       }}
       tabBarOptions={{
-        labelStyle: {paddingBottom:5,fontSize: 12, fontWeight:'bold' },
+        labelStyle: { paddingBottom: 5, fontSize: 12, fontWeight: "bold" },
         style: { padding: 10, height: 70 },
       }}
     >
@@ -65,12 +65,12 @@ export default function NavigatorBar() {
         options={{
           headerShown: false,
           component: { HomePageScreen },
-          tabBarIcon: ({color}) => (
+          tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="home"
               size={25}
               color={color}
-              style={{paddingTop:5}}
+              style={{ paddingTop: 5 }}
             />
           ),
         }}
@@ -81,12 +81,12 @@ export default function NavigatorBar() {
         options={{
           headerShown: false,
           component: { SearchScreen },
-          tabBarIcon: ({color}) => (
+          tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="map-outline"
               size={25}
               color={color}
-              style={{paddingTop:5}}
+              style={{ paddingTop: 5 }}
             />
           ),
         }}
@@ -97,12 +97,12 @@ export default function NavigatorBar() {
         options={{
           headerShown: false,
           component: { MyEventsScreen },
-          tabBarIcon: ({color}) => (
+          tabBarIcon: ({ color }) => (
             <MaterialIcons
               name="event"
               size={25}
               color={color}
-              style={{paddingTop:5}}
+              style={{ paddingTop: 5 }}
             />
           ),
         }}

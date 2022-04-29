@@ -1,23 +1,19 @@
-import { StatusBar } from 'expo-status-bar';
-import { registerRootComponent } from 'expo';
-import { StyleSheet, Text, View } from 'react-native';
-import LandingScreen from './app/screens/LandingScreen.js';
-import SignInScreen from './app/screens/SignInScreen.js';
-import SignUpScreen from './app/screens/SignUpScreen.js';
+
+import { StyleSheet} from "react-native";
+import LandingScreen from "./app/screens/LandingScreen.js";
+import SignInScreen from "./app/screens/SignInScreen.js";
+import SignUpScreen from "./app/screens/SignUpScreen.js";
+import EventPerCategoryScreen from "./app/screens/EventPerCategoryScreen.js";
+import NavigatorBar from "./app/screens/NavigatorBar.js";
 import ProfileScreen from './app/screens/ProfileScreen.js';
-import HomePageScreen from './app/screens/HomePageScreen.js';
-import EventPerCategoryScreen from './app/screens/EventPerCategoryScreen.js';
-import NavigatorBar from './app/screens/NavigatorBar.js';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer } from "@react-navigation/native";
 import "react-native-gesture-handler";
 import { createStackNavigator } from "@react-navigation/stack";
 import SearchScreen from "./app/screens/SearchScreen.js";
-import { TextField } from "native-base";
-import ValidationCode from './app/screens/ValidationCode'
+import ValidationCode from "./app/screens/ValidationCode";
 import FilterScreen from "./app/screens/FilterScreen.js";
 import CategorieCard from './app/components/CategorieCard.js';
 import CarouselCard from './app/components/CarouselCard';
-
 import ParticipationDemandScreen from './app/screens/ParticipationDemandScreen.js';
 import NotificationsScreen from './app/screens/NotificationsScreen.js'
 import MyAccountScreen from './app/screens/MyAccountScreen.js';
@@ -55,8 +51,8 @@ export default function App() {
         <Stack.Screen name="SearchScreen" component={SearchScreen} />
       </Stack.Navigator>
     </NavigationContainer>
-   // <ValidationCode/>
-   // <SearchScreen />
+    // <ValidationCode/>
+    // <SearchScreen />
   );
 }
 
