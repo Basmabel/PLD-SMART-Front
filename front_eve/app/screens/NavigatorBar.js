@@ -27,6 +27,8 @@ export default function NavigatorBar() {
         tabBarActiveTintColor: COLORS.greyBlue,
         tabBarInactiveTintColor: COLORS.mauve,
         tabBarStyle: { backgroundColor: COLORS.beige },
+        gestureEnabled: false,
+        animationEnabled: false,
         tabBarLabelStyle: {
           paddingBottom: 5,
           fontSize: 12,

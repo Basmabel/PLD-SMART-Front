@@ -679,7 +679,7 @@ export default function MyAccountScreen({navigation}) {
                     <Text style={styles.title_body}>Reviews</Text>
                     <MaterialIcons name="preview" color={COLORS.lightBlue} size={26}/>
                   </View>
-                  <MyCarousel data={review} type={{ event: "review" }} />
+                  <MyCarousel data={review} type={{ event: "review" }} navigation={navigation}/>
                   </View>
 
               </View>

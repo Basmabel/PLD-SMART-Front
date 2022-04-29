@@ -13,7 +13,7 @@ if(light==="light"){
 
 
 
-const ParticipantCard= ({ item, index, width}) => {
+const ParticipantCard= ({ item, index, width, navigation}) => {
   const height = width*0.5;
 
   var colorBack="";
@@ -76,7 +76,9 @@ const ParticipantCard= ({ item, index, width}) => {
     return (
       <View style={styles.container}>
             <View style={styles.header}>
-                <Image source={{uri: isImage? item.photo : 'https://cdn-icons-png.flaticon.com/128/1946/1946429.png'}} style={styles.profil}/>
+                <TouchableOpacity onPress={()=> navigation.navigate("Profile user",{profile_id:item.user_id})}>
+                   <Image source={{uri: isImage? item.photo : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}} style={styles.profil} />
+                </TouchableOpacity>
                 <View style={styles.infos}>
                     <Text style={styles.title_header}>{item.name} {item.surname}</Text>
                 </View>

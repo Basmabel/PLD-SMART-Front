@@ -1,5 +1,5 @@
 import React, {useEffect, useRef} from "react";
-import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView, TouchableOpacity} from 'react-native';
+import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, Alert,ScrollView, TouchableOpacity} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS} from '../config/colors.js';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
@@ -38,16 +38,203 @@ export default function EventScreen({route, navigation}) {
   const [maxRating, setMaxRating] = React.useState([1, 2, 3, 4, 5])
   const [like, setLike] = React.useState(0)
   const [reviewedParticipant, setReviewedParticipant] = React.useState("")
+  const [reviewIdParti,setReviewIdParti] = React.useState(0)
   const eventId = route.params.eventId
   const [notifVisible, setNotifVisible] = React.useState(false)
   const socketRef = useRef();
   const isFocused = useIsFocused();
+  const [textIn, setTextIn] = React.useState(false) 
+
 
   const starImgFilled = 'https://raw.githubusercontent.com/tranhonghan/images/main/star_filled.png'
   const starImgEmpty = 'https://raw.githubusercontent.com/tranhonghan/images/main/star_corner.png'
 
   const heartImgFilled =''
   const heartImgEmpty = ''
+
+  const demandParticipation = async ()=>{
+    Alert.alert(
+      "Do you really want to participate to this event?",
+      ``,
+      [
+        {
+          text: "Yes",
+          onPress: () => {participateFetch()}
+        },
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel"
+        }
+      ],
+      { cancelable: false }
+    );
+    
+  }
+
+  const participateFetch = async()=>{
+
+    fetch("http://169.254.3.246:3000/demandParticipation",{
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({user_id: userId, event_id: eventId}),
+    }).then((response) => {
+      return response.json()
+    }).then(async (json) => {
+      const message = ""
+      const type = 1
+      const event_id = null
+      const user_id = infoEvent.creator_id
+      const review_id = null
+      const user_targeted_id = null
+      const participation_demand_id = json[0].id
+      socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
+      navigation.navigate("Home")
+    }).catch((error)=>console.error(error));
+
+    
+  }
+
+  const LikeFetch = async(like)=>{
+
+    fetch("http://169.254.3.246:3000/setLiked",{
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({user_id: userId, event_id: eventId, liked: like}),
+    }).catch((error)=>console.error(error));
+
+     const message = ""
+      const type = 9
+      const event_id = eventId
+      const user_id = infoEvent.creator_id
+      const review_id = null
+      const user_targeted_id = userId
+      const participation_demand_id = null
+      socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
+      navigation.navigate("Home")
+  }
+
+
+  const cancelEvent = async (participants)=>{
+    Alert.alert(
+      "Do you really want to cancel this event?",
+      ``,
+      [
+        {
+          text: "Yes",
+          onPress: () => {cancelFetch(participants)}
+        },
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel"
+        }
+      ],
+      { cancelable: false }
+    );
+    
+  }
+
+  const cancelFetch = async(participants)=>{
+
+    fetch("http://169.254.3.246:3000/cancelEvent",{
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({event_id: eventId}),
+    }).catch((error)=>console.error(error));
+    console.log(participants)
+    const message = ""
+      const type = 12
+      const event_id = eventId
+      const user_id = infoEvent.creator_id
+      const review_id = null
+      const user_targeted_id = null
+      const participation_demand_id = null
+      socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id,participants})
+      navigation.navigate("Home")
+  }
+
+  const withdrawEvent = async ()=>{
+    Alert.alert(
+      "Do you really want to withdraw from this event?",
+      ``,
+      [
+        {
+          text: "Yes",
+          onPress: () => {withdrawFetch()}
+        },
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel"
+        }
+      ],
+      { cancelable: false }
+    );
+    
+  }
+
+  const withdrawFetch = async()=>{
+
+    fetch("http://169.254.3.246:3000/removeParticipant",{
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({user_id:userId, event_id: eventId}),
+    }).catch((error)=>console.error(error));
+
+    const message = ""
+      const type = 8
+      const event_id = eventId
+      const user_id = infoEvent.creator_id
+      const review_id = null
+      const user_targeted_id = userId
+      const participation_demand_id = null
+      socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
+      navigation.navigate("Home")
+  }
+
+  const reviewEvent = async (id)=>{
+    Alert.alert(
+      "Do you really want to send the review?",
+      ``,
+      [
+        {
+          text: "Yes",
+          onPress: () => {reviewFetch(id)}
+        },
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel"
+        }
+      ],
+      { cancelable: false }
+    );
+    
+  }
+
+  const reviewFetch = async(id)=>{
+   
+    fetch("http://169.254.3.246:3000/addReview",{
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({score:defaultRating, review: new_review, creator:infoEvent.user_is_creator, writer_id:userId, target_id:id, event_id: eventId}),
+    }).then((response) => {
+      return response.json()
+    }).then(async (json) => {
+      const message = ""
+      const type = 5
+      const event_id = null
+      const user_id = infoEvent.creator_id
+      const review_id = json[0].id
+      const user_targeted_id = null
+      const participation_demand_id = null
+      socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
+    }).catch((error)=>console.error(error));
+
+    
+  }
+
 
   const CustomRatingBar = () => {
     return(
@@ -75,33 +262,30 @@ export default function EventScreen({route, navigation}) {
       </View>
     )
   }
-  // const CustomLike = () => {
+  const CustomLike = () => {
 
-  //   if(like){
-  //     return(
-  //       <View style={{justifyContent:'center', flexDirection: 'item',
-  //                     marginTop: 10,
-  //                     marginBottom: 10}}>
-  //       <TouchableOpacity activeOpacity={0.7} onPress={()=>setLike(0)} style={{backgroundColor:COLORS.white}} >
-  //         <MaterialCommunityIcons name="heart-outline" 
-  //             color={COLORS.lightBlue} 
-  //             size={30}
-  //             style={{right : - 250, top: -40}}/>
-  //       </TouchableOpacity>
-  //       </View>
-  //     )
-  //   }else{
-  //       return(
-  //         <View style={{justifyContent:'center', flexDirection: 'row',
-  //               marginTop: 10,
-  //               marginBottom: 10}}>          
-  //         <TouchableOpacity activeOpacity={0.7} onPress={()=>setLike(1)} >
-  //           <MaterialCommunityIcons name="heart" color={COLORS.lightBlue} size={30}/>
-  //         </TouchableOpacity>
-  //         </View>
-  //       )
-  //   }
-  // }
+    if(like===1){
+      return(
+        <View style={{justifyContent:'center', flexDirection: 'row', width:'100%', 
+                      marginBottom: 10}}>
+        <TouchableOpacity activeOpacity={0.7} onPress={()=>{setLike(0), LikeFetch(0)}} style={{backgroundColor: COLORS.yellow}} >
+          <MaterialCommunityIcons name="heart" 
+              color={COLORS.lightBlue} 
+              size={30}/>
+        </TouchableOpacity>
+        </View>
+      )
+    }else{
+        return(
+          <View style={{justifyContent:'center', flexDirection: 'row',width:'100%',
+                marginBottom: 10}}>          
+          <TouchableOpacity activeOpacity={0.7} onPress={()=>{setLike(1), LikeFetch(1)}} >
+            <MaterialCommunityIcons name="heart-outline" color={COLORS.lightBlue} size={30}/>
+          </TouchableOpacity>
+          </View>
+        )
+    }
+  }
 
   var [fontsLoaded] = useFonts({
     Montserrat_400Regular,
@@ -109,14 +293,18 @@ export default function EventScreen({route, navigation}) {
     Montserrat_600SemiBold
   });
 
+  
   useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
-      socketRef.current = io("http://169.254.3.246:3000");
-      socketRef.current.emit('userId',(userId))
-      return () => {
-          socketRef.current.disconnect();
-      };
+      if(!textIn){
+        socketRef.current = io("http://169.254.3.246:3000");
+        socketRef.current.emit('userId',(userId))
+        return () => {
+            socketRef.current.disconnect();
+        };
+      }
+      
     }, [])
   );
 
@@ -146,9 +334,10 @@ export default function EventScreen({route, navigation}) {
     
     socketRef.current.on('message', (message)=>{
       console.log("You received a notification")
+      setNotifVisible(true)
     })
     
-    if(isFocused) {
+    if(isFocused && !textIn) {
       setLoading(true)
     }
 
@@ -171,7 +360,7 @@ export default function EventScreen({route, navigation}) {
           body: JSON.stringify({
             "event_id":eventId,
           })}),
-        fetch('http://192.168.56.1:3000/getEventParticipants',{
+        fetch('http://169.254.3.246:3000/getEventParticipants',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id": eventId})
@@ -193,13 +382,18 @@ export default function EventScreen({route, navigation}) {
             console.log(item[0])
           }else if(index==1){
             setInfoEvent(item[0])
-            console.log(item[0])
+            if(item[0].liked_id!=0){
+             setLike(1);
+            }else{
+              setLike(0)
+            }
+            console.log(item)
           }else if(index==2){
              setReviewEvent(item.reviews)
              //console.log(item.reviews)
            }else if(index==3){
             setParticipation(item.participants)
-            //console.log(item)
+            console.log(item)
             //console.log(item.reviews)
           }              
         });
@@ -211,7 +405,7 @@ export default function EventScreen({route, navigation}) {
   }, [retreive,isFocused]);
 
   const generate_cancelled_event = () =>{
-
+      return(<View></View>)
   }
 
   const generate_non_participant_page = () =>{
@@ -220,7 +414,7 @@ export default function EventScreen({route, navigation}) {
       console.log('Event has not happened yet')
     return (
             <View style= {{alignItems: "center", position: 'relative', top: -10}}>
-              <Pressable title = "participate" style={styles.button} onPress={()=>console.log('permission for singing up')}>
+              <Pressable title = "participate" style={[styles.button,{display: (infoEvent.demand_id===0)?"flex" : "none"}]} onPress={()=>{demandParticipation()}}>
                 <Text style={styles.text_button}>Participate !</Text>
               </Pressable>
             </View>
@@ -232,20 +426,29 @@ export default function EventScreen({route, navigation}) {
                       <Text style={styles.title_body}>Reviews</Text>
                       <MaterialIcons name="preview" color={COLORS.lightBlue} size={26}/>
                     </View>
-                    <MyCarousel data={review} type={{ event: "review" }} />
+                    <MyCarousel data={review} type={{ event: "review" }} navigation={navigation} />
                   </View> 
       )
-    }else if(infoEvent.status_id==1) generate_cancelled_event()
+    }else if (infoEvent.status_id==2) {return generate_cancelled_event()}
   }
 
   const generate_participant_page = () =>{
     if(infoEvent.status_id===1){
       return (
+        <View style={styles.events}>
+              <View style={styles.events}>
+                <View style={styles.categorieEvents}>
+                  <Text style={styles.title_body}>Participant</Text>
+                  <MaterialIcons name="verified-user" color={COLORS.lightBlue} size={26}/>
+                </View>
+                <MyCarousel data={participation} type={{ event: "participant" }} navigation={navigation} onPress={(item)=>console.log(item)}/>
+            </View>
               <View style= {{alignItems: "center", position: 'relative', top: -10}}>
-                <Pressable title = "withdraw" style={styles.button} onPress={()=>console.log('permission fro withdrawal')}>
+                <Pressable title = "withdraw" style={styles.button} onPress={()=>{withdrawEvent()}}>
                   <Text style={styles.text_button}>Withdraw :(</Text>
                 </Pressable>
               </View>
+        </View>
       )
     }else if(infoEvent.status_id===3){
         console.log('IT HAAAS')
@@ -256,32 +459,33 @@ export default function EventScreen({route, navigation}) {
                 <Text style={styles.title_body}>Reviews </Text>
                 <MaterialIcons name="preview" color={COLORS.lightBlue} size={26}/>
               </View>
-              <MyCarousel data={review} type={{ event: "review" }} />
+              <MyCarousel data={review} type={{ event: "review" }} navigation={navigation}/>
             </View> 
             <View style={styles.events}>
               <View style={styles.categorieEvents}>
                 <Text style={styles.title_body}>Participants </Text>
                 <MaterialIcons name="verified-user" color={COLORS.lightBlue} size={26}/>
               </View>
-              <MyCarousel data={participation} type={{ event: "participant" }} />
+              <MyCarousel data={participation} type={{ event: "participant" }} navigation={navigation} />
             </View>
             <View style= {{justifyContent: "space-evenly", 
                                 alignItems: "center", 
-                                position: 'relative', 
-                                top: -10,}}>
-                  <TextInput style={styles.input} 
-                            placeholder="Post a review"
-                            onChangeText={
-                              (value) => setNew_Review(value)
-                            } />
+                                position: 'relative',}}>
+                  <TextInput
+                    style={[styles.input]}
+                    placeholder="Post a review"
+                    placeholderTextColor={COLORS.black}
+                    onChangeText={(value) => {setNew_Review(value);setTextIn(true)}}
+                    onEndEditing={() =>{setTextIn(false)}}
+                  />
                   <CustomRatingBar/>
-                  <Pressable title = "makereviews" style={styles.button} onPress={()=>alert('Thank You For The Review!')}>
+                  <Pressable title = "makereviews" style={styles.button} onPress={()=>{reviewEvent(infoEvent.creator_id)}}>
                     <Text style={styles.text_button}>Post !</Text>
                   </Pressable>
             </View>
         </View>
         )
-      }else if(infoEvent.status_id===2) generate_cancelled_event()
+      }else if (infoEvent.status_id==2) {return generate_cancelled_event()}
     }
 
   const generate_organizer_page = () =>{
@@ -296,10 +500,10 @@ export default function EventScreen({route, navigation}) {
                 <Text style={styles.title_body}>Participant</Text>
                 <MaterialIcons name="verified-user" color={COLORS.lightBlue} size={26}/>
               </View>
-              <MyCarousel data={participation} type={{ event: "participant" }} onPress={(item)=>console.log(item)}/>
+              <MyCarousel data={participation} type={{ event: "participant" }} navigation={navigation} onPress={(item)=>console.log(item)}/>
             </View>
             <View style={{justifyContent:'center', alignContent:'space-around'}}>
-              <Pressable title = "cancel" style={styles.button} onPress={()=>alert('The Event has been cancelled.')}>
+              <Pressable title = "cancel" style={styles.button} onPress={()=>{cancelEvent(participation)}}>
                       <Text style={styles.text_button}>Cancel</Text>
               </Pressable>
               <Pressable title = "edit" style={styles.button} onPress={()=>console.log('navigate to edit event page on process')}>
@@ -318,24 +522,25 @@ export default function EventScreen({route, navigation}) {
                 <Text style={styles.title_body}>Participant</Text>
                 <MaterialIcons name="verified-user" color={COLORS.lightBlue} size={26}/>
               </View>
-              <MyCarousel data={participation} type={{ event: "participant" }} />
+              <MyCarousel data={participation} type={{ event: "participant" }} navigation={navigation}/>
             </View>
           <View style={styles.events}>
               <View style={styles.categorieEvents}>
                 <Text style={styles.title_body}>Reviews</Text>
                 <MaterialIcons name="preview" color={COLORS.lightBlue} size={26}/>
               </View>
-              <MyCarousel data={review} type={{ event: "review" }} />
+              <MyCarousel data={review} type={{ event: "review" }} navigation={navigation}/>
             </View>
             <View style= {{justifyContent: "space-evenly", 
                                 alignItems: "center", 
-                                position: 'relative', 
-                                top: -10}}>
-                  <TextInput style={styles.input} 
-                            placeholder="Post a review"
-                            onChangeText={
-                              (value) => setNew_Review(value)
-                            } />
+                                position: 'relative'}}>
+                  <TextInput
+                    style={[styles.input]}
+                    placeholder="Post a review"
+                    placeholderTextColor={COLORS.black}
+                    onChangeText={(value) => {setNew_Review(value);setTextIn(true)}}
+                    onEndEditing={() =>{setTextIn(false)}}
+                  />
                   <CustomRatingBar/>
                   <Pressable title = "makereviews" style={styles.button} onPress={()=>alert('Thank You For The Review!')}>
                     <Text style={styles.text_button}>Post !</Text>
@@ -346,7 +551,7 @@ export default function EventScreen({route, navigation}) {
             </View>
         </View>
       )
-    }else{infoEvent.status_id==2} generate_cancelled_event()
+    }else if (infoEvent.status_id==2) { return generate_cancelled_event()}
 
 
   }
@@ -354,7 +559,7 @@ export default function EventScreen({route, navigation}) {
   
   const BodyGen = () =>{
 
-    if (!infoEvent.user_is_creator){
+    if (infoEvent.user_is_creator){
       //return generate_organizer_page();
       return  generate_organizer_page();
       //the condition is wrong to check 
@@ -412,15 +617,16 @@ export default function EventScreen({route, navigation}) {
                       <View style={styles.contentContainer}>
                             <View style={styles.info_event}>
                                 <Image style={styles.photo_event} source={{uri: infoEvent.event_image}}/>
-                                
                                 <Text style={styles.title_info_event}>{infoEvent.event_name}</Text>
                                 <Text style={styles.text_info_event}>{formatageDate(infoEvent.date)}</Text>
+                                <Text style={[styles.desc,{display: (infoEvent.description!=null)? "flex":"none"}]}>{infoEvent.description}</Text>
                                 <MaterialCommunityIcons name={paying_line} color={COLORS.lightBlue} size={24}/>
                                 <Image style = {styles.profilImage} source={{uri: infoEvent.creator_image}}/>
-                                {/* <CustomLike/> */}
-                                <Text style={styles.desc}>{infoEvent.description}</Text>
                             </View>
-                        <BodyGen/>
+                            <View style={styles.otherInfos}>
+                                <CustomLike/> 
+                                <BodyGen/>
+                            </View>
                       </View>
                 </ScrollView>
               </View>
@@ -443,8 +649,7 @@ const styles = StyleSheet.create({
     color: COLORS.lightBlue,
     fontFamily: "Montserrat_400Regular",
     fontSize: 14,
-    marginBottom: 5,
-    top : -30
+    marginTop:10
   },
   header: {
     paddingHorizontal: 20,
@@ -520,7 +725,6 @@ const styles = StyleSheet.create({
   },
   contentContainer:{
     flexDirection: "column",
-    paddingTop:15,
     height: "100%",
   },
   title_body: {
@@ -582,26 +786,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: 'Montserrat_600SemiBold',
   },
-  // info_event:{
-  //   marginBottom: 0,
-  //   marginTop: 0,
-  // },
+  info_event:{
+    marginTop: 15
+  },
   photo_event:{
     width:'100%',
     height: 0.6*Dimensions.get("window").width,
     marginBottom:10,
     borderRadius: 10
-  },
-  title_info_event: {
-    color: COLORS.lightBlue,
-    fontFamily: "Montserrat_600SemiBold",
-    fontSize: 23
-  },
-  text_info_event:{
-    color: COLORS.lightBlue,
-    fontFamily: "Montserrat_400Regular",
-    fontSize: 19,
-    marginBottom: 5
   },
   container_categorie: {
     backgroundColor: COLORS.white,
@@ -641,6 +833,8 @@ const styles = StyleSheet.create({
     fontSize:15,
     fontWeight:'bold',
     paddingLeft: 5
+  },
+  otherInfos:{
   },
   notif_buble:{
     width:'100%', 

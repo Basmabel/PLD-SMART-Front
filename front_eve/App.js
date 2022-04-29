@@ -43,7 +43,7 @@ export default function App() {
         <Stack.Screen name="MyEventsScreen" component={MyEventsScreen}/>
         <Stack.Screen name="Buble" component={NotifBuble}/>
         <Stack.Screen name="MyAccount" component={MyAccountScreen}/>
-        <Stack.Screen
+        <Stack.Screen 
           name="Previous"
           component={NavigatorBar}
           options={{ headerShown: false }}

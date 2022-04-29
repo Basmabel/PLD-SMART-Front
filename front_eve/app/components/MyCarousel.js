@@ -33,9 +33,9 @@ const MyCarousel = ({data, type,navigation}) => {
     }else if (type.event==="oui"){
       return (<CarouselCard item={item} index={index} navigation={navigation}/>);
     }else if(type.event==="review"){
-      return (<ReviewCard item={item} index={index} width={Dimensions.get("window").width*0.75}/>);
+      return (<ReviewCard item={item} index={index} width={Dimensions.get("window").width*0.75} navigation={navigation}/>);
     }else if(type.event==="participant"){
-      return (<ParticipantCard item={item} index={index} width={Dimensions.get("window").width*0.3}/>);
+      return (<ParticipantCard item={item} index={index} width={Dimensions.get("window").width*0.3} navigation={navigation}/>);
     }
     
   }
