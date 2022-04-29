@@ -12,7 +12,7 @@ import Fontisto from "react-native-vector-icons/Fontisto";
 import * as Animatable from "react-native-animatable";
 import {Picker} from '@react-native-picker/picker';
 
-const CreateEventScreenTest = ({ navigation }) => {
+const CreateEventScreen = ({ navigation }) => {
     //TODO : put a link with the admin view event page
     //const goToEvent = () => navigation.navigate("Create");
     const [title, onChangeTitle] = React.useState("");
@@ -254,7 +254,7 @@ const handleValidDate = (val) => {
     );
 };
 
-export default CreateEventScreenTest;
+export default CreateEventScreen;
 
 const styles = StyleSheet.create({
     container: {

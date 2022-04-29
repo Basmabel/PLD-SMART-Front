@@ -14,7 +14,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import SearchScreen from "./app/screens/SearchScreen.js";
 import { TextField } from "native-base";
 import ValidationCode from './app/screens/ValidationCode'
-import CreateEventScreenTest from "./app/screens/CreateEventScreenTest";
+import CreateEventScreen from "./app/screens/CreateEventScreen";
 import FilterScreen from "./app/screens/FilterScreen.js";
 import CategorieCard from './app/components/CategorieCard.js';
 import ParticipationDemandScreen from './app/screens/ParticipationDemandScreen.js';
@@ -45,7 +45,7 @@ export default function App() {
     </NavigationContainer>*/
    // <ValidationCode/>
    // <SearchScreen />
-   <CreateEventScreenTest/>
+   <CreateEventScreen/>
   );
 }
 
