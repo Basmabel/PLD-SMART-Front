@@ -171,7 +171,9 @@ export default function EventScreen({route}) {
   }
 
   const generate_participant_page = () =>{
+    console.log('IM INSIDE PARTICIPANT')
     if(infoEvent.status_id==1){
+      console.log('STILL HAS NOTTT')
       // onPress={()=>Alert.alert("Are you sure you want to quit?")
       return (
               <View style= {{alignItems: "center", position: 'relative', top: -10}}>
@@ -181,6 +183,7 @@ export default function EventScreen({route}) {
               </View>
       )
       }else if(infoEvent.status_id==3){
+        console.log('IT HAAAS')
         return(     
         <View>
           <View style={styles.events}>
@@ -200,7 +203,7 @@ export default function EventScreen({route}) {
                               (value) => setNew_Review(value)
                             } />
                   <CustomRatingBar/>
-                  <Pressable title = "makereviews" style={styles.button} onPress={()=>alert('Thank You For The Review! ')}>
+                  <Pressable title = "makereviews" style={styles.button} onPress={()=>alert('Thank You For The Review!')}>
                     <Text style={styles.text_button}>Post !</Text>
                   </Pressable>
             </View>
@@ -257,6 +260,7 @@ export default function EventScreen({route}) {
 
     if (!infoEvent.user_is_creator){
       //return generate_organizer_page();
+      console.log('hreeeeee oh oh')
       return  generate_participant_page();
       //the condition is wrong to check 
     }else if(infoEvent.particip_id){
