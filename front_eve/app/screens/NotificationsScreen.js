@@ -14,6 +14,8 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import formatageDate from '../utils/date_formatage';
 import {io} from "socket.io-client"
 import { Ionicons } from '@expo/vector-icons';  
+import { useIsFocused } from "@react-navigation/native";
+
 
 var light = "dark"
 var colorBack= COLORS.greyBlue
@@ -35,6 +37,7 @@ export default function HomePageScreen({navigation}) {
    const [image,setImage] = React.useState("")
    const [notifContent, setNotifContent] =React.useState(null)
    const [selectedNotif, setSelectedNotif] = React.useState({id:"",type:""})
+   const isFocused = useIsFocused();
   
    const socketRef = useRef();
 
@@ -107,7 +110,7 @@ export default function HomePageScreen({navigation}) {
      }else if(type===5){
        navigation.navigate("Profile")
      }else if(type===9 || type===10 || type===11 || type===12){
-       navigation.navigate("ProfileScreen",{profile_id:user_id})
+       navigation.navigate("Profile user",{profile_id:user_id})
      }
    }
 
@@ -138,6 +141,21 @@ export default function HomePageScreen({navigation}) {
     }).catch((error)=>console.error(error));
    }
    
+   const fetchNotif = async ()=>{
+    console.log("fetch")
+    fetch('http://169.254.3.246:3000/getNotifications',{
+      method: "POST",
+      headers: {'content-type': 'application/json'},
+      body: JSON.stringify({
+        "id":userId
+      })}).then((response)=>{
+          return response.json();
+    })
+    .then(async (json)=>{
+      setNotifContent(json)
+    })
+    .catch((error)=>console.error(error))
+   }
   
   
   useEffect(() => {
@@ -166,8 +184,11 @@ export default function HomePageScreen({navigation}) {
        console.log("You received a notification")
      })
      
+    if(isFocused) {
+      //setLoading(true)
+    }
 
-    if(retreive){      
+    if(retreive){    
       Promise.all([
         fetch('http://169.254.3.246:3000/getUserInfo',{
           method: "POST",
@@ -205,7 +226,7 @@ export default function HomePageScreen({navigation}) {
     }
       
 
-  }, [retreive]);
+  }, [retreive,isFocused]);
 
   const DisplayNotif=()=>{
     const listNotif = notifContent.map((item)=>
@@ -271,7 +292,7 @@ export default function HomePageScreen({navigation}) {
                   </View>
                     <View style={styles.contentContainer}>
 
-                        <DisplayNotif/>
+                        <DisplayNotif style={{display: isFocused? "flex":"non"}}/>
                            
                     </View>
               </ScrollView>

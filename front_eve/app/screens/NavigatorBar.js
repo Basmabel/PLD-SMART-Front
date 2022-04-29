@@ -26,6 +26,8 @@ import MyEventsScreen from "../screens/MyEventsScreen";
 import MyAccountScreen from "./MyAccountScreen.js";
 import NotificationsScreen from "./NotificationsScreen.js"
 import { Ionicons } from '@expo/vector-icons'; 
+import EventPerCategoryScreen from "./EventPerCategoryScreen.js";
+import ProfileScreen from "./ProfileScreen.js";
 
 
 const Tab = createBottomTabNavigator();
@@ -44,7 +46,7 @@ export default function NavigatorBar() {
           fontSize: 12,
           fontWeight: "bold"
         },
-        unmountOnBlur: true,
+        //unmountOnBlur: true,
         tabBarStyle: [
           {
             display: "flex"
@@ -125,7 +127,7 @@ export default function NavigatorBar() {
         component={MyAccountScreen}
         options={{
           headerShown: false,
-          component: { HomePageScreen },
+          component: { MyAccountScreen },
           tabBarIcon: ({color}) => (
             <MaterialCommunityIcons
               name="account"
@@ -133,6 +135,22 @@ export default function NavigatorBar() {
               color={color}
             />
           ),
+        }}
+      />
+      <Tab.Screen
+        name="EventPerCategoryScreen"
+        component={EventPerCategoryScreen}
+        options={{
+          headerShown: false,
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="Profile user"
+        component={ProfileScreen}
+        options={{
+          headerShown: false,
+          tabBarButton: () => null,
         }}
       />
 

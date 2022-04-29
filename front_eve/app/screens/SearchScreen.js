@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -12,6 +12,7 @@ import {
   SafeAreaView,
   Platform,
 } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from "expo-location";
 import { Marker } from "react-native-maps";
 import { mapDarkMode } from "../model/Map";
@@ -26,6 +27,8 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import Fontisto from "react-native-vector-icons/Fontisto";
 import { COLORS } from "../config/colors";
 import { useTheme } from "@react-navigation/native";
+import NotifBuble from "../components/NotifBuble.js";
+import {io} from "socket.io-client"
 
 const { width, height } = Dimensions.get("window");
 const CARD_HEIGHT = 220;
@@ -84,10 +87,14 @@ const SearchScreen = ({ navigation }) => {
       longitudeDelta: 0.040142817690068,
     },
   };
-
+  const [retreive, setRetreive] = React.useState(false);
   const [popularEvents, setPopularEvents] = React.useState([]);
   const [isLoading, setLoading] = React.useState(true);
   const [state, setState] = React.useState(initialMapState);
+  const [notifVisible, setNotifVisible] = React.useState(false)
+  const socketRef = useRef();
+  const [userId, setUserId] = React.useState("")
+  const [userToken, setUserToken] = React.useState("")
 
   let mapIndex = 0;
   let mapAnimation = new Animated.Value(0);
@@ -120,7 +127,29 @@ const SearchScreen = ({ navigation }) => {
       }, 10);
     });
     
-    if (true) {
+    const retreiveData = async ()=>{
+      try {
+        const valueString = await AsyncStorage.getItem('key');
+        const value = JSON.parse(valueString);
+
+        const tokenString = await AsyncStorage.getItem('token');
+        const token = JSON.parse(tokenString);
+        
+        setUserId(value)
+        setUserToken(token)
+        setRetreive(true)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    retreiveData();
+    socketRef.current = io("http://169.254.3.246:3000");
+     socketRef.current.on('message', (message)=>{
+       console.log("You received a notification")
+       setNotifVisible(true)
+     })
+     socketRef.current.emit('userId',(userId))
+    if (retreive) {
       Promise.all([
         //fetch("http://169.254.3.246:3000/getMapEvents"),
         fetch("http://169.254.3.246:3000/getMapEvents"),
@@ -148,7 +177,7 @@ const SearchScreen = ({ navigation }) => {
         })
         .finally(() => setLoading(false));
     }
-  });
+  }, [retreive]);      
 
 
 
@@ -189,6 +218,9 @@ const SearchScreen = ({ navigation }) => {
       ) : (
         <View>
           <View style={styles.body}>
+          <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
+                  <NotifBuble navigation={navigation}/>
+                </View>
             <MapView
               ref={_map}
               initialRegion={state.region}
@@ -447,4 +479,11 @@ const styles = StyleSheet.create({
     padding: 10,
     flex: 1,
   },
+  notif_buble:{
+    width:'100%', 
+    flexDirection: 'row',
+    justifyContent: 'flex-end', 
+    marginBottom: -40, 
+    zIndex: 100
+  }
 });

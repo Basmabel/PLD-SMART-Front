@@ -115,7 +115,7 @@ const CarouselCard= ({item, index, navigation, type }) => {
       />
        <View style={styles.header}>
          <Text style={styles.name}>{item.name}</Text>
-         <TouchableOpacity onPress={()=> navigation.navigate("ProfileScreen",{profile_id:item.CreatorId})}>
+         <TouchableOpacity onPress={()=> navigation.navigate("Profile user",{profile_id:item.CreatorId})}>
          <Image source={{uri: isImage? item.ImageProfil : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}} style={styles.profil} />
          </TouchableOpacity>
          </View>

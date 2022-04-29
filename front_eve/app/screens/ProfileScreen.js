@@ -28,12 +28,12 @@ import {
   import Spinner from 'react-native-loading-spinner-overlay';
 import { TouchableOpacity } from "react-native-gesture-handler";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import NotifBuble from "../components/NotifBuble.js";
 import {io} from "socket.io-client"
 
   
   export default function ProfileScreen({route,navigation}) {
     const profile_id=route.params.profile_id;
-   
     var [fontsLoaded] = useFonts({
       Montserrat_400Regular,
       Montserrat_500Medium,
@@ -65,7 +65,8 @@ import {io} from "socket.io-client"
     const [causeVisible, setCauseVisible] = React.useState(false);
     const [causeId, setCauseId] =  React.useState(1);
     const [isRported, setReported] =  React.useState(false);
-    const socketRef = useRef();
+    const [notifVisible, setNotifVisible] = React.useState(false)
+   const socketRef = useRef();
 
     const fetchReport = async ()=>{
       setCauseVisible(false)
@@ -132,6 +133,9 @@ import {io} from "socket.io-client"
             data.map((item,index)=>{
               if(index===0){
                 setuserInfo(item.global_infos[0])
+                if(item.global_infos[0].reported!=-1){
+                  setReported(true)
+                }
                 setCreatorRating(item.creator_rating[0].score)
                 setParticipantRating(item.participant_rating[0].score)
               }else if(index===1){
@@ -151,6 +155,7 @@ import {io} from "socket.io-client"
       
       socketRef.current.on('message', (message)=>{
         console.log("You received a notification")
+        setNotifVisible(true)
       })
       socketRef.current.emit('userId',(userId))
 
@@ -173,6 +178,9 @@ import {io} from "socket.io-client"
             </View>
             <View style={styles.body}>
               <ScrollView style={{marginBottom: '40%'}}>
+              <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
+                  <NotifBuble navigation={navigation}/>
+                </View>
                 <View style={{paddingTop: 40,justifyContent: "center",alignItems: "center"}}>
                 
                 <Image
@@ -430,6 +438,14 @@ import {io} from "socket.io-client"
       fontFamily: "Montserrat_500Medium",
       fontSize: 18,
       paddingBottom: 20
+    },
+    notif_buble:{
+      width:'100%', 
+      flexDirection: 'row',
+      justifyContent: 'flex-end', 
+      marginBottom: -40, 
+      zIndex: 100
     }
+    
   });
   

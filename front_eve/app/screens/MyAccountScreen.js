@@ -11,7 +11,7 @@ import {
   ImageBackground,
   Alert,
 } from "react-native";
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useEffect} from "react";
 import { COLORS } from "../config/colors.js";
@@ -34,6 +34,8 @@ import {
   Montserrat_600SemiBold
 } from '@expo-google-fonts/dev'
 import Spinner from 'react-native-loading-spinner-overlay';
+import NotifBuble from "../components/NotifBuble.js";
+import {io} from "socket.io-client"
 
 //Recup les events
 /*const organizedEvents = [
@@ -64,8 +66,10 @@ import Spinner from 'react-native-loading-spinner-overlay';
 //const rating = {value:"10/10"};
 
 
-export default function MyAccountScreen() {
+export default function MyAccountScreen({navigation}) {
   const tabBarHeight = useBottomTabBarHeight() * 2;
+  const [notifVisible, setNotifVisible] = React.useState(false)
+  const socketRef = useRef();
 
   var [fontsLoaded] = useFonts({
     Montserrat_400Regular,
@@ -148,6 +152,14 @@ export default function MyAccountScreen() {
         }
       }
       retreiveData();
+
+     socketRef.current = io("http://169.254.3.246:3000");
+     socketRef.current.on('message', (message)=>{
+       console.log("You received a notification")
+       setNotifVisible(true)
+     })
+     socketRef.current.emit('userId',(userId))
+
       if(retreive){      
         Promise.all([
           fetch('http://169.254.3.246:3000/getMyAccountInfo',{
@@ -343,6 +355,9 @@ export default function MyAccountScreen() {
           </View>
           <View style={styles.body}>
             <ScrollView style={{marginBottom: tabBarHeight*2}}>
+                <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
+                  <NotifBuble navigation={navigation}/>
+                </View>
               <View style={{paddingTop: 40,justifyContent: "center",alignItems: "center"}}>
               <UploadImage imgProfil={userInfo.photo} id={userId}/>
               </View>
@@ -819,4 +834,11 @@ const styles = StyleSheet.create({
       color: "#05375a",
       fontSize: 18,
   },
+  notif_buble:{
+    width:'100%', 
+    flexDirection: 'row',
+    justifyContent: 'flex-end', 
+    marginBottom: -40, 
+    zIndex: 100
+  }
 });

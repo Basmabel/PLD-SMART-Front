@@ -77,7 +77,7 @@ export default function ParticipationDemandScreen({route,navigation}) {
     fetch("http://169.254.3.246:3000/refuseDemand",{
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ id: demandInfo.demand_id }),
+      body: JSON.stringify({ id: demandInfo.demand_id, notif_id:notif_id }),
     }).catch((error)=>console.error(error));
     const message = "hello"
     const type = 3
@@ -93,7 +93,7 @@ export default function ParticipationDemandScreen({route,navigation}) {
     fetch("http://169.254.3.246:3000/acceptDemand",{
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ demand_id: demandInfo.demand_id, user_id: demandInfo.user_id, event_id: demandInfo.event_id }),
+      body: JSON.stringify({ demand_id: demandInfo.demand_id, user_id: demandInfo.user_id, event_id: demandInfo.event_id, notif_id: notif_id}),
     }).catch((error)=>console.error(error));
 
     const message = "hello"
@@ -104,8 +104,6 @@ export default function ParticipationDemandScreen({route,navigation}) {
       const user_targeted_id = null
       const participation_demand_id = null
       socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
-
-    navigation.navigate("NavigatorBar")
   }
 
   const signoutFetch = async ()=>{
@@ -170,7 +168,9 @@ export default function ParticipationDemandScreen({route,navigation}) {
       
     socketRef.current.on('message', (message)=>{
       console.log("You received a notification")
+      navigation.navigate("Notifications")
     })
+
     socketRef.current.emit('userId',(userId))
     if(retreive){      
       Promise.all([

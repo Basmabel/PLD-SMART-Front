@@ -22,6 +22,7 @@ import ParticipationDemandScreen from './app/screens/ParticipationDemandScreen.j
 import NotificationsScreen from './app/screens/NotificationsScreen.js'
 import MyAccountScreen from './app/screens/MyAccountScreen.js';
 import MyEventsScreen from './app/screens/MyEventsScreen'
+import NotifBuble from './app/components/NotifBuble.js';
 
 const Stack = createStackNavigator();
 
@@ -43,6 +44,8 @@ export default function App() {
         <Stack.Screen name="CarousselCard" component={CarouselCard}/>
         <Stack.Screen name="ProfileScreen" component={ProfileScreen}/>
         <Stack.Screen name="MyEventsScreen" component={MyEventsScreen}/>
+        <Stack.Screen name="Buble" component={NotifBuble}/>
+        <Stack.Screen name="MyAccount" component={MyAccountScreen}/>
         <Stack.Screen
           name="Previous"
           component={NavigatorBar}

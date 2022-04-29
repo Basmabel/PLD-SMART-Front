@@ -15,60 +15,8 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {io} from "socket.io-client"
+import NotifBuble from "../components/NotifBuble.js";
 
-
-
-/*const popEvents = [
-    {
-      name: "Aenean leo",
-      date: "5 march 2020",
-      place: "Charpennes",
-      imgUrl: "https://picsum.photos/id/11/200/300",
-      imgProfil: "https://picsum.photos/id/11/200/300"
-    },
-    {
-      name: "Aenean leo",
-      date: "5 march 2020",
-      place: "Charpennes",
-      imgUrl: "https://picsum.photos/id/11/200/300",
-      imgProfil: "https://picsum.photos/id/11/200/300"
-    },
-    {
-      name: "Aenean leo",
-      date: "5 march 2020",
-      place: "Charpennes",
-      imgUrl: "https://picsum.photos/id/11/200/300",
-      imgProfil: "https://picsum.photos/id/11/200/300"
-    }
-  ];*/
-
-const userInfo = {
-  name: "Coco",
-  imgProfil: "https://picsum.photos/200/300",
-};
-
-const categorie = [
-  {
-    name: "party",
-    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
-  },
-  {
-    name: "party",
-    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
-  },
-  {
-    name: "party",
-    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
-  },
-  {
-    name: "party",
-    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
-  },
-  {
-    name: "party",
-    imgUrl: "https://cdn-icons-png.flaticon.com/128/3058/3058890.png",
-  },
-];
 
 var light = "dark"
 var colorBack= COLORS.greyBlue
@@ -90,6 +38,7 @@ export default function HomePageScreen() {
    const [retreive, setRetreive] = React.useState(false);
    const [userId, setUserId] = React.useState("")
    const [userToken, setUserToken] = React.useState("")
+   const [notifVisible, setNotifVisible] = React.useState(false)
 
    const socketRef = useRef();
 
@@ -100,14 +49,12 @@ export default function HomePageScreen() {
     Montserrat_600SemiBold
   });
 
-  const startLoading = () => {
+ const startLoading = () => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-    }, 1000);
+    }, 5000);
   };
-
-   
 
   
   useEffect(() => {
@@ -133,6 +80,8 @@ export default function HomePageScreen() {
     socketRef.current = io("http://169.254.3.246:3000");
      socketRef.current.on('message', (message)=>{
        console.log("You received a notification")
+       setNotifVisible(true)
+       console.log("home")
      })
      socketRef.current.emit('userId',(userId))
  
@@ -157,7 +106,7 @@ export default function HomePageScreen() {
         // You would do something with both sets of data here
         data.map((item,index)=>{
           if(index==0){
-            setPopularEvents(item)
+            setPopularEvents(item);
           }else if(index==1){
             setUserInfo(item)
           }else if(index==2){
@@ -252,8 +201,14 @@ export default function HomePageScreen() {
                   <Image style={styles.profilImage} source={{uri: userInfo[0].photo ? userInfo[0].photo : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}}/>
                   </View>
             </View>
+            
             <View style={styles.body}>
               <ScrollView style={[{marginBottom:tabBarHeight*2}]}>
+              
+              <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
+                <NotifBuble navigation={navigation}/>
+              </View>
+
                   <View style={styles.locationView}>
                         <Text style={styles.text_header}> Lyon </Text>
                         <MaterialCommunityIcons name="map-marker" color={colorText} size={24}/>
@@ -366,6 +321,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 15,
   },
+  notif_buble:{
+    width:'100%', 
+    flexDirection: 'row',
+    justifyContent: 'flex-end', 
+    marginBottom: -40, 
+    zIndex: 100
+  }
 });
 
  

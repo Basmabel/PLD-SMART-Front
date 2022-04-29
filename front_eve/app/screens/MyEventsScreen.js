@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS} from '../config/colors.js';
@@ -13,6 +13,8 @@ import {
   Montserrat_600SemiBold
 } from '@expo-google-fonts/dev'
 import Spinner from 'react-native-loading-spinner-overlay';
+import NotifBuble from "../components/NotifBuble.js";
+import {io} from "socket.io-client"
 
 var light = "dark"
 var colorBack= COLORS.greyBlue
@@ -36,7 +38,8 @@ export default function MyEventsScreen({navigation}) {
    const [favorites, setFavorites] = React.useState([]);
    const [comingCreatEve, setComingCreatEve] = React.useState([]);
    const [historicCreatEve, setHistoricCreatEve] =React.useState([]);
-
+   const [notifVisible, setNotifVisible] = React.useState(false)
+   const socketRef = useRef();
   
 
    var [fontsLoaded] = useFonts({
@@ -74,6 +77,13 @@ export default function MyEventsScreen({navigation}) {
     }
     //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
     retreiveData();
+    socketRef.current = io("http://169.254.3.246:3000");
+     socketRef.current.on('message', (message)=>{
+       console.log("You received a notification")
+       setNotifVisible(true)
+     })
+     socketRef.current.emit('userId',(userId))
+
     if(retreive){      
       Promise.all([
         fetch('http://169.254.3.246:3000/getComingEvents',{
@@ -138,8 +148,10 @@ export default function MyEventsScreen({navigation}) {
             setComingCreatEve(item)
           } else if(index==5){
             setHistoricCreatEve(item)
-          }        
+          }    
+          console.log(item)    
         });
+        
       }).catch(function (error) {
         // if there's an error, log it
         console.log(error);
@@ -177,6 +189,9 @@ export default function MyEventsScreen({navigation}) {
             </View>
             <View style={styles.body}>
               <ScrollView style={[{marginBottom:tabBarHeight*2}]}>
+                <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
+                  <NotifBuble navigation={navigation}/>
+                </View>
                   <View style={styles.locationView}>
                         <Text style={styles.text_header}> Lyon </Text>
                         <MaterialCommunityIcons name="map-marker" color={colorText} size={24}/>
@@ -307,6 +322,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 15,
   },
+  notif_buble:{
+    width:'100%', 
+    flexDirection: 'row',
+    justifyContent: 'flex-end', 
+    marginBottom: -40, 
+    zIndex: 100
+  }
 });
 
  
