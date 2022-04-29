@@ -30,7 +30,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import NotifBuble from "../components/NotifBuble.js";
 import {io} from "socket.io-client"
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 
   
   export default function ProfileScreen({route,navigation}) {
@@ -68,6 +68,7 @@ import { useFocusEffect } from "@react-navigation/native";
     const [isRported, setReported] =  React.useState(false);
     const [notifVisible, setNotifVisible] = React.useState(false)
    const socketRef = useRef();
+   const isFocused = useIsFocused();
 
     const fetchReport = async ()=>{
       setCauseVisible(false)
@@ -118,7 +119,16 @@ import { useFocusEffect } from "@react-navigation/native";
           }
         }
         retreiveData();
+
+        socketRef.current.on('message', (message)=>{
+          console.log("You received a notification")
+          setNotifVisible(true)
+        })
         
+        if(isFocused) {
+          setLoading(true)
+        }
+
         if(retreive){      
           Promise.all([
             fetch('http://169.254.3.246:3000/getMyAccountInfo',{
@@ -161,12 +171,9 @@ import { useFocusEffect } from "@react-navigation/native";
             console.log(error);
           }).finally(()=> setLoading(false));
         }
-      }, [retreive]);
+      }, [retreive,isFocused]);
       
-      socketRef.current.on('message', (message)=>{
-        console.log("You received a notification")
-        setNotifVisible(true)
-      })
+      
 
     if(!fontsLoaded){
       return(<AppLoading/>)

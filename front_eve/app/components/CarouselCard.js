@@ -49,10 +49,15 @@ const CarouselCard= ({item, index, navigation, type }) => {
       shadowColor: colorShadow,
       margin:5
     },
-    image: {
+    containerImage:{
+      borderRadius: (type.type==="category")? 0 :10,
       width: (type.type==="category")? '100%' :ITEM_WIDTH,
       height: '75%',
       marginBottom:10
+    },
+    image: {
+      width: '100%',
+      height: '100%',      
     }, 
     header:{
       flexDirection: 'row',
@@ -109,17 +114,22 @@ const CarouselCard= ({item, index, navigation, type }) => {
   
   return (
     <View style={styles.container} key={index}>
-      <Image
-        source={{ uri: item.ImageEvent }}
-        style={styles.image}
-      />
+      <TouchableOpacity style={styles.containerImage} onPress={()=>{navigation.navigate("Event", {eventId: item.event_id})}}>
+          <Image
+            source={{ uri: item.ImageEvent }}
+            style={styles.image}
+          />
+      </TouchableOpacity>
+      
        <View style={styles.header}>
+       <TouchableOpacity onPress={()=>{navigation.navigate("Event", {eventId: item.event_id})}}>
          <Text style={styles.name}>{item.name}</Text>
+        </TouchableOpacity>
          <TouchableOpacity onPress={()=> navigation.navigate("Profile user",{profile_id:item.CreatorId})}>
          <Image source={{uri: isImage? item.ImageProfil : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}} style={styles.profil} />
          </TouchableOpacity>
          </View>
-      <View style={styles.body}>
+      <TouchableOpacity style={styles.body} onPress={()=>{navigation.navigate("Event", {eventId: item.event_id})}}>
         <View style={styles.infos}>
           <Entypo name="clock" size={15} color={COLORS.lightGrey} />
           <Text style={styles.date}>{formattedDate}</Text>
@@ -130,7 +140,7 @@ const CarouselCard= ({item, index, navigation, type }) => {
         </View>
         
         
-      </View>
+      </TouchableOpacity>
       
     </View>
   )

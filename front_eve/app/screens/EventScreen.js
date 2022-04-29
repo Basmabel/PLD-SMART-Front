@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView, TouchableOpacity} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS} from '../config/colors.js';
@@ -15,11 +15,14 @@ import {
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 import { FlatList } from "native-base";
 import { TextInput } from "react-native-paper";
+import NotifBuble from "../components/NotifBuble.js";
+import {io} from "socket.io-client"
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 
 
 //Retreive Data of the Event
 
-export default function EventScreen({route}) {
+export default function EventScreen({route, navigation}) {
 
   const [isLoading, setLoading] = React.useState(true);
   const [retreive, setRetreive] = React.useState(false);
@@ -34,6 +37,9 @@ export default function EventScreen({route}) {
   const [defaultRating, setDefaultRating] = React.useState(0)
   const [maxRating, setMaxRating] = React.useState([1, 2, 3, 4, 5])
   const eventId = route.params.eventId
+  const [notifVisible, setNotifVisible] = React.useState(false)
+  const socketRef = useRef();
+  const isFocused = useIsFocused();
 
   const starImgFilled = 'https://raw.githubusercontent.com/tranhonghan/images/main/star_filled.png'
   const starImgEmpty = 'https://raw.githubusercontent.com/tranhonghan/images/main/star_corner.png'
@@ -71,6 +77,17 @@ export default function EventScreen({route}) {
     Montserrat_600SemiBold
   });
 
+  useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      socketRef.current = io("http://169.254.3.246:3000");
+      socketRef.current.emit('userId',(userId))
+      return () => {
+          socketRef.current.disconnect();
+      };
+    }, [])
+  );
+
   useEffect(() => {
     
     const retreiveData = async ()=>{
@@ -93,20 +110,30 @@ export default function EventScreen({route}) {
     
 
     retreiveData();
+
+    
+    socketRef.current.on('message', (message)=>{
+      console.log("You received a notification")
+    })
+    
+    if(isFocused) {
+      setLoading(true)
+    }
+
     if(retreive){
       Promise.all([
-        fetch('http://192.168.56.1:3000/getUserInfo',{
+        fetch('http://169.254.3.246:3000/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('http://192.168.56.1:3000/getInfoEvent',{
+        fetch('http://169.254.3.246:3000/getInfoEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id":eventId , "user_id": userId})
         }),
-        fetch('http://192.168.56.1:3000/getReviewEvent',{
+        fetch('http://169.254.3.246:3000/getReviewEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
@@ -143,7 +170,7 @@ export default function EventScreen({route}) {
         console.log(error);
       }).finally(()=> setLoading(false));
     }
-  }, [retreive]);
+  }, [retreive,isFocused]);
 
   const generate_cancelled_event = () =>{
 
@@ -171,10 +198,7 @@ export default function EventScreen({route}) {
   }
 
   const generate_participant_page = () =>{
-    console.log('IM INSIDE PARTICIPANT')
-    if(infoEvent.status_id==1){
-      console.log('STILL HAS NOTTT')
-      // onPress={()=>Alert.alert("Are you sure you want to quit?")
+    if(infoEvent.status_id===1){
       return (
               <View style= {{alignItems: "center", position: 'relative', top: -10}}>
                 <Pressable title = "withdraw" style={styles.button} onPress={()=>console.log('permission fro withdrawal')}>
@@ -182,7 +206,7 @@ export default function EventScreen({route}) {
                 </Pressable>
               </View>
       )
-      }else if(infoEvent.status_id==3){
+    }else if(infoEvent.status_id===3){
         console.log('IT HAAAS')
         return(     
         <View>
@@ -193,10 +217,11 @@ export default function EventScreen({route}) {
               </View>
               <MyCarousel data={review} type={{ event: "review" }} />
             </View> 
+            
             <View style= {{justifyContent: "space-evenly", 
                                 alignItems: "center", 
                                 position: 'relative', 
-                                top: -10}}>
+                                top: -10,}}>
                   <TextInput style={styles.input} 
                             placeholder="Post a review"
                             onChangeText={
@@ -209,7 +234,7 @@ export default function EventScreen({route}) {
             </View>
         </View>
         )
-      }else if(infoEvent.status_id==1) generate_cancelled_event()
+      }else if(infoEvent.status_id===2) generate_cancelled_event()
     }
 
   const generate_organizer_page = () =>{
@@ -260,7 +285,6 @@ export default function EventScreen({route}) {
 
     if (!infoEvent.user_is_creator){
       //return generate_organizer_page();
-      console.log('hreeeeee oh oh')
       return  generate_participant_page();
       //the condition is wrong to check 
     }else if(infoEvent.particip_id){
@@ -296,6 +320,9 @@ export default function EventScreen({route}) {
               </View>
               <View style={styles.body}>
                 <ScrollView style={[{marginBottom:200}]}>
+                <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
+                  <NotifBuble navigation={navigation}/>
+                </View>
                   <View style = {{flexDirection : 'row',justifyContent: "space-between", alignItems : 'center', width:'100%'}}>
                   <View style={styles.container_categorie}>
                       <View style={styles.containerIcon}>
@@ -421,7 +448,7 @@ const styles = StyleSheet.create({
   },
   contentContainer:{
     flexDirection: "column",
-    paddingTop:5,
+    paddingTop:15,
     height: "100%",
   },
   title_body: {
@@ -507,6 +534,7 @@ const styles = StyleSheet.create({
   container_categorie: {
     backgroundColor: COLORS.white,
     height: 40,
+    width: 150,
     ...Platform.select({
       ios:{
         shadowOffset: {
@@ -524,12 +552,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 10,
-    padding: 5,
     margin:5
   },
   containerIcon:{
     width: "25%",
-    height: "75%",
+    height: "90%",
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -542,5 +569,12 @@ const styles = StyleSheet.create({
     fontSize:15,
     fontWeight:'bold',
     paddingLeft: 5
+  },
+  notif_buble:{
+    width:'100%', 
+    flexDirection: 'row',
+    justifyContent: 'flex-end', 
+    marginBottom: -40, 
+    zIndex: 100
   }
 });

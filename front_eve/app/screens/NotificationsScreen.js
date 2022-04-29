@@ -299,11 +299,9 @@ export default function HomePageScreen({navigation}) {
                         <Text style={styles.text_header}> Lyon </Text>
                         <MaterialCommunityIcons name="map-marker" color={colorText} size={24}/>
                   </View>
-                    <View style={styles.contentContainer}>
-
-                        <DisplayNotif style={{display: isFocused? "flex":"non"}}/>
-                           
-                    </View>
+                  <View style={styles.contentContainer}>
+                   <DisplayNotif style={{display: isFocused? "flex":"none"}}/>   
+                </View>
               </ScrollView>
             </View>
             

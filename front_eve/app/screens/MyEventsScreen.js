@@ -17,6 +17,7 @@ import NotifBuble from "../components/NotifBuble.js";
 import {io} from "socket.io-client"
 import { useFocusEffect } from "@react-navigation/native";
 
+
 var light = "dark"
 var colorBack= COLORS.greyBlue
 var colorText=COLORS.lightBlue

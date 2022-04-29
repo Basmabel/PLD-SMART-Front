@@ -65,7 +65,7 @@ export default function EventPerCategoryScreen({route, navigation}) {
     }, [])
   );
   
-  useEffect(() => {
+  useEffect(() => { 
     const retreiveData = async ()=>{
       try {
         const valueString = await AsyncStorage.getItem('key');
@@ -88,6 +88,11 @@ export default function EventPerCategoryScreen({route, navigation}) {
        console.log("You received a notification")
        setNotifVisible(true)
      })
+
+     if(isFocused) {
+      setLoading(true)
+    }
+
      
     if(retreive){      
       Promise.all([
@@ -127,7 +132,7 @@ export default function EventPerCategoryScreen({route, navigation}) {
       
       
 
-  }, [retreive]);      
+  },[retreive,isFocused]);      
     
   const DisplayEvents=()=>{
     
