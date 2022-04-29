@@ -74,7 +74,8 @@ const CreateEventScreen = ({ navigation }) => {
       date != "" &&
       participants != "" &&
       address != "" &&
-      selectedActivity != ""
+      selectedActivity != "" &&
+      img != ""
     ) {
       return true;
     } else {
