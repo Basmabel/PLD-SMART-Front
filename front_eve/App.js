@@ -15,6 +15,7 @@ import SearchScreen from "./app/screens/SearchScreen.js";
 import { TextField } from "native-base";
 import ValidationCode from './app/screens/ValidationCode'
 import CreateEventScreen from "./app/screens/CreateEventScreen.js";
+import CreateEventScreenTest from "./app/screens/CreateEventScreenTest";
 import FilterScreen from "./app/screens/FilterScreen.js";
 import CategorieCard from './app/components/CategorieCard.js';
 import ParticipationDemandScreen from './app/screens/ParticipationDemandScreen.js';
@@ -45,7 +46,8 @@ export default function App() {
     </NavigationContainer>*/
    // <ValidationCode/>
    // <SearchScreen />
-   <CreateEventScreen/>
+   //<CreateEventScreen/>
+   <CreateEventScreenTest/>
   );
 }
 

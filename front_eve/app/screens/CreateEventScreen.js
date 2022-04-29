@@ -12,6 +12,7 @@ import {
   Montserrat_500Medium,
   Montserrat_600SemiBold
 } from '@expo-google-fonts/dev'
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 var light = "dark"
 var colorBack= COLORS.greyBlue
@@ -190,6 +191,8 @@ const CreateEventScreen = ({ navigation }) => {
     );
 };
 
+export default CreateEventScreen;
+
 const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -251,4 +254,11 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginTop: 50,
     },
+    action: {
+        flexDirection: "row",
+        marginTop: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: COLORS.beige,
+        paddingBottom: 5,
+      },
   });
