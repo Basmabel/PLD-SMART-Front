@@ -10,9 +10,6 @@ import {
   Montserrat_500Medium,
   Montserrat_600SemiBold
 } from '@expo-google-fonts/dev'
-import { ScrollView } from "react-native-gesture-handler";
-import { StatusBar } from "expo-status-bar";
-
 
 export default function ValidationCode() {
   

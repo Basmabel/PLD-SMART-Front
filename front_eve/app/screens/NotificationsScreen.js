@@ -14,7 +14,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import formatageDate from '../utils/date_formatage';
 import {io} from "socket.io-client"
 import { Ionicons } from '@expo/vector-icons';  
-import { useIsFocused } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 
 
 var light = "dark"
@@ -157,6 +157,16 @@ export default function HomePageScreen({navigation}) {
     .catch((error)=>console.error(error))
    }
   
+   useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      socketRef.current = io("http://169.254.3.246:3000");
+      socketRef.current.emit('userId',(userId))
+      return () => {
+          socketRef.current.disconnect();
+      };
+    }, [])
+  );
   
   useEffect(() => {
 
@@ -178,8 +188,7 @@ export default function HomePageScreen({navigation}) {
     //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
     retreiveData();
     
-    socketRef.current = io("http://169.254.3.246:3000");
-    socketRef.current.emit('userId',(userId))
+    
      socketRef.current.on('message', (message)=>{
        console.log("You received a notification")
      })

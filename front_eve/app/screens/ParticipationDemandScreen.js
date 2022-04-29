@@ -13,6 +13,7 @@ import {
 import Spinner from 'react-native-loading-spinner-overlay';
 import formatageDate from '../utils/date_formatage';
 import {io} from "socket.io-client"
+import { useFocusEffect } from "@react-navigation/native";
 
 
 
@@ -143,6 +144,16 @@ export default function ParticipationDemandScreen({route,navigation}) {
   }
    
 
+  useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      socketRef.current = io("http://169.254.3.246:3000");
+      socketRef.current.emit('userId',(userId))
+      return () => {
+          socketRef.current.disconnect();
+      };
+    }, [])
+  );
   
   useEffect(() => {
     
@@ -163,15 +174,12 @@ export default function ParticipationDemandScreen({route,navigation}) {
     }
     
     retreiveData();
-
-    socketRef.current = io("http://169.254.3.246:3000");
       
     socketRef.current.on('message', (message)=>{
       console.log("You received a notification")
       navigation.navigate("Notifications")
     })
 
-    socketRef.current.emit('userId',(userId))
     if(retreive){      
       Promise.all([
         fetch('http://169.254.3.246:3000/getUserInfo',{

@@ -1,6 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {useState} from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 //import { useDimensions, useDeviceOrientation } from '@react-native-community/hooks';
 
 import { COLORS } from "../config/colors";
@@ -24,14 +23,11 @@ import {
   Pressable,
   ScrollView,
 } from "react-native";
-import { Colors } from "react-native/Libraries/NewAppScreen";
 import * as Animatable from "react-native-animatable";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Feather from "react-native-vector-icons/Feather";
 //import RNPickerSelect from 'react-native-picker-select';
 import {Picker} from '@react-native-picker/picker';
-import { useTheme } from "react-native-paper";
-import { sendEmail } from '../utils/emailSender';
 
 export default function SignUpScreen({ navigation }) {
   const [name, onChangeName] = React.useState("");

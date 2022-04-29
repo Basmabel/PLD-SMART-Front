@@ -15,6 +15,7 @@ import {
 import Spinner from 'react-native-loading-spinner-overlay';
 import NotifBuble from "../components/NotifBuble.js";
 import {io} from "socket.io-client"
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 
 const windowHeight = Dimensions.get("window").height;
 
@@ -37,6 +38,7 @@ export default function EventPerCategoryScreen({route, navigation}) {
    const {cat_id}=route.params;
    const [notifVisible, setNotifVisible] = React.useState(false)
    const socketRef = useRef();
+   const isFocused = useIsFocused();
   
 
    var [fontsLoaded] = useFonts({
@@ -51,9 +53,19 @@ export default function EventPerCategoryScreen({route, navigation}) {
       setLoading(false);
     }, 1000);
   };
-  
-    useEffect(() => {
 
+  useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      socketRef.current = io("http://169.254.3.246:3000");
+      socketRef.current.emit('userId',(userId))
+      return () => {
+          socketRef.current.disconnect();
+      };
+    }, [])
+  );
+  
+  useEffect(() => {
     const retreiveData = async ()=>{
       try {
         const valueString = await AsyncStorage.getItem('key');
@@ -71,12 +83,12 @@ export default function EventPerCategoryScreen({route, navigation}) {
     }
     //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
     retreiveData();
-    socketRef.current = io("http://169.254.3.246:3000");
+
      socketRef.current.on('message', (message)=>{
        console.log("You received a notification")
        setNotifVisible(true)
      })
-     socketRef.current.emit('userId',(userId))
+     
     if(retreive){      
       Promise.all([
         fetch('http://169.254.3.246:3000/getUserInfo',{

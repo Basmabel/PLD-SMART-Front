@@ -15,13 +15,10 @@ import React, { useState, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useEffect} from "react";
 import { COLORS } from "../config/colors.js";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { Button, Column } from "native-base";
+import {  MaterialIcons } from "@expo/vector-icons";
 import MyCarousel from "../components/MyCarousel";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import Feather from "react-native-vector-icons/Feather";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { NativeBaseProvider } from 'native-base';
 import DialogInput from 'react-native-dialog-input';
 import UploadImage from '../config/uploadImage.js';
 import formatageDate from '../utils/date_formatage';
@@ -36,34 +33,9 @@ import {
 import Spinner from 'react-native-loading-spinner-overlay';
 import NotifBuble from "../components/NotifBuble.js";
 import {io} from "socket.io-client"
+import { useFocusEffect } from "@react-navigation/native";
 
-//Recup les events
-/*const organizedEvents = [
-  {
-    name: "Pool party",
-    date: "20 april 2022",
-    place: "Ibiza",
-    imgUrl: "https://picsum.photos/id/11/200/300",
-    imgProfil: "https://picsum.photos/id/11/200/300",
-  },
-  {
-    name: "Laser game",
-    date: "5 february 2021",
-    place: "Charpennes",
-    imgUrl: "https://picsum.photos/id/11/200/300",
-    imgProfil: "https://picsum.photos/id/11/200/300",
-  },
-  {
-    name: "Aenean leo",
-    date: "5 march 2020",
-    place: "Charpennes",
-    imgUrl: "https://picsum.photos/id/11/200/300",
-    imgProfil: "https://picsum.photos/id/11/200/300",
-  },
-];*/
 
-//Recup les ratings
-//const rating = {value:"10/10"};
 
 
 export default function MyAccountScreen({navigation}) {
@@ -111,26 +83,16 @@ export default function MyAccountScreen({navigation}) {
   const [review, setReviewUser] = React.useState(null);
   const [birthDate, setBirthDate] = React.useState("")
 
-
-  /*({
-      name: "Meryem",
-      surname: "Alami",
-      email: "malami@gmail.com",
-      phoneNumber: "0606060606",
-      city: "Lyon",
-      streetNb: "20",
-      street: "Avenue Albert Einstein",
-      region: "Rhone",
-      zipCode: "69100",
-      addressComplement: "Batiment M",
-      password: "malamieve",
-      gender: "Femme",
-      birthDate: "19/12/2000",
-      imgProfil: "https://picsum.photos/200/300",
-      //secureTextEntry: true,
-      //isValidPassword: true,
-      //isCompatiblePassword: true,
-    });*/
+  useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      socketRef.current = io("http://169.254.3.246:3000");
+      socketRef.current.emit('userId',(userId))
+      return () => {
+          socketRef.current.disconnect();
+      };
+    }, [])
+  );
 
     
     //Recuperation des données
@@ -153,12 +115,10 @@ export default function MyAccountScreen({navigation}) {
       }
       retreiveData();
 
-     socketRef.current = io("http://169.254.3.246:3000");
      socketRef.current.on('message', (message)=>{
        console.log("You received a notification")
        setNotifVisible(true)
      })
-     socketRef.current.emit('userId',(userId))
 
       if(retreive){      
         Promise.all([

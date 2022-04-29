@@ -13,20 +13,13 @@ import {
   Platform,
 } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Location from "expo-location";
-import { Marker } from "react-native-maps";
 import { mapDarkMode } from "../model/Map";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import GetLocation from "react-native-get-location";
-
 import StarRating from "../components/StarRating";
-import MyCarousel from "../components/MyCarousel";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import Fontisto from "react-native-vector-icons/Fontisto";
 import { COLORS } from "../config/colors";
-import { useTheme } from "@react-navigation/native";
+import { useFocusEffect, useTheme } from "@react-navigation/native";
 import NotifBuble from "../components/NotifBuble.js";
 import {io} from "socket.io-client"
 
@@ -105,6 +98,17 @@ const SearchScreen = ({ navigation, route }) => {
   let mapIndex = 0;
   let mapAnimation = new Animated.Value(0);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      socketRef.current = io("http://169.254.3.246:3000");
+      socketRef.current.emit('userId',(userId))
+      return () => {
+          socketRef.current.disconnect();
+      };
+    }, [])
+  );
+
   useEffect(() => {
     mapAnimation.addListener(({ value }) => {
       let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
@@ -149,16 +153,15 @@ const SearchScreen = ({ navigation, route }) => {
       }
     }
     retreiveData();
-    socketRef.current = io("http://169.254.3.246:3000");
+    
      socketRef.current.on('message', (message)=>{
        console.log("You received a notification")
        setNotifVisible(true)
      })
-     socketRef.current.emit('userId',(userId))
     if (retreive) {
       Promise.all([
         //fetch("http://192.168.56.1:3000/getMapEvents"),
-        fetch("http://eve-back.herokuapp.com/getMapEvents"),
+        fetch("http://169.254.3.246:3000/getMapEvents"),
       ])
         .then(function (responses) {
           // Get a JSON object from each of the responses

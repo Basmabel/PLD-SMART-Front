@@ -15,6 +15,7 @@ import {
 import Spinner from 'react-native-loading-spinner-overlay';
 import NotifBuble from "../components/NotifBuble.js";
 import {io} from "socket.io-client"
+import { useFocusEffect } from "@react-navigation/native";
 
 var light = "dark"
 var colorBack= COLORS.greyBlue
@@ -55,7 +56,16 @@ export default function MyEventsScreen({navigation}) {
     }, 1000);
   };
 
-   
+  useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      socketRef.current = io("http://169.254.3.246:3000");
+      socketRef.current.emit('userId',(userId))
+      return () => {
+          socketRef.current.disconnect();
+      };
+    }, [])
+  );
 
   
   useEffect(() => {
@@ -77,12 +87,10 @@ export default function MyEventsScreen({navigation}) {
     }
     //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
     retreiveData();
-    socketRef.current = io("http://169.254.3.246:3000");
      socketRef.current.on('message', (message)=>{
        console.log("You received a notification")
        setNotifVisible(true)
      })
-     socketRef.current.emit('userId',(userId))
 
     if(retreive){      
       Promise.all([

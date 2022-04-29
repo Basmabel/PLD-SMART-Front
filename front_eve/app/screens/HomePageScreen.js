@@ -12,7 +12,7 @@ import {
   Montserrat_500Medium,
   Montserrat_600SemiBold
 } from '@expo-google-fonts/dev'
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {io} from "socket.io-client"
 import NotifBuble from "../components/NotifBuble.js";
@@ -56,6 +56,17 @@ export default function HomePageScreen() {
     }, 5000);
   };
 
+  useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      socketRef.current = io("http://169.254.3.246:3000");
+      socketRef.current.emit('userId',(userId))
+      return () => {
+          socketRef.current.disconnect();
+      };
+    }, [])
+  );
+
   
   useEffect(() => {
     const retreiveData = async () => {
@@ -76,13 +87,11 @@ export default function HomePageScreen() {
     //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
     retreiveData();
 
-    socketRef.current = io("http://169.254.3.246:3000");
-     socketRef.current.on('message', (message)=>{
-       console.log("You received a notification")
-       setNotifVisible(true)
-       console.log("home")
-     })
-     socketRef.current.emit('userId',(userId))
+    socketRef.current.on('message', (message)=>{
+      console.log("You received a notification")
+      setNotifVisible(true)
+      console.log("home")
+    })
  
     if(retreive){      
       Promise.all([
@@ -155,11 +164,7 @@ export default function HomePageScreen() {
         })
         .finally(() => setLoading(false));
     }
-      
-
-    /*return ()=>{
-      socketRef.current.disconnect();
-    }*/
+     
   }, [retreive]);
 
   

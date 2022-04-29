@@ -30,6 +30,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import NotifBuble from "../components/NotifBuble.js";
 import {io} from "socket.io-client"
+import { useFocusEffect } from "@react-navigation/native";
 
   
   export default function ProfileScreen({route,navigation}) {
@@ -86,6 +87,17 @@ import {io} from "socket.io-client"
       alert("User has been reported")
       setReported(true)
     }
+
+    useFocusEffect(
+      React.useCallback(() => {
+        // Do something when the screen is focused
+        socketRef.current = io("http://169.254.3.246:3000");
+        socketRef.current.emit('userId',(userId))
+        return () => {
+            socketRef.current.disconnect();
+        };
+      }, [])
+    );
       
       //Recuperation des données
       useEffect(() => {
@@ -106,7 +118,7 @@ import {io} from "socket.io-client"
           }
         }
         retreiveData();
-        //setUserId(profile_id);
+        
         if(retreive){      
           Promise.all([
             fetch('http://169.254.3.246:3000/getMyAccountInfo',{
@@ -151,13 +163,10 @@ import {io} from "socket.io-client"
         }
       }, [retreive]);
       
-      socketRef.current = io("http://169.254.3.246:3000");
-      
       socketRef.current.on('message', (message)=>{
         console.log("You received a notification")
         setNotifVisible(true)
       })
-      socketRef.current.emit('userId',(userId))
 
     if(!fontsLoaded){
       return(<AppLoading/>)

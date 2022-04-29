@@ -1,24 +1,9 @@
-import {
-  StyleSheet,
-  Dimensions,
-  Text,
-  View,
-  Image,
-  TouchableNativeFeedback,
-  SafeAreaView,
-  Button,
-  Alert,
-  Platform,
-  TextInput,
-  Pressable,
-} from "react-native";
+
 import { COLORS } from "../config/colors.js";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
-import { NavigationContainer } from "@react-navigation/native";
 import {
-  createBottomTabNavigator,
-  useBottomTabBarHeight,
+  createBottomTabNavigator
 } from "@react-navigation/bottom-tabs";
 import HomePageScreen from "../screens/HomePageScreen";
 import SearchScreen from "../screens/SearchScreen";
