@@ -405,6 +405,7 @@ export default function EventScreen({route, navigation}) {
             }).then((response) => {
               return response.json()
             }).then(async (json) => {
+              console.log(json)
               if(json[0].id!=-1){
                 setReviewIdParti(true)
               }
