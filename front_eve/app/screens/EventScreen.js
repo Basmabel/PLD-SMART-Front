@@ -38,7 +38,7 @@ export default function EventScreen({route, navigation}) {
   const [maxRating, setMaxRating] = React.useState([1, 2, 3, 4, 5])
   const [like, setLike] = React.useState(0)
   const [reviewedParticipant, setReviewedParticipant] = React.useState("")
-  const [reviewIdParti,setReviewIdParti] = React.useState(0)
+  const [reviewIdParti,setReviewIdParti] = React.useState(false)
   const eventId = route.params.eventId
   const [notifVisible, setNotifVisible] = React.useState(false)
   const socketRef = useRef();
@@ -89,7 +89,7 @@ export default function EventScreen({route, navigation}) {
       const user_targeted_id = null
       const participation_demand_id = json[0].id
       socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
-      navigation.navigate("Home")
+      alertRedirection("A participation demand has been sent to organizer")
     }).catch((error)=>console.error(error));
 
     
@@ -111,7 +111,7 @@ export default function EventScreen({route, navigation}) {
       const user_targeted_id = userId
       const participation_demand_id = null
       socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
-      navigation.navigate("Home")
+      
   }
 
 
@@ -151,7 +151,7 @@ export default function EventScreen({route, navigation}) {
       const user_targeted_id = null
       const participation_demand_id = null
       socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id,participants})
-      navigation.navigate("Home")
+      alertRedirection("Your event has been canceled, participants have been warned")
   }
 
   const withdrawEvent = async ()=>{
@@ -190,7 +190,7 @@ export default function EventScreen({route, navigation}) {
       const user_targeted_id = userId
       const participation_demand_id = null
       socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
-      navigation.navigate("Home")
+      alertRedirection("You are no longer a participant")
   }
 
   const reviewEvent = async (id)=>{
@@ -230,9 +230,24 @@ export default function EventScreen({route, navigation}) {
       const user_targeted_id = null
       const participation_demand_id = null
       socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
+      alertRedirection("Your review has been posted")
     }).catch((error)=>console.error(error));
 
     
+  }
+
+  const alertRedirection = (message)=>{
+    Alert.alert(
+      message,
+      ``,
+      [
+        {
+          text: "Ok",
+          onPress: () => {navigation.navigate("Home")}
+        }
+      ],
+      { cancelable: false }
+    );
   }
 
 
@@ -382,6 +397,19 @@ export default function EventScreen({route, navigation}) {
             console.log(item[0])
           }else if(index==1){
             setInfoEvent(item[0])
+
+            fetch('http://169.254.3.246:3000/getReviewId',{
+              method: "POST",
+              headers: {'content-type': 'application/json'},
+              body: JSON.stringify({"writer_id":userId, "target_id":item[0].creator_id,"event_id": eventId})
+            }).then((response) => {
+              return response.json()
+            }).then(async (json) => {
+              if(json[0].id!=-1){
+                setReviewIdParti(true)
+              }
+            }).catch((error)=>console.error(error));
+
             if(item[0].liked_id!=0){
              setLike(1);
             }else{
@@ -470,7 +498,8 @@ export default function EventScreen({route, navigation}) {
             </View>
             <View style= {{justifyContent: "space-evenly", 
                                 alignItems: "center", 
-                                position: 'relative',}}>
+                                position: 'relative',
+                                display: (!reviewIdParti)?"flex":"none"}}>
                   <TextInput
                     style={[styles.input]}
                     placeholder="Post a review"
@@ -557,14 +586,14 @@ export default function EventScreen({route, navigation}) {
   }
 
   
-  const BodyGen = () =>{
+  const bodyGen = () =>{
 
     if (infoEvent.user_is_creator){
-      //return generate_organizer_page();
+      //return Generate_organizer_page();
       return  generate_organizer_page();
       //the condition is wrong to check 
     }else if(infoEvent.particip_id){
-      return  generate_participant_page();
+      return generate_participant_page();
     }else{
       return generate_non_participant_page();
     }
@@ -625,7 +654,7 @@ export default function EventScreen({route, navigation}) {
                             </View>
                             <View style={styles.otherInfos}>
                                 <CustomLike/> 
-                                <BodyGen/>
+                                {bodyGen()}
                             </View>
                       </View>
                 </ScrollView>
