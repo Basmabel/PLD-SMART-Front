@@ -74,7 +74,7 @@ export default function EventScreen({route, navigation}) {
 
   const participateFetch = async()=>{
 
-    fetch("http://192.168.56.1:3000/demandParticipation",{
+    fetch("http://169.254.3.246:3000/demandParticipation",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({user_id: userId, event_id: eventId}),
@@ -97,7 +97,7 @@ export default function EventScreen({route, navigation}) {
 
   const LikeFetch = async(like)=>{
 
-    fetch("http://192.168.56.1:3000/setLiked",{
+    fetch("http://169.254.3.246:3000/setLiked",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({user_id: userId, event_id: eventId, liked: like}),
@@ -137,7 +137,7 @@ export default function EventScreen({route, navigation}) {
 
   const cancelFetch = async(participants)=>{
 
-    fetch("http://192.168.56.1:3000/cancelEvent",{
+    fetch("http://169.254.3.246:3000/cancelEvent",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({event_id: eventId}),
@@ -176,7 +176,7 @@ export default function EventScreen({route, navigation}) {
 
   const withdrawFetch = async()=>{
 
-    fetch("http://192.168.56.1:3000/removeParticipant",{
+    fetch("http://169.254.3.246:3000/removeParticipant",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({user_id:userId, event_id: eventId}),
@@ -215,7 +215,7 @@ export default function EventScreen({route, navigation}) {
 
   const reviewFetch = async(id)=>{
    
-    fetch("http://192.168.56.1/addReview",{
+    fetch("http://169.254.3.246:3000/addReview",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({score:defaultRating, review: new_review, creator:infoEvent.user_is_creator, writer_id:userId, target_id:id, event_id: eventId}),
@@ -358,24 +358,24 @@ export default function EventScreen({route, navigation}) {
 
     if(retreive){
       Promise.all([
-        fetch('http://192.168.56.1:3000/getUserInfo',{
+        fetch('http://169.254.3.246:3000/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('http://192.168.56.1:3000/getInfoEvent',{
+        fetch('http://169.254.3.246:3000/getInfoEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id":eventId , "user_id": userId})
         }),
-        fetch('http://192.168.56.1:3000/getReviewEvent',{
+        fetch('http://169.254.3.246:3000/getReviewEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "event_id":eventId,
           })}),
-        fetch('http://192.168.56.1:3000/getEventParticipants',{
+        fetch('http://169.254.3.246:3000/getEventParticipants',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id": eventId})
@@ -398,7 +398,7 @@ export default function EventScreen({route, navigation}) {
           }else if(index==1){
             setInfoEvent(item[0])
 
-            fetch('http://192.168.56.1:3000/getReviewId',{
+            fetch('http://169.254.3.246:3000/getReviewId',{
               method: "POST",
               headers: {'content-type': 'application/json'},
               body: JSON.stringify({"writer_id":userId, "target_id":item[0].creator_id,"event_id": eventId})

@@ -61,6 +61,7 @@ export default function HomePageScreen() {
       // Do something when the screen is focused
       socketRef.current = io("http://169.254.3.246:3000");
       socketRef.current.emit('userId',(userId))
+      
       return () => {
           socketRef.current.disconnect();
       };
@@ -87,12 +88,13 @@ export default function HomePageScreen() {
     //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
     retreiveData();
 
+    socketRef.current.emit('userId',(userId))
     socketRef.current.on('message', (message)=>{
       console.log("You received a notification")
       setNotifVisible(true)
       console.log("home")
     })
- 
+    
     if(retreive){      
       Promise.all([
         fetch('http://169.254.3.246:3000/getPopular'),
