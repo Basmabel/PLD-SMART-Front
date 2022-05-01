@@ -33,13 +33,14 @@ export default function EventScreen({route, navigation}) {
   const [userInfo, setUserInfo] = React.useState(null);
   const [notifParticipant, setNotifParticipant] = React.useState(null)
   const [infoEvent, setInfoEvent] = React.useState([])
-  const [participation, setParticipation] = React.useState("");
+  const [participation, setParticipation] = React.useState(null);
   const [review, setReviewEvent] = React.useState(null);
   const [new_review, setNew_Review] = React.useState("");
   const [defaultRating, setDefaultRating] = React.useState(0)
   const [maxRating, setMaxRating] = React.useState([1, 2, 3, 4, 5])
   const [like, setLike] = React.useState(0)
   const [reviewedParticipant, setReviewedParticipant] = React.useState(null)
+  const [reviewedParticipantID, setReviewedParticipantID] = React.useState(-1)
   const [reviewIdParti,setReviewIdParti] = React.useState(false)
   const eventId = route.params.eventId
   const [notifVisible, setNotifVisible] = React.useState(false)
@@ -54,6 +55,7 @@ export default function EventScreen({route, navigation}) {
   const [causeId, setCauseId] =  React.useState(1);
   const [isRported, setReported] =  React.useState(false);
   const [nbParticipant, setnbParticipant] = React.useState(false)
+  const [nb_registered, setnbRegistered] = React.useState(0)
 
 
   const starImgFilled = 'https://raw.githubusercontent.com/tranhonghan/images/main/star_filled.png'
@@ -235,7 +237,7 @@ export default function EventScreen({route, navigation}) {
       const message = ""
       const type = 5
       const event_id = null
-      const user_id = infoEvent.creator_id
+      const user_id = id
       const review_id = json[0].id
       const user_targeted_id = null
       const participation_demand_id = null
@@ -468,14 +470,15 @@ export default function EventScreen({route, navigation}) {
             if(item[0].nb_registered===item[0].maxcapacity){
               setnbParticipant(true)
             }
+
+            setnbRegistered(item[0].nb_registered)
             //console.log(item)
           }else if(index==2){
              setReviewEvent(item.reviews)
              //console.log(item.reviews)
            }else if(index==3){
             setParticipation(item.participants)
-            console.log(item.participants)
-            //console.log(item)
+            //console.log(item.participants)
             //console.log(item.reviews)
           }else if(index==4){
             console.log(item)
@@ -645,7 +648,7 @@ export default function EventScreen({route, navigation}) {
             <CustomLike/>
         </View>
       )
-    }else if(infoEvent.status_id==2){
+    }else if(infoEvent.status_id==3){
       console.log('Event has happened')
       return(
         <View>
@@ -671,49 +674,55 @@ export default function EventScreen({route, navigation}) {
               <Text style={styles.title_body}>Review A Participant</Text>
               <MaterialIcons name="person" color={COLORS.lightBlue} size={26}/>
             </View>
-            <View style= {{justifyContent: "space-evenly", 
-                                alignItems: "center", 
-                                position: 'relative', marginTop : 20, marginLeft: 20}}>
-                    <Dropdown
-                      style={[styles.dropdown, isFocus && { borderColor: "blue", borderWidth : 100 }, {backgroundColor: COLORS.white}]}
-                      placeholderStyle={styles.placeholderStyle}
-                      selectedTextStyle={styles.selectedTextStyle}
-                      inputSearchStyle={styles.inputSearchStyle}
-                      iconStyle={styles.iconStyle}
-                      data={participation}
-                      maxHeight={100}
-                      labelField="participant"
-                      placeholder={reviewedParticipant === null ? "Select a participant" : reviewedParticipant}
-                      onFocus={() => setIsFocus(true)}
-                      onBlur={() => setIsFocus(false)}
-                      onChange={(item) => {
-                        console.log("IM HERE IN DROPDOWN")
-                        setReviewedParticipant(item.surname)
-                        console.log(reviewedParticipant)
-                        setIsFocus(false);
-                      }}
-                    />
+            
+            <View style={[styles.reviewContent,{ display: "flex"}]}>
+                                <Dropdown
+                                  style={[styles.dropdown,{backgroundColor:COLORS.white}, isFocus && { borderColor: "blue" }]}
+                                  placeholderStyle={styles.placeholderStyle}
+                                  selectedTextStyle={styles.selectedTextStyle}
+                                  inputSearchStyle={styles.inputSearchStyle}
+                                  iconStyle={styles.iconStyle}
+                                  data={participation}
+                                  maxHeight={nb_registered*50}
+                                  labelField="surname"
+                                  placeholder={reviewedParticipant === null ? "Select a report type" : reviewedParticipant}
+                                  onFocus={() => setIsFocus(true)}
+                                  onBlur={() => setIsFocus(false)}
+                                  onChange={(item) => {
+                                    setReviewedParticipant(item.surname);
+                                    setReviewedParticipantID(item.user_id)
+                                    setIsFocus(false);
+                                  }}
+                                  renderLeftIcon={() => (
+                                    <AntDesign
+                                      style={styles.icon}
+                                      color={isFocus ? "blue" : "black"}
+                                      name="Safety"
+                                      size={20}
+                                    />
+                                  )}
+                                />
                   <TextInput
-                    style={[styles.input]}
-                    placeholder="Click on a Partipant and Review"
-                    placeholderTextColor={COLORS.grey}
+                    style={[styles.input,{display: (reviewedParticipantID!=-1)? "flex":"none"}]}
+                    placeholder="Post a review"
+                    placeholderTextColor={COLORS.black}
                     onChangeText={(value) => {setNew_Review(value);setTextIn(true)}}
-                    onEndEditing={() =>{setTextIn(false)}}
+                    onEndEditing={() =>{setTextIn(false)}}                    
                   />
-                  <CustomRatingBar/>
+                  <CustomRatingBar style={{display: (reviewedParticipantID!=-1)? "flex":"none"}}/>
                   <View style={{justifyContent:"space-around",
                            flexDirection:'row', marginTop : 10, 
                            marginBottom: 20}}>
                   <TouchableOpacity activeOpacity={0.7} 
                                     style={[styles.button, {marginRight: 10}]} 
-                                    onPress={()=>alert('Thank You For The Review!')}>
-                    <Text style={styles.text_button}>Post !</Text>
+                                    onPress={()=>{reviewEvent(reviewedParticipantID)}}>
+                    <Text style={[styles.text_button,{display: (reviewedParticipantID!=-1)? "flex":"none"}]}>Post !</Text>
                   </TouchableOpacity>
                   <TouchableOpacity activeOpacity={0.7} 
                                     style={[styles.button, 
                                             {backgroundColor: COLORS.red, 
                                             marginLeft:10}]} 
-                                    onPress={()=>alert("This event will be permanently deleted")}>
+                                    onPress={()=>{alert("This event will be permanently deleted")}}>
                       <Text style={[styles.text_button, {color: COLORS.white}]}>Delete Event</Text>
                   </TouchableOpacity>
                   </View>
@@ -1123,5 +1132,16 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat_500Medium",
     fontSize: 18,
     paddingBottom: 20
-  }
+  }, 
+  reviewContent:{
+    paddingHorizontal: 10,
+    paddingVertical:20,
+    marginVertical: 30
+  },
+  text_intro_review:{
+    color:COLORS.lightBlue,
+    fontFamily: "Montserrat_500Medium",
+    fontSize: 18,
+    paddingBottom: 20
+  },
 });

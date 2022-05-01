@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -26,6 +26,9 @@ import * as ImagePicker from "expo-image-picker";
 import UploadImageEvent from "../config/uploadImageEvent.js";
 import * as Animatable from "react-native-animatable";
 import { Picker } from "@react-native-picker/picker";
+import {io} from "socket.io-client"
+import NotifBuble from "../components/NotifBuble.js";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 
 const tmp = [
   { label: "Sports", value: 1 },
@@ -67,6 +70,13 @@ const CreateEventScreen = ({ navigation }) => {
   });
   const [selectedActivity, setSelectedActivity] = useState("Select a Category");
   const [isSelected, setSelection] = useState(false);
+  const [notifVisible, setNotifVisible] = React.useState(false)
+  const [retreive, setRetreive] = React.useState(false);
+  const [userId, setUserId] = React.useState("")
+  const [userToken, setUserToken] = React.useState("")
+  const isFocused = useIsFocused();
+
+   const socketRef = useRef();
 
   const valuesNotNul = () => {
     if (
@@ -136,29 +146,72 @@ const CreateEventScreen = ({ navigation }) => {
     }
   };
 
+  useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      socketRef.current = io("http://169.254.3.246:3000");
+      socketRef.current.emit('userId',(userId))
+      
+      return () => {
+          socketRef.current.disconnect();
+      };
+    }, [])
+  );
+
   useEffect(() => {
-    Promise.all([
-      //fetch("http://169.254.3.246:3000/getCategories"),
-      fetch("https://eve-back.herokuapp.com/getCategories"),
-      // fetch('https://eve-back.herokuapp.com/getEventsByCategory')
-    ])
-      .then(function (responses) {
-        // Get a JSON object from each of the responses
-        return Promise.all(
-          responses.map(function (response) {
-            return response.json();
-          })
-        );
-      })
-      .then(function (data) {
-        setCategories(data);
-      })
-      .catch(function (error) {
-        // if there's an error, log it
+    const retreiveData = async () => {
+      try {
+        const valueString = await AsyncStorage.getItem("key");
+        const value = JSON.parse(valueString);
+
+        const tokenString = await AsyncStorage.getItem("token");
+        const token = JSON.parse(tokenString);
+
+        setUserId(value);
+        setUserToken(token);
+        setRetreive(true);
+      } catch (error) {
         console.log(error);
-      })
-      .finally(() => setLoading(false));
-  });
+      }
+    };
+    //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
+    retreiveData();
+
+    socketRef.current.emit('userId',(userId))
+    socketRef.current.on('message', (message)=>{
+      console.log("You received a notification")
+      setNotifVisible(true)
+      console.log("home")
+    })
+
+    if(isFocused) {
+      setLoading(true)
+    }
+    
+    if(retreive){ 
+      Promise.all([
+        //fetch("http://169.254.3.246:3000/getCategories"),
+        fetch("http://169.254.3.246:3000/getCategories"),
+        // fetch('https://eve-back.herokuapp.com/getEventsByCategory')
+      ])
+        .then(function (responses) {
+          // Get a JSON object from each of the responses
+          return Promise.all(
+            responses.map(function (response) {
+              return response.json();
+            })
+          );
+        })
+        .then(function (data) {
+          setCategories(data[0]);
+        })
+        .catch(function (error) {
+          // if there's an error, log it
+          console.log(error);
+        })
+        .finally(() => setLoading(false));
+      }
+  }, [retreive,isFocused]);
 
   const textInputChange = (val) => {
     //TODO
@@ -184,6 +237,9 @@ const CreateEventScreen = ({ navigation }) => {
 
   return (
     <ScrollView>
+      <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
+                    <NotifBuble navigation={navigation}/>
+      </View>
       <View style={styles.container}>
         <StatusBar backgroundColor={COLORS.beige} barStyle="light-content" />
         <View style={styles.header}>
@@ -327,7 +383,7 @@ const CreateEventScreen = ({ navigation }) => {
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
               iconStyle={styles.iconStyle}
-              data={categories[0]}
+              data={categories}
               search
               maxHeight={300}
               labelField="description"
@@ -599,4 +655,11 @@ const imageUploaderStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  notif_buble:{
+    width:'100%', 
+    flexDirection: 'row',
+    justifyContent: 'flex-end', 
+    marginBottom: -40, 
+    zIndex: 100
+  }
 });

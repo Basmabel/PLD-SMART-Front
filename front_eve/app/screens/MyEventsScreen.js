@@ -16,6 +16,8 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import NotifBuble from "../components/NotifBuble.js";
 import {io} from "socket.io-client"
 import { useFocusEffect } from "@react-navigation/native";
+import { Entypo } from '@expo/vector-icons'; 
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 
 var light = "dark"
@@ -207,8 +209,11 @@ export default function MyEventsScreen({navigation}) {
                   </View>
                     <View style={styles.contentContainer}>
                             <View style={styles.events}>
-                                <View style={styles.categorieEvents}>
+                                <View style={[styles.categorieEvents,{flexDirection: 'row', justifyContent:'space-between', alignItems: 'center', marginTop:10}]}>
                                     <Text style={[styles.title_body]}>Upcoming Events</Text>
+                                    <TouchableOpacity style={{marginRight: 20, marginTop:5}} onPress={()=>{navigation.navigate("Create event", {navigation: navigation})}}>
+                                      <Entypo name="circle-with-plus" size={30} color={COLORS.lightBlue}/>
+                                    </TouchableOpacity>
                                 </View> 
                                 <Text style={[styles.text_body]}>Participation</Text>
                                 <MyCarousel data={comingEvents} type={{"event":"oui"}} navigation={navigation}/>   

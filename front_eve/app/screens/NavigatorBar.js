@@ -14,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import EventPerCategoryScreen from "./EventPerCategoryScreen.js";
 import ProfileScreen from "./ProfileScreen.js";
 import EventScreen from "./EventScreen.js";
+import CreateEventScreen from "./CreateEventScreen.js";
 
 
 const Tab = createBottomTabNavigator();
@@ -148,7 +149,14 @@ export default function NavigatorBar() {
           headerShown: false,
           tabBarButton: () => null,
         }}
-      />
+      /><Tab.Screen
+      name="Create event"
+      component={CreateEventScreen}
+      options={{
+        headerShown: false,
+        tabBarButton: () => null,
+      }}
+    />
 
     </Tab.Navigator>
   );

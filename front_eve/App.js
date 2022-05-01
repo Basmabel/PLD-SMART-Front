@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 
 import { StyleSheet} from "react-native";
 import LandingScreen from "./app/screens/LandingScreen.js";
@@ -13,25 +12,6 @@ import "react-native-gesture-handler";
 import { createStackNavigator } from "@react-navigation/stack";
 import SearchScreen from "./app/screens/SearchScreen.js";
 import ValidationCode from "./app/screens/ValidationCode";
-=======
-import 'react-native-gesture-handler';
-import { StatusBar } from 'expo-status-bar';
-import { registerRootComponent } from 'expo';
-import { StyleSheet, Text, View } from 'react-native';
-import LandingScreen from './app/screens/LandingScreen.js';
-import SignInScreen from './app/screens/SignInScreen.js';
-import SignUpScreen from './app/screens/SignUpScreen.js';
-import HomePageScreen from './app/screens/HomePageScreen.js';
-import EventPerCategoryScreen from './app/screens/EventPerCategoryScreen.js';
-import NavigatorBar from './app/screens/NavigatorBar.js';
-import { NavigationContainer } from '@react-navigation/native';
-import "react-native-gesture-handler";
-import { createStackNavigator } from "@react-navigation/stack";
-import SearchScreen from "./app/screens/SearchScreen.js";
-import { TextField } from "native-base";
-import ValidationCode from './app/screens/ValidationCode'
-import CreateEventScreen from "./app/screens/CreateEventScreen";
->>>>>>> origin/front-Jade
 import FilterScreen from "./app/screens/FilterScreen.js";
 import CategorieCard from './app/components/CategorieCard.js';
 import CarouselCard from './app/components/CarouselCard';
@@ -40,6 +20,7 @@ import NotificationsScreen from './app/screens/NotificationsScreen.js'
 import MyAccountScreen from './app/screens/MyAccountScreen.js';
 import MyEventsScreen from './app/screens/MyEventsScreen'
 import NotifBuble from './app/components/NotifBuble.js';
+import CreateEventScreen from "./app/screens/CreateEventScreen";
 
 const Stack = createStackNavigator();
 
