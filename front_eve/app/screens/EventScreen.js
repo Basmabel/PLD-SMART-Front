@@ -34,12 +34,13 @@ export default function EventScreen({route, navigation}) {
   const [notifParticipant, setNotifParticipant] = React.useState(null)
   const [infoEvent, setInfoEvent] = React.useState([])
   const [participation, setParticipation] = React.useState(null);
+  const [reviewedParticipation, setReviewedParticipation] = React.useState(null);
   const [review, setReviewEvent] = React.useState(null);
   const [new_review, setNew_Review] = React.useState("");
   const [defaultRating, setDefaultRating] = React.useState(0)
   const [maxRating, setMaxRating] = React.useState([1, 2, 3, 4, 5])
   const [like, setLike] = React.useState(0)
-  const [reviewedParticipant, setReviewedParticipant] = React.useState(null)
+  const [reviewedParticipant, setReviewedParticipant] = React.useState("hello")
   const [reviewedParticipantID, setReviewedParticipantID] = React.useState(-1)
   const [reviewIdParti,setReviewIdParti] = React.useState(false)
   const eventId = route.params.eventId
@@ -86,7 +87,7 @@ export default function EventScreen({route, navigation}) {
 
   const participateFetch = async()=>{
 
-    fetch("http://169.254.3.246:3000/demandParticipation",{
+    fetch("http://192.168.98.166:3000/demandParticipation",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({user_id: userId, event_id: eventId}),
@@ -109,7 +110,7 @@ export default function EventScreen({route, navigation}) {
 
   const LikeFetch = async(like)=>{
 
-    fetch("http://169.254.3.246:3000/setLiked",{
+    fetch("http://192.168.98.166:3000/setLiked",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({user_id: userId, event_id: eventId, liked: like}),
@@ -149,7 +150,7 @@ export default function EventScreen({route, navigation}) {
 
   const cancelFetch = async(participants)=>{
 
-    fetch("http://169.254.3.246:3000/cancelEvent",{
+    fetch("http://192.168.98.166:3000/cancelEvent",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({event_id: eventId}),
@@ -164,6 +165,45 @@ export default function EventScreen({route, navigation}) {
       const participation_demand_id = null
       socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id,participants})
       alertRedirection("Your event has been canceled, participants have been warned")
+  }
+
+  const deleteEvent = async ()=>{
+    Alert.alert(
+      "Do you really want to delete this event?",
+      ``,
+      [
+        {
+          text: "Yes",
+          onPress: () => {deleteFetch()}
+        },
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel"
+        }
+      ],
+      { cancelable: false }
+    );
+    
+  }
+
+  const deleteFetch = async()=>{
+
+    fetch("http://192.168.98.166:3000/cancelEvent",{
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({event_id: eventId}),
+    }).catch((error)=>console.error(error));
+    //console.log(participants)
+    const message = ""
+      const type = 12
+      const event_id = eventId
+      const user_id = infoEvent.creator_id
+      const review_id = null
+      const user_targeted_id = null
+      const participation_demand_id = null
+      socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id,participants})
+      alertRedirection("Your event has been erased completely!")
   }
 
   const withdrawEvent = async ()=>{
@@ -188,7 +228,7 @@ export default function EventScreen({route, navigation}) {
 
   const withdrawFetch = async()=>{
 
-    fetch("http://169.254.3.246:3000/removeParticipant",{
+    fetch("http://192.168.98.166:3000/removeParticipant",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({user_id:userId, event_id: eventId}),
@@ -227,7 +267,7 @@ export default function EventScreen({route, navigation}) {
 
   const reviewFetch = async(id)=>{
    
-    fetch("http://169.254.3.246:3000/addReview",{
+    fetch("http://192.168.98.166:3000/addReview",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({score:defaultRating, review: new_review, creator:infoEvent.user_is_creator, writer_id:userId, target_id:id, event_id: eventId}),
@@ -264,7 +304,7 @@ export default function EventScreen({route, navigation}) {
 
   const fetchReport = async ()=>{
     setCauseVisible(false)
-    fetch("http://169.254.3.246:3000/createReportEvent",{
+    fetch("http://192.168.98.166:3000/createReportEvent",{
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ event_id: eventId, type_id: causeId}),
@@ -356,7 +396,7 @@ export default function EventScreen({route, navigation}) {
     React.useCallback(() => {
       // Do something when the screen is focused
       if(!textIn){
-        socketRef.current = io("http://169.254.3.246:3000");
+        socketRef.current = io("http://192.168.98.166:3000");
         socketRef.current.emit('userId',(userId))
         return () => {
             socketRef.current.disconnect();
@@ -401,29 +441,34 @@ export default function EventScreen({route, navigation}) {
 
     if(retreive){
       Promise.all([
-        fetch('http://169.254.3.246:3000/getUserInfo',{
+        fetch('http://192.168.98.166:3000/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('http://169.254.3.246:3000/getInfoEvent',{
+        fetch('http://192.168.98.166:3000/getInfoEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id":eventId , "user_id": userId})
         }),
-        fetch('http://169.254.3.246:3000/getReviewEvent',{
+        fetch('http://192.168.98.166:3000/getReviewEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "event_id":eventId,
           })}),
-        fetch('http://169.254.3.246:3000/getEventParticipants',{
+        fetch('http://192.168.98.166:3000/getEventParticipants',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id": eventId})
         }),
-        fetch('http://169.254.3.246:3000/getReportTypesEvent'),
+        fetch('http://192.168.98.166:3000/getReportTypesEvent'),
+        fetch('http://192.168.98.166:3000/getnonReviewedParticipants',{
+          method: "POST",
+          headers: {'content-type': 'application/json'},
+          body: JSON.stringify({"event_id": eventId})
+        })
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
         return Promise.all(responses.map(function (response) {
@@ -442,7 +487,7 @@ export default function EventScreen({route, navigation}) {
           }else if(index==1){
             setInfoEvent(item[0])
             console.log(item)
-            fetch('http://169.254.3.246:3000/getReviewId',{
+            fetch('http://192.168.98.166:3000/getReviewId',{
               method: "POST",
               headers: {'content-type': 'application/json'},
               body: JSON.stringify({"writer_id":userId, "target_id":item[0].creator_id,"event_id": eventId})
@@ -483,6 +528,8 @@ export default function EventScreen({route, navigation}) {
           }else if(index==4){
             console.log(item)
             setReportTypes(item)
+          }else if(index==5){
+            setReviewedParticipation(item.participantstoReview)
           }              
         });
       }).catch(function (error) {
@@ -619,7 +666,7 @@ export default function EventScreen({route, navigation}) {
 
   const generate_organizer_page = () =>{
     console.log('generate Organizer Page')
-    if(infoEvent.status_id==1){
+    if(infoEvent.status_id==11){
       console.log('Event has not happened yet')
       return(
         <View>
@@ -648,8 +695,9 @@ export default function EventScreen({route, navigation}) {
             <CustomLike/>
         </View>
       )
-    }else if(infoEvent.status_id==3){
+    }else if(infoEvent.status_id==1){
       console.log('Event has happened')
+      console.log('The value of reviewedParticipant is ', reviewedParticipant)
       return(
         <View>
           <View style={styles.events}>
@@ -682,14 +730,14 @@ export default function EventScreen({route, navigation}) {
                                   selectedTextStyle={styles.selectedTextStyle}
                                   inputSearchStyle={styles.inputSearchStyle}
                                   iconStyle={styles.iconStyle}
-                                  data={participation}
+                                  data={reviewedParticipation}
                                   maxHeight={nb_registered*50}
                                   labelField="surname"
-                                  placeholder={reviewedParticipant === null ? "Select a report type" : reviewedParticipant}
+                                  placeholder={(reviewedParticipant === "hello")? "Select a report type" : reviewedParticipant}
                                   onFocus={() => setIsFocus(true)}
                                   onBlur={() => setIsFocus(false)}
                                   onChange={(item) => {
-                                    setReviewedParticipant(item.surname);
+                                    setReviewedParticipant(item.name);
                                     setReviewedParticipantID(item.user_id)
                                     setIsFocus(false);
                                   }}
@@ -703,26 +751,26 @@ export default function EventScreen({route, navigation}) {
                                   )}
                                 />
                   <TextInput
-                    style={[styles.input,{display: (reviewedParticipantID!=-1)? "flex":"none"}]}
+                    style={[styles.input,{display: (reviewedParticipantID==-1)? "flex":"none"}]}
                     placeholder="Post a review"
                     placeholderTextColor={COLORS.black}
                     onChangeText={(value) => {setNew_Review(value);setTextIn(true)}}
                     onEndEditing={() =>{setTextIn(false)}}                    
                   />
-                  <CustomRatingBar style={{display: (reviewedParticipantID!=-1)? "flex":"none"}}/>
+                  <CustomRatingBar style={{display: (reviewedParticipantID==-1)? "flex":"none"}}/>
                   <View style={{justifyContent:"space-around",
                            flexDirection:'row', marginTop : 10, 
                            marginBottom: 20}}>
                   <TouchableOpacity activeOpacity={0.7} 
-                                    style={[styles.button, {marginRight: 10}]} 
+                                    style={[styles.button, {marginRight: 10, display: (reviewedParticipantID==-1)? "flex":"none"}]} 
                                     onPress={()=>{reviewEvent(reviewedParticipantID)}}>
-                    <Text style={[styles.text_button,{display: (reviewedParticipantID!=-1)? "flex":"none"}]}>Post !</Text>
+                     <Text style={styles.text_button}> Post !</Text> 
                   </TouchableOpacity>
                   <TouchableOpacity activeOpacity={0.7} 
                                     style={[styles.button, 
                                             {backgroundColor: COLORS.red, 
                                             marginLeft:10}]} 
-                                    onPress={()=>{alert("This event will be permanently deleted")}}>
+                                    onPress={()=>{deleteFetch(); navigation.navigate("NavigatorBar")}}>
                       <Text style={[styles.text_button, {color: COLORS.white}]}>Delete Event</Text>
                   </TouchableOpacity>
                   </View>
@@ -745,7 +793,7 @@ export default function EventScreen({route, navigation}) {
       return generate_participant_page();
     }else{
       //return generate_non_participant_page();
-      return  generate_non_participant_page();
+      return  generate_organizer_page();
     }
 
   }

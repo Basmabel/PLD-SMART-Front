@@ -72,7 +72,7 @@ export default function ProfileScreen({route,navigation}) {
 
   const fetchReport = async ()=>{
     setCauseVisible(false)
-    fetch("http://169.254.3.246:3000/createReport",{
+    fetch("http://192.168.98.166:3000/createReport",{
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ user_id: profile_id, type_id: causeId}),
@@ -101,7 +101,7 @@ export default function ProfileScreen({route,navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
-      socketRef.current = io("http://169.254.3.246:3000");
+      socketRef.current = io("http://192.168.98.166:3000");
       socketRef.current.emit('userId',(userId))
       return () => {
           socketRef.current.disconnect();
@@ -140,19 +140,19 @@ export default function ProfileScreen({route,navigation}) {
 
       if(retreive){      
         Promise.all([
-          fetch('http://169.254.3.246:3000/getMyAccountInfo',{
+          fetch('http://192.168.98.166:3000/getMyAccountInfo',{
             method: "POST",
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({
               "id":profile_id,
             })}),
-          fetch('http://169.254.3.246:3000/getReviewUser',{
+          fetch('http://192.168.98.166:3000/getReviewUser',{
             method: "POST",
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({
               "id":profile_id,
             })}),
-          fetch('http://169.254.3.246:3000/getReportTypes'),
+          fetch('http://192.168.98.166:3000/getReportTypes'),
         ]).then(function (responses) {
           // Get a JSON object from each of the responses
           return Promise.all(responses.map(function (response) {

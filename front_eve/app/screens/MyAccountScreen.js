@@ -86,7 +86,7 @@ export default function MyAccountScreen({navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
-      socketRef.current = io("http://169.254.3.246:3000");
+      socketRef.current = io("http://192.168.98.166:3000");
       socketRef.current.emit('userId',(userId))
       return () => {
           socketRef.current.disconnect();
@@ -122,13 +122,13 @@ export default function MyAccountScreen({navigation}) {
 
       if(retreive){      
         Promise.all([
-          fetch('http://169.254.3.246:3000/getMyAccountInfo',{
+          fetch('http://192.168.98.166:3000/getMyAccountInfo',{
             method: "POST",
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({
               "id":userId,
             })}),
-          fetch('http://169.254.3.246:3000/getReviewUser',{
+          fetch('http://192.168.98.166:3000/getReviewUser',{
             method: "POST",
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({
@@ -213,7 +213,7 @@ export default function MyAccountScreen({navigation}) {
     })
 
     
-    fetch('http://169.254.3.246:3000/editProfile',{
+    fetch('http://192.168.98.166:3000/editProfile',{
       method: "POST",
       headers: {'content-type': 'application/json'},
       body: JSON.stringify({
