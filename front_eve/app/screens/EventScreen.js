@@ -13,11 +13,13 @@ import {
   Montserrat_600SemiBold
 } from '@expo-google-fonts/dev'
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
-import { FlatList } from "native-base";
 import { TextInput } from "react-native-paper";
 import NotifBuble from "../components/NotifBuble.js";
 import {io} from "socket.io-client"
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { Dropdown } from "react-native-element-dropdown";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import { set } from "date-fns";
 
 
 //Retreive Data of the Event
@@ -37,13 +39,20 @@ export default function EventScreen({route, navigation}) {
   const [defaultRating, setDefaultRating] = React.useState(0)
   const [maxRating, setMaxRating] = React.useState([1, 2, 3, 4, 5])
   const [like, setLike] = React.useState(0)
-  const [reviewedParticipant, setReviewedParticipant] = React.useState("")
+  const [reviewedParticipant, setReviewedParticipant] = React.useState(null)
   const [reviewIdParti,setReviewIdParti] = React.useState(false)
   const eventId = route.params.eventId
   const [notifVisible, setNotifVisible] = React.useState(false)
   const socketRef = useRef();
   const isFocused = useIsFocused();
   const [textIn, setTextIn] = React.useState(false) 
+  const [reportTypes, setReportTypes] = React.useState(null);
+  const [reportType, setReportType] = React.useState(null)
+  console.log(reportType)
+  const [isFocus, setIsFocus] = React.useState(false);
+  const [causeVisible, setCauseVisible] = React.useState(false);
+  const [causeId, setCauseId] =  React.useState(1);
+  const [isRported, setReported] =  React.useState(false);
 
 
   const starImgFilled = 'https://raw.githubusercontent.com/tranhonghan/images/main/star_filled.png'
@@ -142,7 +151,7 @@ export default function EventScreen({route, navigation}) {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({event_id: eventId}),
     }).catch((error)=>console.error(error));
-    console.log(participants)
+    //console.log(participants)
     const message = ""
       const type = 12
       const event_id = eventId
@@ -250,6 +259,26 @@ export default function EventScreen({route, navigation}) {
     );
   }
 
+  const fetchReport = async ()=>{
+    setCauseVisible(false)
+    fetch("http://169.254.3.246:3000/createReport",{
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ user_id: infoEvent.creator_id, type_id: causeId}),
+    }).catch((error)=>console.error(error));
+    const message = "hello"
+    const type = 6
+    const event_id = null
+    const user_id = infoEvent.creator_id
+    const review_id = null
+    const user_targeted_id = null
+    const participation_demand_id = null
+    socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
+    alert("User has been reported")
+    setReported(true)
+  }
+
+
 
   const CustomRatingBar = () => {
     return(
@@ -283,10 +312,11 @@ export default function EventScreen({route, navigation}) {
       return(
         <View style={{justifyContent:'center', flexDirection: 'row', width:'100%', 
                       marginBottom: 10}}>
-        <TouchableOpacity activeOpacity={0.7} onPress={()=>{setLike(0), LikeFetch(0)}} style={{backgroundColor: COLORS.yellow}} >
+        <TouchableOpacity activeOpacity={0.7} onPress={()=>{setLike(0), LikeFetch(0)}} >
           <MaterialCommunityIcons name="heart" 
               color={COLORS.lightBlue} 
-              size={30}/>
+              size={30}
+              />
         </TouchableOpacity>
         </View>
       )
@@ -295,7 +325,7 @@ export default function EventScreen({route, navigation}) {
           <View style={{justifyContent:'center', flexDirection: 'row',width:'100%',
                 marginBottom: 10}}>          
           <TouchableOpacity activeOpacity={0.7} onPress={()=>{setLike(1), LikeFetch(1)}} >
-            <MaterialCommunityIcons name="heart-outline" color={COLORS.lightBlue} size={30}/>
+            <MaterialCommunityIcons name="heart-outline" color={COLORS.lightBlue} size={30} />
           </TouchableOpacity>
           </View>
         )
@@ -313,7 +343,7 @@ export default function EventScreen({route, navigation}) {
     React.useCallback(() => {
       // Do something when the screen is focused
       if(!textIn){
-        socketRef.current = io("http://169.254.3.246:3000");
+        socketRef.current = io("http://10.24.40.91:3000");
         socketRef.current.emit('userId',(userId))
         return () => {
             socketRef.current.disconnect();
@@ -379,7 +409,8 @@ export default function EventScreen({route, navigation}) {
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id": eventId})
-        })
+        }),
+        fetch('http://10.24.40.91:3000/getReportTypes'),
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
         return Promise.all(responses.map(function (response) {
@@ -394,7 +425,7 @@ export default function EventScreen({route, navigation}) {
           //console.log(index)
           if(index==0){
             setUserInfo(item[0])
-            console.log(item[0])
+            //console.log(item[0])
           }else if(index==1){
             setInfoEvent(item[0])
 
@@ -416,14 +447,18 @@ export default function EventScreen({route, navigation}) {
             }else{
               setLike(0)
             }
-            console.log(item)
+            //console.log(item)
           }else if(index==2){
              setReviewEvent(item.reviews)
              //console.log(item.reviews)
            }else if(index==3){
             setParticipation(item.participants)
-            console.log(item)
+            console.log(item.participants)
+            //console.log(item)
             //console.log(item.reviews)
+          }else if(index==4){
+            console.log(item)
+            setReportTypes(item)
           }              
         });
       }).catch(function (error) {
@@ -434,8 +469,18 @@ export default function EventScreen({route, navigation}) {
   }, [retreive,isFocused]);
 
   const generate_cancelled_event = () =>{
-      return(<View></View>)
+      return(<View style={{alignItems:"center", marginBottom: 30,
+      borderRadius: 10,
+      borderWidth: 5,
+      borderColor: COLORS.lightBlue }}>
+        <Text style={[styles.text_header, 
+          {borderColor: COLORS.lightBlue, 
+          fontWeight:"bold",
+          padding: 10}]}>THIS EVENT HAS BEEN CANCELLED</Text>
+      </View>)
   }
+
+  const gen_report = () => {}
 
   const generate_non_participant_page = () =>{
     console.log('generate non Participant Page')
@@ -443,26 +488,31 @@ export default function EventScreen({route, navigation}) {
       console.log('Event has not happened yet')
     return (
             <View style= {{alignItems: "center", position: 'relative', top: -10}}>
-              <Pressable title = "participate" style={[styles.button,{display: (infoEvent.demand_id===0)?"flex" : "none"}]} onPress={()=>{demandParticipation()}}>
+              <TouchableOpacity activeOpacity={0.7} style={[styles.button,{marginBottom: 20, display: (infoEvent.demand_id===0)?"flex" : "none"}]} onPress={()=>{demandParticipation()}}>
                 <Text style={styles.text_button}>Participate !</Text>
-              </Pressable>
+              </TouchableOpacity>
+              <CustomLike/>
             </View>
     )
     }else if(infoEvent.status_id==3){
       console.log('Event has happened')
       return(     <View style={styles.events}>
-                    <View style={styles.categorieEvents}>
+                    <View style={[styles.categorieEvents, {marginBottom: 20}]}>
                       <Text style={styles.title_body}>Reviews</Text>
                       <MaterialIcons name="preview" color={COLORS.lightBlue} size={26}/>
+                      <MyCarousel data={review} type={{ event: "review" }} navigation={navigation}/>
                     </View>
-                    <MyCarousel data={review} type={{ event: "review" }} navigation={navigation} />
+                    
+                    <CustomLike/>
                   </View> 
       )
     }else if (infoEvent.status_id==2) {return generate_cancelled_event()}
   }
 
   const generate_participant_page = () =>{
+    console.log('generate Participant Page')
     if(infoEvent.status_id===1){
+      console.log('Event has not happened yet')
       return (
         <View style={styles.events}>
               <View style={styles.events}>
@@ -472,15 +522,16 @@ export default function EventScreen({route, navigation}) {
                 </View>
                 <MyCarousel data={participation} type={{ event: "participant" }} navigation={navigation} onPress={(item)=>console.log(item)}/>
             </View>
-              <View style= {{alignItems: "center", position: 'relative', top: -10}}>
-                <Pressable title = "withdraw" style={styles.button} onPress={()=>{withdrawEvent()}}>
+              <View style= {{alignItems: "center", position: 'relative', top: -10, marginBottom: 20}}>
+                <TouchableOpacity activeOpacity={0.7} style={styles.button} onPress={()=>{withdrawEvent()}}>
                   <Text style={styles.text_button}>Withdraw :(</Text>
-                </Pressable>
+                </TouchableOpacity>
               </View>
+              <CustomLike/>
         </View>
       )
     }else if(infoEvent.status_id===3){
-        console.log('IT HAAAS')
+        console.log('Event has happened')
         return(     
         <View>
           <View style={styles.events}>
@@ -500,7 +551,8 @@ export default function EventScreen({route, navigation}) {
             <View style= {{justifyContent: "space-evenly", 
                                 alignItems: "center", 
                                 position: 'relative',
-                                display: (!reviewIdParti)?"flex":"none"}}>
+                                display: (!reviewIdParti)?"flex":"none",
+                                marginBottom: 20}}>
                   <TextInput
                     style={[styles.input]}
                     placeholder="Post a review"
@@ -509,10 +561,11 @@ export default function EventScreen({route, navigation}) {
                     onEndEditing={() =>{setTextIn(false)}}
                   />
                   <CustomRatingBar/>
-                  <Pressable title = "makereviews" style={styles.button} onPress={()=>{reviewEvent(infoEvent.creator_id)}}>
+                  <TouchableOpacity activeOpacity={0.7} style={styles.button} onPress={()=>{reviewEvent(infoEvent.creator_id)}}>
                     <Text style={styles.text_button}>Post !</Text>
-                  </Pressable>
+                  </TouchableOpacity>
             </View>
+            <CustomLike/>
         </View>
         )
       }else if (infoEvent.status_id==2) {return generate_cancelled_event()}
@@ -532,17 +585,20 @@ export default function EventScreen({route, navigation}) {
               </View>
               <MyCarousel data={participation} type={{ event: "participant" }} navigation={navigation} onPress={(item)=>console.log(item)}/>
             </View>
-            <View style={{justifyContent:'center', alignContent:'space-around'}}>
-              <Pressable title = "cancel" style={styles.button} onPress={()=>{cancelEvent(participation)}}>
-                      <Text style={styles.text_button}>Cancel</Text>
-              </Pressable>
-              <Pressable title = "edit" style={styles.button} onPress={()=>console.log('navigate to edit event page on process')}>
+            <View style={{justifyContent:"space-around",
+                           flexDirection:'row', 
+                           marginBottom: 20}}>
+              <TouchableOpacity activeOpacity={0.7} style={styles.button} onPress={()=>{cancelEvent(participation)}}>
+                      <Text style={styles.text_button}>Cancel Event</Text>
+              </TouchableOpacity>
+              <TouchableOpacity activeOpacity={0.7} style={styles.button} onPress={()=>console.log('navigate to edit event page on process')}>
                       <Text style={styles.text_button}>Edit</Text>
-              </Pressable>
+              </TouchableOpacity>
             </View>
+            <CustomLike/>
         </View>
       )
-    }else if(infoEvent.status_id==3){
+    }else if(infoEvent.status_id==2){
       console.log('Event has happened')
       return(
         <View>
@@ -561,24 +617,61 @@ export default function EventScreen({route, navigation}) {
               </View>
               <MyCarousel data={review} type={{ event: "review" }} navigation={navigation}/>
             </View>
+            <View style = {styles.categorieEvents}>
+              <Text style={styles.title_body}>Review A Participant</Text>
+              <MaterialIcons name="person" color={COLORS.lightBlue} size={26}/>
+            </View>
             <View style= {{justifyContent: "space-evenly", 
                                 alignItems: "center", 
-                                position: 'relative'}}>
+                                position: 'relative', marginTop : 20, marginLeft: 20}}>
+                    <Dropdown
+                      style={[styles.dropdown, isFocus && { borderColor: "blue", borderWidth : 100 }, {backgroundColor: COLORS.white}]}
+                      placeholderStyle={styles.placeholderStyle}
+                      selectedTextStyle={styles.selectedTextStyle}
+                      inputSearchStyle={styles.inputSearchStyle}
+                      iconStyle={styles.iconStyle}
+                      data={participation}
+                      maxHeight={100}
+                      labelField="report_type"
+                      placeholder={reviewedParticipant === null ? "Select a participant" : reviewedParticipant}
+                      onFocus={() => setIsFocus(true)}
+                      onBlur={() => setIsFocus(false)}
+                      onChange={(item) => {
+                        console.log("IM HERE IN DROPDOWN")
+                        setReviewedParticipant(item.surname)
+                        //setReviewIdParti(item)
+                        // setCauseId(item.id)
+                        // setReportType(item.report_type);
+                        console.log(reviewedParticipant)
+                        setIsFocus(false);
+                      }}
+                    />
                   <TextInput
                     style={[styles.input]}
-                    placeholder="Post a review"
-                    placeholderTextColor={COLORS.black}
+                    placeholder="Click on a Partipant and Review"
+                    placeholderTextColor={COLORS.grey}
                     onChangeText={(value) => {setNew_Review(value);setTextIn(true)}}
                     onEndEditing={() =>{setTextIn(false)}}
                   />
                   <CustomRatingBar/>
-                  <Pressable title = "makereviews" style={styles.button} onPress={()=>alert('Thank You For The Review!')}>
+                  <View style={{justifyContent:"space-around",
+                           flexDirection:'row', marginTop : 10, 
+                           marginBottom: 20}}>
+                  <TouchableOpacity activeOpacity={0.7} 
+                                    style={[styles.button, {marginRight: 10}]} 
+                                    onPress={()=>alert('Thank You For The Review!')}>
                     <Text style={styles.text_button}>Post !</Text>
-                  </Pressable>
-                  <Pressable title = "delete" style={styles.button$} onPress={()=>console.log('delete')}>
-                      <Text style={styles.text_button}>Delete</Text>
-                  </Pressable>
+                  </TouchableOpacity>
+                  <TouchableOpacity activeOpacity={0.7} 
+                                    style={[styles.button, 
+                                            {backgroundColor: COLORS.red, 
+                                            marginLeft:10}]} 
+                                    onPress={()=>alert("This event will be permanently deleted")}>
+                      <Text style={[styles.text_button, {color: COLORS.white}]}>Delete Event</Text>
+                  </TouchableOpacity>
+                  </View>
             </View>
+            <CustomLike/>
         </View>
       )
     }else if (infoEvent.status_id==2) { return generate_cancelled_event()}
@@ -592,11 +685,11 @@ export default function EventScreen({route, navigation}) {
     if (infoEvent.user_is_creator){
       //return Generate_organizer_page();
       return  generate_organizer_page();
-      //the condition is wrong to check 
     }else if(infoEvent.particip_id){
       return generate_participant_page();
     }else{
-      return generate_non_participant_page();
+      //return generate_non_participant_page();
+      return  generate_organizer_page();
     }
 
   }
@@ -630,32 +723,77 @@ export default function EventScreen({route, navigation}) {
                   <NotifBuble navigation={navigation}/>
                 </View>
                   <View style = {{flexDirection : 'row',justifyContent: "space-between", alignItems : 'center', width:'100%'}}>
-                  <View style={styles.container_categorie}>
-                      <View style={styles.containerIcon}>
-                          <Image
-                              source={{uri: infoEvent.categorie_image}}
-                              style={styles.image_cat}
-                          />
-                      </View>  
-                      <Text style={styles.name_cat}>{infoEvent.categorie_name}</Text>    
+                    <View style={styles.container_categorie}>
+                        <View style={styles.containerIcon}>
+                            <Image
+                                source={{uri: infoEvent.categorie_image}}
+                                style={styles.image_cat}
+                            />
+                        </View>  
+                        <Text style={styles.name_cat}>{infoEvent.categorie_name}</Text>    
+                      </View>
+                      <View style={styles.locationView}>
+                            <Text style={styles.text_header}> Lyon </Text>
+                            <MaterialCommunityIcons name="map-marker" color={COLORS.lightBlue} size={24}/>
+                      </View>
                     </View>
-                    <View style={styles.locationView}>
-                          <Text style={styles.text_header}> Lyon </Text>
-                          <MaterialCommunityIcons name="map-marker" color={COLORS.lightBlue} size={24}/>
-                    </View>
-                  </View>
-                      <View style={styles.contentContainer}>
-                            <View style={styles.info_event}>
-                                <Image style={styles.photo_event} source={{uri: infoEvent.event_image}}/>
-                                <Text style={styles.title_info_event}>{infoEvent.event_name}</Text>
-                                <Text style={styles.text_info_event}>{formatageDate(infoEvent.date)}</Text>
-                                <Text style={[styles.desc,{display: (infoEvent.description!=null)? "flex":"none"}]}>{infoEvent.description}</Text>
-                                <MaterialCommunityIcons name={paying_line} color={COLORS.lightBlue} size={24}/>
-                                <Image style = {styles.profilImage} source={{uri: infoEvent.creator_image}}/>
-                            </View>
-                            <View style={styles.otherInfos}>
-                                <CustomLike/> 
-                                {bodyGen()}
+                        <View style={styles.contentContainer}>
+                              <View style={styles.info_event}>
+                                  <Image style={styles.photo_event} source={{uri: infoEvent.event_image}}/>
+                                  <Text style={styles.title_info_event}>{infoEvent.event_name}</Text>
+                                  <Text style={styles.text_info_event}>{formatageDate(infoEvent.date)}</Text>
+                                  <MaterialCommunityIcons name={paying_line} color={COLORS.lightBlue} size={24}/>
+                                  <Image style = {styles.profilImage} source={{uri: infoEvent.creator_image}}/>
+                                  <Text style={[styles.desc,{display: (infoEvent.description!=null)? "flex":"none"}]}>{infoEvent.description}</Text>
+                              </View>
+                              <View style={styles.otherInfos}>
+                                  {bodyGen()}
+                              </View>
+                              <TouchableOpacity activeOpacity={0.7} style={{right: -230}} onPress={()=>setCauseVisible(true)}>
+                                <Text style = {{color : COLORS.lightBlue, 
+                                                textDecorationLine: "underline",
+                                                }}>
+                                                  Click Here To Report
+                                </Text>
+                              </TouchableOpacity>
+                              <View style={[styles.reportCause,{ display: (causeVisible)? "flex" : "none"}]}>
+                                <Text style={styles.text_cause}>Select a cause for the report</Text>
+                                <Dropdown
+                                  style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
+                                  placeholderStyle={styles.placeholderStyle}
+                                  selectedTextStyle={styles.selectedTextStyle}
+                                  inputSearchStyle={styles.inputSearchStyle}
+                                  iconStyle={styles.iconStyle}
+                                  data={reportTypes}
+                                  maxHeight={100}
+                                  labelField="report_type"
+                                  placeholder={reportType === null ? "Select a report type" : reportType}
+                                  onFocus={() => setIsFocus(true)}
+                                  onBlur={() => setIsFocus(false)}
+                                  onChange={(item) => {
+                                    setCauseId(item.id)
+                                    setReportType(item.report_type);
+                                    setIsFocus(false);
+                                  }}
+                                  renderLeftIcon={() => (
+                                    <AntDesign
+                                      style={styles.icon}
+                                      color={isFocus ? "blue" : "black"}
+                                      name="Safety"
+                                      size={20}
+                                    />
+                                  )}
+                                />
+                                <View style= {styles.content_report}>
+                                    <TouchableOpacity style={styles.button_report} onPress={()=>{fetchReport()}}>
+                                    <Text style={styles.text_report}>Validate</Text>
+                                    </TouchableOpacity>
+                              </View>
+                              <View style= {styles.content_report}>
+                                    <TouchableOpacity style={styles.button_report} onPress={()=>{setCauseVisible(false)}}>
+                                    <Text style={styles.text_report}>Cancel</Text>
+                                    </TouchableOpacity>
+                              </View>
                             </View>
                       </View>
                 </ScrollView>
@@ -679,7 +817,7 @@ const styles = StyleSheet.create({
     color: COLORS.lightBlue,
     fontFamily: "Montserrat_400Regular",
     fontSize: 14,
-    marginTop:10
+    top: -30
   },
   header: {
     paddingHorizontal: 20,
@@ -872,5 +1010,64 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end', 
     marginBottom: -40, 
     zIndex: 100
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+    color:COLORS.black
+  },
+  reportCause:{
+    backgroundColor: COLORS.white,
+    paddingHorizontal: 10,
+    paddingVertical:20,
+    marginVertical: 30,
+   
+  },
+  content_report:{
+    marginTop:30,
+    width:'100%',
+  },
+  button_report: {
+    width: "100%",
+    backgroundColor: COLORS.lightBlue,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+  text_report:{
+      fontSize: 18,
+      fontWeight: "bold",
+      color:COLORS.greyBlue
+  },
+  dropdown: {
+    height: 50,
+    borderBottomColor: "gray",
+    borderBottomWidth: 0.5,
+    marginBottom: 15,
+    color:COLORS.black
+  },
+  placeholderStyle: {
+    fontSize: 16,
+    color:COLORS.black
+  },
+  selectedTextStyle: {
+    fontSize: 14,
+    color:COLORS.black
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+    color:COLORS.black
+  },
+  text_cause:{
+    color:COLORS.black,
+    fontFamily: "Montserrat_500Medium",
+    fontSize: 18,
+    paddingBottom: 20
   }
 });

@@ -60,7 +60,7 @@ export default function MyEventsScreen({navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
-      socketRef.current = io("http://169.254.3.246:3000");
+      socketRef.current = io("http://10.24.40.91:3000");
       socketRef.current.emit('userId',(userId))
       return () => {
           socketRef.current.disconnect();
@@ -95,41 +95,41 @@ export default function MyEventsScreen({navigation}) {
 
     if(retreive){      
       Promise.all([
-        fetch('http://169.254.3.246:3000/getComingEvents',{
+        fetch('http://10.24.40.91:3000/getComingEvents',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('http://169.254.3.246:3000/getUserInfo',{
+        fetch('http://10.24.40.91:3000/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-          fetch('http://169.254.3.246:3000/getMyHistoric',{
+          fetch('http://10.24.40.91:3000/getMyHistoric',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('http://169.254.3.246:3000/getMyFavorite',{
+        fetch('http://10.24.40.91:3000/getMyFavorite',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('http://169.254.3.246:3000/getUpcomingEvent',{
+        fetch('http://10.24.40.91:3000/getUpcomingEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('http://169.254.3.246:3000/getHistoric',{
+        fetch('http://10.24.40.91:3000/getHistoric',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
