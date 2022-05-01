@@ -76,7 +76,7 @@ const ParticipantCard= ({ item, index, width, navigation}) => {
     return (
       <View style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={()=> navigation.navigate("Profile user",{profile_id:item.user_id})}>
+                <TouchableOpacity activeOpacity={0.7} onPress={()=> navigation.navigate("Profile user",{profile_id:item.user_id})}>
                    <Image source={{uri: isImage? item.photo : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}} style={styles.profil} />
                 </TouchableOpacity>
                 <View style={styles.infos}>

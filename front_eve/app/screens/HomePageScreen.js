@@ -59,7 +59,7 @@ export default function HomePageScreen() {
   useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
-      socketRef.current = io("http://169.254.3.246:3000");
+      socketRef.current = io("http://10.24.40.91:3000");
       socketRef.current.emit('userId',(userId))
       return () => {
           socketRef.current.disconnect();
@@ -95,8 +95,8 @@ export default function HomePageScreen() {
  
     if(retreive){      
       Promise.all([
-        fetch('http://169.254.3.246:3000/getPopular'),
-        fetch('http://169.254.3.246:3000/getUserInfo',{
+        fetch('http://10.24.40.91:3000/getPopular'),
+        fetch('http://10.24.40.91:3000/getUserInfo',{
           method: "POST",
           headers: {
             "content-type": "application/json",
@@ -105,8 +105,8 @@ export default function HomePageScreen() {
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('http://169.254.3.246:3000/getCategories'),
-        fetch('http://169.254.3.246:3000/getEventsByCategory')
+        fetch('http://10.24.40.91:3000/getCategories'),
+        fetch('http://10.24.40.91:3000/getEventsByCategory')
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
         return Promise.all(responses.map(function (response) {
