@@ -66,7 +66,7 @@ const SignInScreen = ({ navigation }) => {
     }
      
    
-      //const response = await fetch("http://10.24.40.91:3000/login"
+      //const response = await fetch("http://169.254.3.246:3000/login"
   };
 
   const { colors } = useTheme();

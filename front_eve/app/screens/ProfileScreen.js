@@ -72,18 +72,27 @@ export default function ProfileScreen({route,navigation}) {
 
   const fetchReport = async ()=>{
     setCauseVisible(false)
-    fetch("http://10.24.40.91:3000/createReport",{
+    fetch("http://169.254.3.246:3000/createReport",{
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ user_id: profile_id, type_id: causeId}),
     }).catch((error)=>console.error(error));
-    const message = "hello"
-    const type = 6
-    const event_id = null
-    const user_id = profile_id
-    const review_id = null
-    const user_targeted_id = null
-    const participation_demand_id = null
+
+    var message = "hello"
+    var type = 6
+    var event_id = null
+    var user_id = profile_id
+    var review_id = null
+    var user_targeted_id = null
+    var participation_demand_id = null
+    socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
+
+    type = 11
+    event_id = null
+    user_id = 1
+    review_id = null
+    user_targeted_id = profile_id
+    participation_demand_id = null
     socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
     alert("User has been reported")
     setReported(true)
@@ -92,7 +101,7 @@ export default function ProfileScreen({route,navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
-      socketRef.current = io("http://10.24.40.91:3000");
+      socketRef.current = io("http://169.254.3.246:3000");
       socketRef.current.emit('userId',(userId))
       return () => {
           socketRef.current.disconnect();
@@ -131,19 +140,19 @@ export default function ProfileScreen({route,navigation}) {
 
       if(retreive){      
         Promise.all([
-          fetch('http://10.24.40.91:3000/getMyAccountInfo',{
+          fetch('http://169.254.3.246:3000/getMyAccountInfo',{
             method: "POST",
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({
               "id":profile_id,
             })}),
-          fetch('http://10.24.40.91:3000/getReviewUser',{
+          fetch('http://169.254.3.246:3000/getReviewUser',{
             method: "POST",
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({
               "id":profile_id,
             })}),
-          fetch('http://10.24.40.91:3000/getReportTypes'),
+          fetch('http://169.254.3.246:3000/getReportTypes'),
         ]).then(function (responses) {
           // Get a JSON object from each of the responses
           return Promise.all(responses.map(function (response) {
@@ -157,7 +166,10 @@ export default function ProfileScreen({route,navigation}) {
               setuserInfo(item.global_infos[0])
               if(item.global_infos[0].reported!=-1){
                 setReported(true)
+              }else{
+                setReported(false)
               }
+              console.log(item)
               setCreatorRating(item.creator_rating[0].score)
               setParticipantRating(item.participant_rating[0].score)
             }else if(index===1){

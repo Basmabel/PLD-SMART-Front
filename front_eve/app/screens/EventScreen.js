@@ -19,7 +19,7 @@ import {io} from "socket.io-client"
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import { set } from "date-fns";
+import AddressComponent from "../components/AddressComponent.js";
 
 
 //Retreive Data of the Event
@@ -53,6 +53,7 @@ export default function EventScreen({route, navigation}) {
   const [causeVisible, setCauseVisible] = React.useState(false);
   const [causeId, setCauseId] =  React.useState(1);
   const [isRported, setReported] =  React.useState(false);
+  const [nbParticipant, setnbParticipant] = React.useState(false)
 
 
   const starImgFilled = 'https://raw.githubusercontent.com/tranhonghan/images/main/star_filled.png'
@@ -261,21 +262,31 @@ export default function EventScreen({route, navigation}) {
 
   const fetchReport = async ()=>{
     setCauseVisible(false)
-    fetch("http://169.254.3.246:3000/createReport",{
+    fetch("http://169.254.3.246:3000/createReportEvent",{
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ user_id: infoEvent.creator_id, type_id: causeId}),
+    body: JSON.stringify({ event_id: eventId, type_id: causeId}),
     }).catch((error)=>console.error(error));
-    const message = "hello"
-    const type = 6
-    const event_id = null
-    const user_id = infoEvent.creator_id
-    const review_id = null
-    const user_targeted_id = null
-    const participation_demand_id = null
+    var message = "hello"
+    var type = 13
+    var event_id = eventId
+    var user_id = infoEvent.creator_id
+    var review_id = null
+    var user_targeted_id = null
+    var participation_demand_id = null
     socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
-    alert("User has been reported")
+
+    type = 10
+    event_id = eventId
+    user_id = 1
+    review_id = null
+    user_targeted_id = null
+    participation_demand_id = null
+    socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
+    alert("Event has been reported")
     setReported(true)
+
+
   }
 
 
@@ -343,7 +354,7 @@ export default function EventScreen({route, navigation}) {
     React.useCallback(() => {
       // Do something when the screen is focused
       if(!textIn){
-        socketRef.current = io("http://10.24.40.91:3000");
+        socketRef.current = io("http://169.254.3.246:3000");
         socketRef.current.emit('userId',(userId))
         return () => {
             socketRef.current.disconnect();
@@ -410,7 +421,7 @@ export default function EventScreen({route, navigation}) {
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id": eventId})
         }),
-        fetch('http://10.24.40.91:3000/getReportTypes'),
+        fetch('http://169.254.3.246:3000/getReportTypesEvent'),
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
         return Promise.all(responses.map(function (response) {
@@ -428,7 +439,7 @@ export default function EventScreen({route, navigation}) {
             //console.log(item[0])
           }else if(index==1){
             setInfoEvent(item[0])
-
+            console.log(item)
             fetch('http://169.254.3.246:3000/getReviewId',{
               method: "POST",
               headers: {'content-type': 'application/json'},
@@ -446,6 +457,16 @@ export default function EventScreen({route, navigation}) {
              setLike(1);
             }else{
               setLike(0)
+            }
+
+            if(item[0].reported!=-1){
+              setReported(true)
+            }else{
+              setReported(false)
+            }
+
+            if(item[0].nb_registered===item[0].maxcapacity){
+              setnbParticipant(true)
             }
             //console.log(item)
           }else if(index==2){
@@ -488,9 +509,21 @@ export default function EventScreen({route, navigation}) {
       console.log('Event has not happened yet')
     return (
             <View style= {{alignItems: "center", position: 'relative', top: -10}}>
-              <TouchableOpacity activeOpacity={0.7} style={[styles.button,{marginBottom: 20, display: (infoEvent.demand_id===0)?"flex" : "none"}]} onPress={()=>{demandParticipation()}}>
+              <TouchableOpacity activeOpacity={0.7} style={[styles.button,{marginBottom: 20, display: (infoEvent.demand_id===0 && !nbParticipant)?"flex" : "none"}]} onPress={()=>{demandParticipation()}}>
                 <Text style={styles.text_button}>Participate !</Text>
               </TouchableOpacity>
+              <Text style = {{color : COLORS.red,
+                              display: (infoEvent.demand_id!=0)? "flex" : "none",
+                              marginBottom: 10
+                            }}>
+                              Waiting for organizer to accept your demand
+              </Text>
+              <Text style = {{color : COLORS.red,
+                              display: (nbParticipant)? "flex" : "none",
+                              marginBottom: 10
+                            }}>
+                              Number of participant reached
+              </Text>
               <CustomLike/>
             </View>
     )
@@ -514,26 +547,36 @@ export default function EventScreen({route, navigation}) {
     if(infoEvent.status_id===1){
       console.log('Event has not happened yet')
       return (
-        <View style={styles.events}>
-              <View style={styles.events}>
-                <View style={styles.categorieEvents}>
-                  <Text style={styles.title_body}>Participant</Text>
-                  <MaterialIcons name="verified-user" color={COLORS.lightBlue} size={26}/>
-                </View>
-                <MyCarousel data={participation} type={{ event: "participant" }} navigation={navigation} onPress={(item)=>console.log(item)}/>
+        <View>
+          <View style={styles.events}>
+                <Text style={styles.title_body}>Address</Text>
+                <AddressComponent city={infoEvent.zip_code + " " + infoEvent.city } address={infoEvent.street_number +" " + infoEvent.street} latitude={infoEvent.latitude} longitude={infoEvent.longitude} font={"Montserrat_500Medium"}/>
             </View>
-              <View style= {{alignItems: "center", position: 'relative', top: -10, marginBottom: 20}}>
-                <TouchableOpacity activeOpacity={0.7} style={styles.button} onPress={()=>{withdrawEvent()}}>
-                  <Text style={styles.text_button}>Withdraw :(</Text>
-                </TouchableOpacity>
+          <View style={styles.events}>
+                <View style={styles.events}>
+                  <View style={styles.categorieEvents}>
+                    <Text style={styles.title_body}>Participant</Text>
+                    <MaterialIcons name="verified-user" color={COLORS.lightBlue} size={26}/>
+                  </View>
+                  <MyCarousel data={participation} type={{ event: "participant" }} navigation={navigation} onPress={(item)=>console.log(item)}/>
               </View>
-              <CustomLike/>
+                <View style= {{alignItems: "center", position: 'relative', top: -10, marginBottom: 20}}>
+                  <TouchableOpacity activeOpacity={0.7} style={styles.button} onPress={()=>{withdrawEvent()}}>
+                    <Text style={styles.text_button}>Withdraw :(</Text>
+                  </TouchableOpacity>
+                </View>
+                <CustomLike/>
+          </View>
         </View>
       )
     }else if(infoEvent.status_id===3){
         console.log('Event has happened')
         return(     
         <View>
+         <View style={styles.events}>
+                <Text style={styles.title_body}>Address</Text>
+                <AddressComponent city={infoEvent.zip_code + " " + infoEvent.city } address={infoEvent.street_number +" " + infoEvent.street} latitude={infoEvent.latitude} longitude={infoEvent.longitude} font={"Montserrat_500Medium"}/>
+            </View>
           <View style={styles.events}>
               <View style={styles.categorieEvents}>
                 <Text style={styles.title_body}>Reviews </Text>
@@ -577,7 +620,11 @@ export default function EventScreen({route, navigation}) {
       console.log('Event has not happened yet')
       return(
         <View>
-          <Text>{infoEvent.adress}</Text>
+          <View style={styles.events}>
+                <Text style={styles.title_body}>Address</Text>
+                <AddressComponent city={infoEvent.zip_code + " " + infoEvent.city } address={infoEvent.street_number +" " + infoEvent.street} latitude={infoEvent.latitude} longitude={infoEvent.longitude} font={"Montserrat_500Medium"}/>
+            </View>
+          
           <View style={styles.events}>
               <View style={styles.categorieEvents}>
                 <Text style={styles.title_body}>Participant</Text>
@@ -602,7 +649,10 @@ export default function EventScreen({route, navigation}) {
       console.log('Event has happened')
       return(
         <View>
-          <Text>{infoEvent.adress}</Text>
+          <View style={styles.events}>
+                <Text style={styles.title_body}>Address</Text>
+                <AddressComponent city={infoEvent.zip_code + " " + infoEvent.city } address={infoEvent.street_number +" " + infoEvent.street} latitude={infoEvent.latitude} longitude={infoEvent.longitude} font={"Montserrat_500Medium"}/>
+            </View>
           <View style={styles.events}>
               <View style={styles.categorieEvents}>
                 <Text style={styles.title_body}>Participant</Text>
@@ -632,16 +682,13 @@ export default function EventScreen({route, navigation}) {
                       iconStyle={styles.iconStyle}
                       data={participation}
                       maxHeight={100}
-                      labelField="report_type"
+                      labelField="participant"
                       placeholder={reviewedParticipant === null ? "Select a participant" : reviewedParticipant}
                       onFocus={() => setIsFocus(true)}
                       onBlur={() => setIsFocus(false)}
                       onChange={(item) => {
                         console.log("IM HERE IN DROPDOWN")
                         setReviewedParticipant(item.surname)
-                        //setReviewIdParti(item)
-                        // setCauseId(item.id)
-                        // setReportType(item.report_type);
                         console.log(reviewedParticipant)
                         setIsFocus(false);
                       }}
@@ -689,7 +736,7 @@ export default function EventScreen({route, navigation}) {
       return generate_participant_page();
     }else{
       //return generate_non_participant_page();
-      return  generate_organizer_page();
+      return  generate_non_participant_page();
     }
 
   }
@@ -742,6 +789,7 @@ export default function EventScreen({route, navigation}) {
                                   <Image style={styles.photo_event} source={{uri: infoEvent.event_image}}/>
                                   <Text style={styles.title_info_event}>{infoEvent.event_name}</Text>
                                   <Text style={styles.text_info_event}>{formatageDate(infoEvent.date)}</Text>
+                                  <Text style={styles.text_info_event}>{infoEvent.place}</Text>
                                   <MaterialCommunityIcons name={paying_line} color={COLORS.lightBlue} size={24}/>
                                   <Image style = {styles.profilImage} source={{uri: infoEvent.creator_image}}/>
                                   <Text style={[styles.desc,{display: (infoEvent.description!=null)? "flex":"none"}]}>{infoEvent.description}</Text>
@@ -749,11 +797,17 @@ export default function EventScreen({route, navigation}) {
                               <View style={styles.otherInfos}>
                                   {bodyGen()}
                               </View>
-                              <TouchableOpacity activeOpacity={0.7} style={{right: -230}} onPress={()=>setCauseVisible(true)}>
+                              <TouchableOpacity activeOpacity={0.7} style={{width:'100%', flexDirection:'row', justifyContent: 'flex-end'}} onPress={()=>setCauseVisible(true)}>
                                 <Text style = {{color : COLORS.lightBlue, 
                                                 textDecorationLine: "underline",
+                                                display: (!isRported)? "flex" : "none"
                                                 }}>
                                                   Click Here To Report
+                                </Text>
+                                <Text style = {{color : COLORS.red, 
+                                                display: (isRported)? "flex" : "none"
+                                                }}>
+                                                  Event has been reported
                                 </Text>
                               </TouchableOpacity>
                               <View style={[styles.reportCause,{ display: (causeVisible)? "flex" : "none"}]}>
