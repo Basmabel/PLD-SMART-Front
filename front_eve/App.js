@@ -20,6 +20,7 @@ import NotificationsScreen from './app/screens/NotificationsScreen.js'
 import MyAccountScreen from './app/screens/MyAccountScreen.js';
 import MyEventsScreen from './app/screens/MyEventsScreen'
 import NotifBuble from './app/components/NotifBuble.js';
+import ResetPasswordMailScreen from "./app/screens/ResetPasswordMailScreen.js";
 
 const Stack = createStackNavigator();
 
@@ -28,7 +29,7 @@ export default function App() {
     //<SignUpScreen/>
     //<NavigatorBar/>
     //<LandingScreen/>
-    <NavigationContainer>
+    /*<NavigationContainer>
       <Stack.Navigator>
          <Stack.Screen name="SignInScreen" component={SignInScreen} />
         <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
@@ -53,9 +54,10 @@ export default function App() {
         <Stack.Screen name="EventScreen" component={EventScreen} />
       
       </Stack.Navigator>
-    </NavigationContainer>
+    </NavigationContainer>*/
     // <ValidationCode/>
     // <SearchScreen />
+    <ResetPasswordMailScreen />
   );
 }
 
