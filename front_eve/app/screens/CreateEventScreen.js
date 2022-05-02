@@ -110,7 +110,7 @@ const CreateEventScreen = ({ navigation }) => {
    })
 
   const valuesNotNul = () => {
-   console.log(participants)
+   console.log(title)
     if (
       title != "" &&
       date != "" &&
@@ -124,6 +124,7 @@ const CreateEventScreen = ({ navigation }) => {
       img != "" &&
       place !=""
     ) {
+      console.log("aaa")
       return true;
     } else {
       return false;
@@ -166,11 +167,11 @@ const CreateEventScreen = ({ navigation }) => {
 
   const fetchCreateEventVal = async (res) => {
     var status = 0;
-
+    console.log(selectedActivity)
     if (data.isValidTitle && data.isValidDate && valuesNotNul()) {
       fetch("https://eve-back.herokuapp.com/createevent", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "application/json",Authorization: "bearer " + userToken,},
         body: JSON.stringify({
           name: title,
           date: date,
@@ -199,6 +200,7 @@ const CreateEventScreen = ({ navigation }) => {
           if (status === 401 || status === 400) {
             alert(json);
           } else {
+            alert("Event has been created")
             navigation.navigate("Home");
           }
         })
@@ -337,6 +339,7 @@ const CreateEventScreen = ({ navigation }) => {
 
   const textInputChange = (val) => {
     //TODO
+    onChangeTitle(val)
   };
 
   const handleValidTitle = (val) => {
@@ -388,7 +391,7 @@ const CreateEventScreen = ({ navigation }) => {
               placeholder="The name of your event"
               placeholderTextColor={COLORS.lightBlue}
               autoCapitalize="none"
-              onChangeText={(val) => textInputChange(val)}
+              onChangeText={onChangeTitle}
               onEndEditing={(e) => handleValidTitle(e.nativeEvent.text)}
             />
             {data.check_textInputChange ? (
@@ -449,7 +452,10 @@ const CreateEventScreen = ({ navigation }) => {
                 },
               }}
               onDateChange={(date) => {
-                setDate(date);
+                const splitted = date.split("/");
+                const newDate = `${splitted[2]}-${splitted[1]}-${splitted[0]} 00:00:00`;
+                console.log(newDate)
+                setDate(newDate);
               }}
             />
           </View>
@@ -573,7 +579,7 @@ const CreateEventScreen = ({ navigation }) => {
             <EvilIcons name="location" color={COLORS.lightBlue} size={20} />
             <TextInput
               style={styles.textInput}
-              placeholder="Enter your city"
+              placeholder="Enter your region"
               placeholderTextColor={COLORS.lightBlue}
               onChangeText={onChangeRegion}
             />
@@ -630,7 +636,7 @@ const CreateEventScreen = ({ navigation }) => {
               onFocus={() => setIsFocus(true)}
               onBlur={() => setIsFocus(false)}
               onChange={(item) => {
-                setSelectedActivity(item.description);
+                setSelectedActivity(item.id);
               }}
               renderLeftIcon={() => (
                 <AntDesign
