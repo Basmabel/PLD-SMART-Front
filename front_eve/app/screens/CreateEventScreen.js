@@ -151,7 +151,7 @@ const CreateEventScreen = ({ navigation }) => {
         );
       })
       .then(function (data) {
-        setCategories(data);
+        setCategories(data[0]);
       })
       .catch(function (error) {
         // if there's an error, log it
@@ -327,7 +327,7 @@ const CreateEventScreen = ({ navigation }) => {
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
               iconStyle={styles.iconStyle}
-              data={categories[0]}
+              data={categories}
               search
               maxHeight={300}
               labelField="description"
