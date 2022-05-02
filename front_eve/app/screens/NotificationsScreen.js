@@ -98,7 +98,7 @@ export default function HomePageScreen({navigation}) {
        }
    }
 
-   const redirection = (id,type,user_id) =>{
+   const redirection = (id,type,user_id,event_id) =>{
      if(type===1){
         var out = 0
        // var id = selectedNotif.id
@@ -109,8 +109,10 @@ export default function HomePageScreen({navigation}) {
        navigation.navigate("Demand",{notif_id:id,out:out})
      }else if(type===5){
        navigation.navigate("Profile")
-     }else if(type===9 || type===10 || type===11 || type===12){
+     }else if(type===11){
        navigation.navigate("Profile user",{profile_id:user_id})
+     }else if(type===2 || type===3 || type===8 || type===9 || type===10 || type===13){
+       navigation.navigate("Event",{eventId:event_id})
      }
    }
 
@@ -245,7 +247,7 @@ export default function HomePageScreen({navigation}) {
                 <Pressable style={styles.contentNotif} onPress={()=>{setSelectedNotif(
                   {...selectedNotif,
                     id: item.id,
-                    type: item.type_id}); redirection(item.id,item.type_id,item.user_targeted_id)}}>
+                    type: item.type_id}); redirection(item.id,item.type_id,item.user_targeted_id,item.event_id)}}>
                     <View style={{flexDirection:"row", width:"90%"}}>
                         <Text style={[styles.text_notif]} numberOfLines={2} ellipsizeMode="middle">{returnText(item.type_id, item.surname, item.event_name, item.type)}</Text>
                     </View>
