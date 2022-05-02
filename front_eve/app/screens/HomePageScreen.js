@@ -18,6 +18,10 @@ import {io} from "socket.io-client"
 import NotifBuble from "../components/NotifBuble.js";
 import { Ionicons } from '@expo/vector-icons'; 
 import { TouchableOpacity} from "react-native";
+import {stopForegroundUpdate,startForegroundUpdate,startBackgroundUpdate,stopBackgroundUpdate} from "../utils/location.js"
+import * as TaskManager from "expo-task-manager"
+import * as Location from "expo-location"
+
 var light = "dark"
 var colorBack= COLORS.greyBlue
 var colorText=COLORS.lightBlue
@@ -42,7 +46,28 @@ export default function HomePageScreen() {
     const [message, setMessage] = React.useState("")
   const socketRef = useRef();
   const isFocused = useIsFocused()
+  const [position, setPosition] = React.useState("")
+  const [isPosition, setIsPosition] = React.useState("false")
   //const [socketRef.current, setSocket]= React.useState(null);
+
+//   const LOCATION_TASK_NAME = "LOCATION_TASK_NAME"
+// let foregroundSubscription = null
+
+// // Define the background task for location tracking
+// TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
+//   if (error) {
+//     console.error(error)
+//     return
+//   }
+//   if (data) {
+//     // Extract location coordinates from data
+//     const { locations } = data
+//     const location = locations[0]
+//     if (location) {
+//       console.log("Location in background", location.coords)
+//     }
+//   }
+// })
 
 
    var [fontsLoaded] = useFonts({
@@ -97,7 +122,73 @@ export default function HomePageScreen() {
 
   },[socketRef.current])
 
+  // Request permissions right after starting the app
+  // useEffect(() => {
+  //   const requestPermissions = async () => {
+  //     const foreground = await Location.requestForegroundPermissionsAsync()
+  //     if (foreground.granted){
+  //         setPosition(null)
+  //     } 
+  //   }
+  //   requestPermissions()
+  // }, [])
+
+  // const getLocation = async () => {
+  //   // Check if foreground permission is granted
+  //   let { status } = await Location.requestForegroundPermissionsAsync();
+
+  //   if (status !== 'granted') {
+  //     Alert.alert(
+  //       'Permission not granted',
+  //       'Allow the app to use location service.',
+  //       [{ text: 'OK' }],
+  //       { cancelable: false }
+  //     );
+  //   }
+  //   console.log("la")
+
+  //   Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest, maximumAge: 10000})
+  //   .then((res) => {
+  //     var {coords} = res
+  //     const {latitude,longitude} = coords
+  //     console.log(latitude,longitude)
+  //     Location.reverseGeocodeAsync({latitude, longitude}).then((res)=>{
+  //       res.map((item)=>{
+  //          var address = `${item.name}, ${item.street}, ${item.postalCode}, ${item.city}`;
+
+  //          setPosition(address)
+  //       })
+  //     })
+  //   })
+  //   .catch(e => console.log(e))
+  // }
+
+  //   let { coords } = await Location.getCurrentPositionAsync();
+
+  //   if (coords) {
+  //     console.log("ici")
+  //     const { latitude, longitude } = coords;
+  //     let response = await Location.reverseGeocodeAsync({
+  //       latitude,
+  //       longitude
+  //     });
+
+  //     for (let item of response) {
+  //       let address = `${item.name}, ${item.street}, ${item.postalCode}, ${item.city}`;
+
+  //       setPosition(address);
+  //     }
+  //   }
+  
+
+  // useEffect (()=>{
+  //   getLocation()
+  // },[])
+
   useEffect(() => {
+
+    
+
     const retreiveData = async () => {
       try {
         const valueString = await AsyncStorage.getItem("key");
@@ -120,7 +211,8 @@ export default function HomePageScreen() {
     console.log("co")
     console.log(socketRef.current?.id)*/
     
-    if(retreive){      
+    if(retreive){   
+      //console.log(position)   
       Promise.all([
         fetch('https://eve-back.herokuapp.com/getPopular'),
         fetch('https://eve-back.herokuapp.com/getUserInfo',{

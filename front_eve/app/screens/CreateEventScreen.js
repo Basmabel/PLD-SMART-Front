@@ -30,6 +30,8 @@ import {io} from "socket.io-client"
 import NotifBuble from "../components/NotifBuble.js";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { Ionicons } from '@expo/vector-icons'; 
+import * as Location from "expo-location"
+import * as TaskManager from "expo-task-manager"
 
 
 const tmp = [
@@ -60,9 +62,15 @@ const CreateEventScreen = ({ navigation }) => {
   const [participants, onChangeParticipants] = React.useState("");
   const [categories, setCategories] = React.useState(tmp);
   const [address, onChangeAddress] = React.useState("");
+  const [street, onChangeStreet] = React.useState("");
+  const [streetNumber, onChangeStreetNumber] = React.useState("");
+  const [zipCode, onChangeZipCode] = React.useState("");
+  const [city, onChangeCity] = React.useState("");
+  const [region, onChangeRegion]= React.useState("");
   const [activity, onChangeActivity] = React.useState("");
   const [description, onChangeDescription] = React.useState("");
   const [isFocus, setIsFocus] = useState(false);
+  const [place,onChangePlace] = useState("");
   const [img, setImg] = React.useState();
   const [isLoading, setLoading] = React.useState(true);
   const [data, setData] = React.useState({
@@ -78,17 +86,43 @@ const CreateEventScreen = ({ navigation }) => {
   const [userToken, setUserToken] = React.useState("")
   const isFocused = useIsFocused();
   const [message, setMessage] = React.useState("")
+  const [position, setPosition] = React.useState(null)
 
    const socketRef = useRef();
 
+   const LOCATION_TASK_NAME = "LOCATION_TASK_NAME"
+   let foregroundSubscription = null
+   
+   // Define the background task for location tracking
+   TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
+     if (error) {
+       console.error(error)
+       return
+     }
+     if (data) {
+       // Extract location coordinates from data
+       const { locations } = data
+       const location = locations[0]
+       if (location) {
+         console.log("Location in background", location.coords)
+       }
+     }
+   })
+
   const valuesNotNul = () => {
+   console.log(participants)
     if (
       title != "" &&
       date != "" &&
       participants != "" &&
-      address != "" &&
+      streetNumber != "" &&
+      street != "" &&
+      zipCode != "" &&
+      city != "" &&
+      region != "" &&
       selectedActivity != "" &&
-      img != ""
+      img != "" &&
+      place !=""
     ) {
       return true;
     } else {
@@ -96,6 +130,22 @@ const CreateEventScreen = ({ navigation }) => {
     }
   };
 
+  const createFormData = (photo, body = {}) => {
+    const data = new FormData();
+  
+    data.append('photo', {
+      name: photo.fileName,
+      type: photo.type,
+      uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
+    });
+  
+    Object.keys(body).forEach((key) => {
+      data.append(key, body[key]);
+    });
+  
+    return data;
+  };
+  
   const addImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -110,20 +160,35 @@ const CreateEventScreen = ({ navigation }) => {
     }
   };
 
-  const fetchCreateEventVal = async () => {
+  const formatAdress = () =>{
+    return streetNumber + " " + street + " " + zipCode + " " + city;
+  }
+
+  const fetchCreateEventVal = async (res) => {
     var status = 0;
+
     if (data.isValidTitle && data.isValidDate && valuesNotNul()) {
       fetch("https://eve-back.herokuapp.com/createevent", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          title: title,
+          name: title,
           date: date,
-          participants: participants,
-          address: address,
-          activity: selectedActivity,
-          photo: img,
           description: description,
+          creatorId: userId,
+          city:city,
+          street: street,
+          streetNb: streetNumber,
+          region: region,
+          zipCode: zipCode,
+          categoryId:selectedActivity,
+          latitude: res[0].latitude,
+          longitude: res[0].longitude,
+          numberPersonMax: participants,
+          paying:isSelected,
+          photo: img,
+          place: place,
+          status_id: 1
         }),
       })
         .then((response) => {
@@ -134,7 +199,7 @@ const CreateEventScreen = ({ navigation }) => {
           if (status === 401 || status === 400) {
             alert(json);
           } else {
-            navigation.navigate("SignInScreen");
+            navigation.navigate("Home");
           }
         })
         .catch((error) => console.error(error));
@@ -187,6 +252,38 @@ const CreateEventScreen = ({ navigation }) => {
 
   },[socketRef.current])
 
+  useEffect(() => {
+    const requestPermissions = async () => {
+      const foreground = await Location.requestForegroundPermissionsAsync()
+      if (foreground.granted){
+          setPosition(null)
+      } 
+    }
+    requestPermissions()
+  }, [])
+
+  const getLocation = async (adress) => {
+    // Check if foreground permission is granted
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    
+    if (status !== 'granted') {
+      Alert.alert(
+        'Permission not granted',
+        'Allow the app to use location service.',
+        [{ text: 'OK' }],
+        { cancelable: false }
+      );
+    }
+    console.log("la")
+    Location.geocodeAsync(adress)
+    .then((res) => {
+      //console.log(res)
+      fetchCreateEventVal(res)
+      
+    }).catch(e => console.log(e))
+  }
+
+
 
   useEffect(() => {
     const retreiveData = async () => {
@@ -207,10 +304,6 @@ const CreateEventScreen = ({ navigation }) => {
     //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
     retreiveData();
 
-    
-    if(message==="rr"){
-      console.log(userId)
-    }
 
     if(isFocused) {
       setLoading(true)
@@ -265,7 +358,7 @@ const CreateEventScreen = ({ navigation }) => {
   };
 
   return (
-    <ScrollView>
+    <ScrollView style={{width:'100%'}}>
       <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
         <TouchableOpacity style={styles.container_icon} onPress={()=>{navigation.navigate("Notifications"); setNotifVisible(false)}}>
               <Ionicons
@@ -376,8 +469,30 @@ const CreateEventScreen = ({ navigation }) => {
             <TextInput
               style={styles.textInput}
               placeholder="Number"
+              keyboardType = 'numeric'
               placeholderTextColor={COLORS.lightBlue}
               onChangeText={onChangeParticipants}
+            />
+          </View>
+
+          <Text
+            style={[
+              styles.text_footer,
+              {
+                color: COLORS.lightBlue,
+                marginTop: 35,
+              },
+            ]}
+          >
+            Street Number *
+          </Text>
+          <View style={styles.action}>
+            <EvilIcons name="location" color={COLORS.lightBlue} size={20} />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your street number"
+              placeholderTextColor={COLORS.lightBlue}
+              onChangeText={onChangeStreetNumber}
             />
           </View>
           <Text
@@ -389,7 +504,93 @@ const CreateEventScreen = ({ navigation }) => {
               },
             ]}
           >
-            Address *
+            Street *
+          </Text>
+          <View style={styles.action}>
+            <EvilIcons name="location" color={COLORS.lightBlue} size={20} />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your street: avenue Albert Einstein"
+              placeholderTextColor={COLORS.lightBlue}
+              onChangeText={onChangeStreet}
+            />
+          </View>
+
+          <Text
+            style={[
+              styles.text_footer,
+              {
+                color: COLORS.lightBlue,
+                marginTop: 35,
+              },
+            ]}
+          >
+            Zip Code *
+          </Text>
+          <View style={styles.action}>
+            <EvilIcons name="location" color={COLORS.lightBlue} size={20} />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your zip code"
+              placeholderTextColor={COLORS.lightBlue}
+              onChangeText={onChangeZipCode}
+            />
+          </View>
+
+          <Text
+            style={[
+              styles.text_footer,
+              {
+                color: COLORS.lightBlue,
+                marginTop: 35,
+              },
+            ]}
+          >
+            City *
+          </Text>
+          <View style={styles.action}>
+            <EvilIcons name="location" color={COLORS.lightBlue} size={20} />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your city"
+              placeholderTextColor={COLORS.lightBlue}
+              onChangeText={onChangeCity}
+            />
+          </View>
+
+          <Text
+            style={[
+              styles.text_footer,
+              {
+                color: COLORS.lightBlue,
+                marginTop: 35,
+              },
+            ]}
+          >
+            Region *
+          </Text>
+          <View style={styles.action}>
+            <EvilIcons name="location" color={COLORS.lightBlue} size={20} />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your city"
+              placeholderTextColor={COLORS.lightBlue}
+              onChangeText={onChangeRegion}
+            />
+          </View>
+          
+          
+          <Text style={{color:COLORS.red, marginTop:10}}>Users won't know the address till they become participants. They will only see the place you enter bellow</Text>
+          <Text
+            style={[
+              styles.text_footer,
+              {
+                color: COLORS.lightBlue,
+                marginTop: 35,
+              },
+            ]}
+          >
+            Place *
           </Text>
           <View style={styles.action}>
             <EvilIcons name="location" color={COLORS.lightBlue} size={20} />
@@ -397,7 +598,7 @@ const CreateEventScreen = ({ navigation }) => {
               style={styles.textInput}
               placeholder="Your event's location"
               placeholderTextColor={COLORS.lightBlue}
-              onChangeText={onChangeAddress}
+              onChangeText={onChangePlace}
             />
           </View>
           <Text
@@ -520,7 +721,7 @@ const CreateEventScreen = ({ navigation }) => {
           <View style={styles.button}>
             <TouchableOpacity
               style={styles.validate}
-              onPress={fetchCreateEventVal}
+              onPress={()=>{getLocation(formatAdress())}}
             >
               <View style={styles.validate}>
                 <Text style={[styles.textSign, { color: COLORS.greyBlue }]}>
@@ -570,6 +771,7 @@ const styles = StyleSheet.create({
   },
   selectedTextStyle: {
     fontSize: 14,
+    color: COLORS.lightBlue,
   },
   iconStyle: {
     width: 20,
