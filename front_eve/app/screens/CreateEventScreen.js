@@ -29,6 +29,8 @@ import { Picker } from "@react-native-picker/picker";
 import {io} from "socket.io-client"
 import NotifBuble from "../components/NotifBuble.js";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { Ionicons } from '@expo/vector-icons'; 
+
 
 const tmp = [
   { label: "Sports", value: 1 },
@@ -75,6 +77,7 @@ const CreateEventScreen = ({ navigation }) => {
   const [userId, setUserId] = React.useState("")
   const [userToken, setUserToken] = React.useState("")
   const isFocused = useIsFocused();
+  const [message, setMessage] = React.useState("")
 
    const socketRef = useRef();
 
@@ -148,15 +151,42 @@ const CreateEventScreen = ({ navigation }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      // Do something when the screen is focused
-      socketRef.current = io("http://169.254.3.246:3000");
-      socketRef.current.emit('userId',(userId))
-      
+      console.log("connected")
+      socketRef.current=io("https://eve-back.herokuapp.com")
+     
       return () => {
-          socketRef.current.disconnect();
+        socketRef.current?.disconnect();
       };
     }, [])
   );
+
+  useEffect(()=>{
+    if(userId!=''){
+      socketRef.current?.emit('userId',(userId))
+    }
+    
+    console.log("in use effect"+userId)
+    
+  },[userId])
+
+  useEffect(()=>{
+    if(userId!=''){
+      socketRef.current?.emit('userId',(userId))
+    }
+    
+    console.log("in use effect"+userId)
+    
+  },[socketRef.current])
+
+  useEffect(()=>{
+
+    socketRef.current?.on('message', (message)=>{
+      console.log("You received a notification")
+      setNotifVisible(true)
+    })
+
+  },[socketRef.current])
+
 
   useEffect(() => {
     const retreiveData = async () => {
@@ -177,12 +207,10 @@ const CreateEventScreen = ({ navigation }) => {
     //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
     retreiveData();
 
-    socketRef.current.emit('userId',(userId))
-    socketRef.current.on('message', (message)=>{
-      console.log("You received a notification")
-      setNotifVisible(true)
-      console.log("home")
-    })
+    
+    if(message==="rr"){
+      console.log(userId)
+    }
 
     if(isFocused) {
       setLoading(true)
@@ -190,8 +218,8 @@ const CreateEventScreen = ({ navigation }) => {
     
     if(retreive){ 
       Promise.all([
-        //fetch("http://169.254.3.246:3000/getCategories"),
-        fetch("http://169.254.3.246:3000/getCategories"),
+        //fetch("https://eve-back.herokuapp.com/getCategories"),
+        fetch("https://eve-back.herokuapp.com/getCategories"),
         // fetch('https://eve-back.herokuapp.com/getEventsByCategory')
       ])
         .then(function (responses) {
@@ -211,6 +239,7 @@ const CreateEventScreen = ({ navigation }) => {
         })
         .finally(() => setLoading(false));
       }
+
   }, [retreive,isFocused]);
 
   const textInputChange = (val) => {
@@ -238,7 +267,13 @@ const CreateEventScreen = ({ navigation }) => {
   return (
     <ScrollView>
       <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
-                    <NotifBuble navigation={navigation}/>
+        <TouchableOpacity style={styles.container_icon} onPress={()=>{navigation.navigate("Notifications"); setNotifVisible(false)}}>
+              <Ionicons
+                name="notifications"
+                size={30}
+                color={COLORS.white}
+              />
+        </TouchableOpacity> 
       </View>
       <View style={styles.container}>
         <StatusBar backgroundColor={COLORS.beige} barStyle="light-content" />
@@ -661,5 +696,15 @@ const imageUploaderStyles = StyleSheet.create({
     justifyContent: 'flex-end', 
     marginBottom: -40, 
     zIndex: 100
+  },
+  container_icon: {
+    backgroundColor: COLORS.red,
+    width:40,
+    height:40,
+    borderRadius:20,
+    borderColor: COLORS.black,
+    borderWidth:2,
+    alignItems:'center',
+    justifyContent:'center'
   }
 });

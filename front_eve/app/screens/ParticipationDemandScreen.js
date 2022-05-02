@@ -75,7 +75,7 @@ export default function ParticipationDemandScreen({route,navigation}) {
   }
 
   const refuseFetch = async()=>{
-    fetch("http://169.254.3.246:3000/refuseDemand",{
+    fetch("https://eve-back.herokuapp.com/refuseDemand",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ id: demandInfo.demand_id, notif_id:notif_id }),
@@ -91,7 +91,7 @@ export default function ParticipationDemandScreen({route,navigation}) {
   }
 
   const acceptFetch = async()=>{
-    fetch("http://169.254.3.246:3000/acceptDemand",{
+    fetch("https://eve-back.herokuapp.com/acceptDemand",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ demand_id: demandInfo.demand_id, user_id: demandInfo.user_id, event_id: demandInfo.event_id, notif_id: notif_id}),
@@ -108,7 +108,7 @@ export default function ParticipationDemandScreen({route,navigation}) {
   }
 
   const signoutFetch = async ()=>{
-    fetch("http://169.254.3.246:3000/signoutDemand",{
+    fetch("https://eve-back.herokuapp.com/signoutDemand",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ demand_id: demandInfo.demand_id, participation_id: demandInfo.particip_id}),
@@ -146,14 +146,41 @@ export default function ParticipationDemandScreen({route,navigation}) {
 
   useFocusEffect(
     React.useCallback(() => {
-      // Do something when the screen is focused
-      socketRef.current = io("http://169.254.3.246:3000");
-      socketRef.current.emit('userId',(userId))
+      console.log("connected")
+      socketRef.current=io("https://eve-back.herokuapp.com")
+     
       return () => {
-          socketRef.current.disconnect();
+        socketRef.current?.disconnect();
       };
     }, [])
   );
+
+  useEffect(()=>{
+    if(userId!=''){
+      socketRef.current?.emit('userId',(userId))
+    }
+    
+    console.log("in use effect"+userId)
+    
+  },[userId])
+
+  useEffect(()=>{
+    if(userId!=''){
+      socketRef.current?.emit('userId',(userId))
+    }
+    
+    console.log("in use effect"+userId)
+    
+  },[socketRef.current])
+
+  useEffect(()=>{
+
+    socketRef.current?.on('message', (message)=>{
+      console.log("You received a notification")
+      setNotifVisible(true)
+    })
+
+  },[socketRef.current])
   
   useEffect(() => {
     
@@ -175,20 +202,16 @@ export default function ParticipationDemandScreen({route,navigation}) {
     
     retreiveData();
       
-    socketRef.current.on('message', (message)=>{
-      console.log("You received a notification")
-      navigation.navigate("Notifications")
-    })
-
+   
     if(retreive){      
       Promise.all([
-        fetch('http://169.254.3.246:3000/getUserInfo',{
+        fetch('https://eve-back.herokuapp.com/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('http://169.254.3.246:3000/getInfoDemanderNotif',{
+        fetch('https://eve-back.herokuapp.com/getInfoDemanderNotif',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({

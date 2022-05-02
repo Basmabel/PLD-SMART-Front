@@ -12,7 +12,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 const NotifBuble= ({navigation}) => {
 
   const styles = StyleSheet.create({
-    container: {
+    container_icon: {
       backgroundColor: COLORS.red,
       width:40,
       height:40,
@@ -28,7 +28,7 @@ const NotifBuble= ({navigation}) => {
   
   
     return (
-      <TouchableOpacity style={styles.container} onPress={()=>{navigation.navigate("Notifications")}}>
+      <TouchableOpacity style={styles.container_icon} onPress={()=>{navigation.navigate("Notifications"); setNotifVisible(false)}}>
             <Ionicons
               name="notifications"
               size={30}

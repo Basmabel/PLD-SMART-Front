@@ -18,7 +18,7 @@ import {io} from "socket.io-client"
 import { useFocusEffect } from "@react-navigation/native";
 import { Entypo } from '@expo/vector-icons'; 
 import { TouchableOpacity } from "react-native-gesture-handler";
-
+import { Ionicons } from '@expo/vector-icons'; 
 
 var light = "dark"
 var colorBack= COLORS.greyBlue
@@ -44,6 +44,7 @@ export default function MyEventsScreen({navigation}) {
    const [historicCreatEve, setHistoricCreatEve] =React.useState([]);
    const [notifVisible, setNotifVisible] = React.useState(false)
    const socketRef = useRef();
+   const [message, setMessage] = React.useState("")
   
 
    var [fontsLoaded] = useFonts({
@@ -61,14 +62,41 @@ export default function MyEventsScreen({navigation}) {
 
   useFocusEffect(
     React.useCallback(() => {
-      // Do something when the screen is focused
-      socketRef.current = io("http://169.254.3.246:3000");
-      socketRef.current.emit('userId',(userId))
+      console.log("connected")
+      socketRef.current=io("https://eve-back.herokuapp.com")
+     
       return () => {
-          socketRef.current.disconnect();
+        socketRef.current?.disconnect();
       };
     }, [])
   );
+
+  useEffect(()=>{
+    if(userId!=''){
+      socketRef.current?.emit('userId',(userId))
+    }
+    
+    console.log("in use effect"+userId)
+    
+  },[userId])
+
+  useEffect(()=>{
+    if(userId!=''){
+      socketRef.current?.emit('userId',(userId))
+    }
+    
+    console.log("in use effect"+userId)
+    
+  },[socketRef.current])
+
+  useEffect(()=>{
+    console.log("eeee")
+    socketRef.current?.on('message', (message)=>{
+      console.log("You received a notification")
+      setNotifVisible(true)
+    })
+
+  },[socketRef.current])
 
   
   useEffect(() => {
@@ -90,48 +118,45 @@ export default function MyEventsScreen({navigation}) {
     }
     //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
     retreiveData();
-     socketRef.current.on('message', (message)=>{
-       console.log("You received a notification")
-       setNotifVisible(true)
-     })
+    
 
     if(retreive){      
       Promise.all([
-        fetch('http://169.254.3.246:3000/getComingEvents',{
+        fetch('https://eve-back.herokuapp.com/getComingEvents',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('http://169.254.3.246:3000/getUserInfo',{
+        fetch('https://eve-back.herokuapp.com/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-          fetch('http://169.254.3.246:3000/getMyHistoric',{
+          fetch('https://eve-back.herokuapp.com/getMyHistoric',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('http://169.254.3.246:3000/getMyFavorite',{
+        fetch('https://eve-back.herokuapp.com/getMyFavorite',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('http://169.254.3.246:3000/getUpcomingEvent',{
+        fetch('https://eve-back.herokuapp.com/getUpcomingEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('http://169.254.3.246:3000/getHistoric',{
+        fetch('https://eve-back.herokuapp.com/getHistoric',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
@@ -201,7 +226,13 @@ export default function MyEventsScreen({navigation}) {
             <View style={styles.body}>
               <ScrollView style={[{marginBottom:tabBarHeight*2}]}>
                 <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
-                  <NotifBuble navigation={navigation}/>
+                <TouchableOpacity style={styles.container_icon} onPress={()=>{navigation.navigate("Notifications"); setNotifVisible(false)}}>
+                          <Ionicons
+                            name="notifications"
+                            size={30}
+                            color={COLORS.white}
+                          />
+                    </TouchableOpacity>
                 </View>
                   <View style={styles.locationView}>
                         <Text style={styles.text_header}> Lyon </Text>
@@ -342,6 +373,16 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end', 
     marginBottom: -40, 
     zIndex: 100
+  },
+  container_icon: {
+    backgroundColor: COLORS.red,
+    width:40,
+    height:40,
+    borderRadius:20,
+    borderColor: COLORS.black,
+    borderWidth:2,
+    alignItems:'center',
+    justifyContent:'center'
   }
 });
 

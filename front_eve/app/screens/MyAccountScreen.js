@@ -34,7 +34,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import NotifBuble from "../components/NotifBuble.js";
 import {io} from "socket.io-client"
 import { useFocusEffect } from "@react-navigation/native";
-
+import { Ionicons } from '@expo/vector-icons'; 
 
 
 
@@ -85,14 +85,40 @@ export default function MyAccountScreen({navigation}) {
 
   useFocusEffect(
     React.useCallback(() => {
-      // Do something when the screen is focused
-      socketRef.current = io("http://169.254.3.246:3000");
-      socketRef.current.emit('userId',(userId))
+      console.log("connected")
+      socketRef.current=io("https://eve-back.herokuapp.com")
+     
       return () => {
-          socketRef.current.disconnect();
+        socketRef.current?.disconnect();
       };
     }, [])
   );
+
+  useEffect(()=>{
+    if(userId!=''){
+      socketRef.current?.emit('userId',(userId))
+    }
+    
+    console.log("in use effect"+userId)
+    
+  },[userId])
+
+  useEffect(()=>{
+    if(userId!=''){
+      socketRef.current?.emit('userId',(userId))
+    }
+    console.log("in use effect"+userId)
+    
+  },[socketRef.current])
+
+  useEffect(()=>{
+
+    socketRef.current?.on('message', (message)=>{
+      console.log("You received a notification")
+      setNotifVisible(true)
+    })
+
+  },[socketRef.current])
 
     
     //Recuperation des données
@@ -115,20 +141,17 @@ export default function MyAccountScreen({navigation}) {
       }
       retreiveData();
 
-     socketRef.current.on('message', (message)=>{
-       console.log("You received a notification")
-       setNotifVisible(true)
-     })
+     
 
       if(retreive){      
         Promise.all([
-          fetch('http://169.254.3.246:3000/getMyAccountInfo',{
+          fetch('https://eve-back.herokuapp.com/getMyAccountInfo',{
             method: "POST",
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({
               "id":userId,
             })}),
-          fetch('http://169.254.3.246:3000/getReviewUser',{
+          fetch('https://eve-back.herokuapp.com/getReviewUser',{
             method: "POST",
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({
@@ -213,7 +236,7 @@ export default function MyAccountScreen({navigation}) {
     })
 
     
-    fetch('http://169.254.3.246:3000/editProfile',{
+    fetch('https://eve-back.herokuapp.com/editProfile',{
       method: "POST",
       headers: {'content-type': 'application/json'},
       body: JSON.stringify({
@@ -316,7 +339,13 @@ export default function MyAccountScreen({navigation}) {
           <View style={styles.body}>
             <ScrollView style={{marginBottom: tabBarHeight*2}}>
                 <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
-                  <NotifBuble navigation={navigation}/>
+                  <TouchableOpacity style={styles.container_icon} onPress={()=>{navigation.navigate("Notifications"); setNotifVisible(false)}}>
+                          <Ionicons
+                            name="notifications"
+                            size={30}
+                            color={COLORS.white}
+                          />
+                    </TouchableOpacity>
                 </View>
               <View style={{paddingTop: 40,justifyContent: "center",alignItems: "center"}}>
               <UploadImage imgProfil={userInfo.photo} id={userId}/>
@@ -800,5 +829,16 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end', 
     marginBottom: -40, 
     zIndex: 100
+  },
+  container_icon: {
+    backgroundColor: COLORS.red,
+    width:40,
+    height:40,
+    borderRadius:20,
+    borderColor: COLORS.black,
+    borderWidth:2,
+    alignItems:'center',
+    justifyContent:'center'
   }
+  
 });

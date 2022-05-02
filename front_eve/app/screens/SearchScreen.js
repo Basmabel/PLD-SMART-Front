@@ -100,14 +100,41 @@ const SearchScreen = ({ navigation, route }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      // Do something when the screen is focused
-      socketRef.current = io("http://169.254.3.246:3000");
-      socketRef.current.emit('userId',(userId))
+      console.log("connected")
+      socketRef.current=io("https://eve-back.herokuapp.com")
+     
       return () => {
-          socketRef.current.disconnect();
+        socketRef.current?.disconnect();
       };
     }, [])
   );
+
+  useEffect(()=>{
+    if(userId!=''){
+      socketRef.current?.emit('userId',(userId))
+    }
+    
+    console.log("in use effect"+userId)
+    
+  },[userId])
+
+  useEffect(()=>{
+    if(userId!=''){
+      socketRef.current?.emit('userId',(userId))
+    }
+    
+    console.log("in use effect"+userId)
+    
+  },[socketRef.current])
+
+  useEffect(()=>{
+
+    socketRef.current?.on('message', (message)=>{
+      console.log("You received a notification")
+      setNotifVisible(true)
+    })
+
+  },[socketRef.current])
 
   useEffect(() => {
     mapAnimation.addListener(({ value }) => {
@@ -154,14 +181,11 @@ const SearchScreen = ({ navigation, route }) => {
     }
     retreiveData();
     
-     socketRef.current.on('message', (message)=>{
-       console.log("You received a notification")
-       setNotifVisible(true)
-     })
+     
     if (retreive) {
       Promise.all([
-        //fetch("http://169.254.3.246:3000/getMapEvents"),
-        fetch("http://169.254.3.246:3000/getMapEvents"),
+        //fetch("https://eve-back.herokuapp.com/getMapEvents"),
+        fetch("https://eve-back.herokuapp.com/getMapEvents"),
       ])
         .then(function (responses) {
           // Get a JSON object from each of the responses
@@ -230,7 +254,13 @@ const SearchScreen = ({ navigation, route }) => {
           <View>
             <View style={styles.body}>
               <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
-                  <NotifBuble navigation={navigation}/>
+                <TouchableOpacity style={styles.container_icon} onPress={()=>{navigation.navigate("Notifications"); setNotifVisible(false)}}>
+                          <Ionicons
+                            name="notifications"
+                            size={30}
+                            color={COLORS.white}
+                          />
+                    </TouchableOpacity>
               </View>
               <MapView
                 ref={_map}
@@ -674,5 +704,15 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end', 
     marginBottom: -40, 
     zIndex: 100
+  },
+  container_icon: {
+    backgroundColor: COLORS.red,
+    width:40,
+    height:40,
+    borderRadius:20,
+    borderColor: COLORS.black,
+    borderWidth:2,
+    alignItems:'center',
+    justifyContent:'center'
   }
 });

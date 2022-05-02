@@ -12,12 +12,12 @@ import {
   Montserrat_500Medium,
   Montserrat_600SemiBold
 } from '@expo-google-fonts/dev'
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {io} from "socket.io-client"
 import NotifBuble from "../components/NotifBuble.js";
-
-
+import { Ionicons } from '@expo/vector-icons'; 
+import { TouchableOpacity} from "react-native";
 var light = "dark"
 var colorBack= COLORS.greyBlue
 var colorText=COLORS.lightBlue
@@ -39,8 +39,10 @@ export default function HomePageScreen() {
    const [userId, setUserId] = React.useState("")
    const [userToken, setUserToken] = React.useState("")
    const [notifVisible, setNotifVisible] = React.useState(false)
-
-   const socketRef = useRef();
+    const [message, setMessage] = React.useState("")
+  const socketRef = useRef();
+  const isFocused = useIsFocused()
+  //const [socketRef.current, setSocket]= React.useState(null);
 
 
    var [fontsLoaded] = useFonts({
@@ -58,17 +60,43 @@ export default function HomePageScreen() {
 
   useFocusEffect(
     React.useCallback(() => {
-      // Do something when the screen is focused
-      socketRef.current = io("http://169.254.3.246:3000");
-      socketRef.current.emit('userId',(userId))
-      
+      console.log(notifVisible)
+      console.log("connected")
+      socketRef.current=io("https://eve-back.herokuapp.com")
+     
       return () => {
-          socketRef.current.disconnect();
+        socketRef.current?.disconnect();
       };
     }, [])
   );
 
-  
+  useEffect(()=>{
+    if(userId!=''){
+      socketRef.current?.emit('userId',(userId))
+    }
+    
+    console.log("in use effect"+userId)
+    
+  },[userId])
+
+  useEffect(()=>{
+    if(userId!=''){
+      socketRef.current?.emit('userId',(userId))
+    }
+    
+    console.log("in use effect"+userId)
+    
+  },[socketRef.current])
+
+  useEffect(()=>{
+
+    socketRef.current?.on('message', (message)=>{
+      console.log("You received a notification")
+      setNotifVisible(true)
+    })
+
+  },[socketRef.current])
+
   useEffect(() => {
     const retreiveData = async () => {
       try {
@@ -87,18 +115,15 @@ export default function HomePageScreen() {
     };
     //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
     retreiveData();
-
-    socketRef.current.emit('userId',(userId))
-    socketRef.current.on('message', (message)=>{
-      console.log("You received a notification")
-      setNotifVisible(true)
-      console.log("home")
-    })
+   
+    /*socketRef.current?.emit('userId',(userId))
+    console.log("co")
+    console.log(socketRef.current?.id)*/
     
     if(retreive){      
       Promise.all([
-        fetch('http://169.254.3.246:3000/getPopular'),
-        fetch('http://169.254.3.246:3000/getUserInfo',{
+        fetch('https://eve-back.herokuapp.com/getPopular'),
+        fetch('https://eve-back.herokuapp.com/getUserInfo',{
           method: "POST",
           headers: {
             "content-type": "application/json",
@@ -107,8 +132,8 @@ export default function HomePageScreen() {
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('http://169.254.3.246:3000/getCategories'),
-        fetch('http://169.254.3.246:3000/getEventsByCategory')
+        fetch('https://eve-back.herokuapp.com/getCategories'),
+        fetch('https://eve-back.herokuapp.com/getEventsByCategory')
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
         return Promise.all(responses.map(function (response) {
@@ -166,7 +191,6 @@ export default function HomePageScreen() {
         })
         .finally(() => setLoading(false));
     }
-     
   }, [retreive]);
 
   
@@ -226,7 +250,13 @@ export default function HomePageScreen() {
               <ScrollView style={[{marginBottom:tabBarHeight*2}]}>
               
                   <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
-                    <NotifBuble navigation={navigation}/>
+                    <TouchableOpacity style={styles.container_icon} onPress={()=>{navigation.navigate("Notifications"); setNotifVisible(false)}}>
+                          <Ionicons
+                            name="notifications"
+                            size={30}
+                            color={COLORS.white}
+                          />
+                    </TouchableOpacity>
                   </View>
 
                   <View style={styles.locationView}>
@@ -345,5 +375,16 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end', 
     marginBottom: -40, 
     zIndex: 100
+  },
+  container_icon: {
+    backgroundColor: COLORS.red,
+    width:40,
+    height:40,
+    borderRadius:20,
+    borderColor: COLORS.black,
+    borderWidth:2,
+    alignItems:'center',
+    justifyContent:'center'
   }
+  
 });

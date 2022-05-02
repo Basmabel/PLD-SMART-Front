@@ -15,13 +15,14 @@ import EventPerCategoryScreen from "./EventPerCategoryScreen.js";
 import ProfileScreen from "./ProfileScreen.js";
 import EventScreen from "./EventScreen.js";
 import CreateEventScreen from "./CreateEventScreen.js";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useEffect } from "react";
 
 
 const Tab = createBottomTabNavigator();
 
 export default function NavigatorBar() {
   
-
   return (
     <Tab.Navigator
       screenOptions={{

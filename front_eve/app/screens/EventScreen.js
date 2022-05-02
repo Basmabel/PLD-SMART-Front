@@ -20,7 +20,7 @@ import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import AddressComponent from "../components/AddressComponent.js";
-
+import { Ionicons } from '@expo/vector-icons'; 
 
 //Retreive Data of the Event
 
@@ -49,7 +49,7 @@ export default function EventScreen({route, navigation}) {
   const [textIn, setTextIn] = React.useState(false) 
   const [reportTypes, setReportTypes] = React.useState(null);
   const [reportType, setReportType] = React.useState(null)
-  console.log(reportType)
+  //console.log(reportType)
   const [isFocus, setIsFocus] = React.useState(false);
   const [causeVisible, setCauseVisible] = React.useState(false);
   const [causeId, setCauseId] =  React.useState(1);
@@ -86,7 +86,7 @@ export default function EventScreen({route, navigation}) {
 
   const participateFetch = async()=>{
 
-    fetch("http://169.254.3.246:3000/demandParticipation",{
+    fetch("https://eve-back.herokuapp.com/demandParticipation",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({user_id: userId, event_id: eventId}),
@@ -109,7 +109,7 @@ export default function EventScreen({route, navigation}) {
 
   const LikeFetch = async(like)=>{
 
-    fetch("http://169.254.3.246:3000/setLiked",{
+    fetch("https://eve-back.herokuapp.com/setLiked",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({user_id: userId, event_id: eventId, liked: like}),
@@ -149,7 +149,7 @@ export default function EventScreen({route, navigation}) {
 
   const cancelFetch = async(participants)=>{
 
-    fetch("http://169.254.3.246:3000/cancelEvent",{
+    fetch("https://eve-back.herokuapp.com/cancelEvent",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({event_id: eventId}),
@@ -188,7 +188,7 @@ export default function EventScreen({route, navigation}) {
 
   const withdrawFetch = async()=>{
 
-    fetch("http://169.254.3.246:3000/removeParticipant",{
+    fetch("https://eve-back.herokuapp.com/removeParticipant",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({user_id:userId, event_id: eventId}),
@@ -227,7 +227,7 @@ export default function EventScreen({route, navigation}) {
 
   const reviewFetch = async(id)=>{
    
-    fetch("http://169.254.3.246:3000/addReview",{
+    fetch("https://eve-back.herokuapp.com/addReview",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({score:defaultRating, review: new_review, creator:infoEvent.user_is_creator, writer_id:userId, target_id:id, event_id: eventId}),
@@ -264,7 +264,7 @@ export default function EventScreen({route, navigation}) {
 
   const fetchReport = async ()=>{
     setCauseVisible(false)
-    fetch("http://169.254.3.246:3000/createReportEvent",{
+    fetch("https://eve-back.herokuapp.com/createReportEvent",{
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ event_id: eventId, type_id: causeId}),
@@ -354,17 +354,41 @@ export default function EventScreen({route, navigation}) {
   
   useFocusEffect(
     React.useCallback(() => {
-      // Do something when the screen is focused
-      if(!textIn){
-        socketRef.current = io("http://169.254.3.246:3000");
-        socketRef.current.emit('userId',(userId))
-        return () => {
-            socketRef.current.disconnect();
-        };
-      }
-      
+      console.log("connected")
+      socketRef.current=io("https://eve-back.herokuapp.com")
+     
+      return () => {
+        socketRef.current?.disconnect();
+      };
     }, [])
   );
+
+  useEffect(()=>{
+    if(userId!=''){
+      socketRef.current?.emit('userId',(userId))
+    }
+    
+    console.log("in use effect"+userId)
+    
+  },[userId])
+
+  useEffect(()=>{
+    if(userId!=''){
+      socketRef.current?.emit('userId',(userId))
+    }
+    
+    console.log("in use effect"+userId)
+    
+  },[socketRef.current])
+
+  useEffect(()=>{
+
+    socketRef.current?.on('message', (message)=>{
+      console.log("You received a notification")
+      setNotifVisible(true)
+    })
+
+  },[socketRef.current])
 
   useEffect(() => {
     
@@ -390,40 +414,36 @@ export default function EventScreen({route, navigation}) {
     retreiveData();
 
     
-    socketRef.current.on('message', (message)=>{
-      console.log("You received a notification")
-      setNotifVisible(true)
-    })
     
-    if(isFocused && !textIn) {
+    if(isFocused) {
       setLoading(true)
     }
 
     if(retreive){
       Promise.all([
-        fetch('http://169.254.3.246:3000/getUserInfo',{
+        fetch('https://eve-back.herokuapp.com/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('http://169.254.3.246:3000/getInfoEvent',{
+        fetch('https://eve-back.herokuapp.com/getInfoEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id":eventId , "user_id": userId})
         }),
-        fetch('http://169.254.3.246:3000/getReviewEvent',{
+        fetch('https://eve-back.herokuapp.com/getReviewEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "event_id":eventId,
           })}),
-        fetch('http://169.254.3.246:3000/getEventParticipants',{
+        fetch('https://eve-back.herokuapp.com/getEventParticipants',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id": eventId})
         }),
-        fetch('http://169.254.3.246:3000/getReportTypesEvent'),
+        fetch('https://eve-back.herokuapp.com/getReportTypesEvent'),
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
         return Promise.all(responses.map(function (response) {
@@ -441,15 +461,15 @@ export default function EventScreen({route, navigation}) {
             //console.log(item[0])
           }else if(index==1){
             setInfoEvent(item[0])
-            console.log(item)
-            fetch('http://169.254.3.246:3000/getReviewId',{
+            //console.log(item)
+            fetch('https://eve-back.herokuapp.com/getReviewId',{
               method: "POST",
               headers: {'content-type': 'application/json'},
               body: JSON.stringify({"writer_id":userId, "target_id":item[0].creator_id,"event_id": eventId})
             }).then((response) => {
               return response.json()
             }).then(async (json) => {
-              console.log(json)
+              //console.log(json)
               if(json[0].id!=-1){
                 setReviewIdParti(true)
               }
@@ -481,7 +501,7 @@ export default function EventScreen({route, navigation}) {
             //console.log(item.participants)
             //console.log(item.reviews)
           }else if(index==4){
-            console.log(item)
+            //console.log(item)
             setReportTypes(item)
           }              
         });
@@ -776,7 +796,13 @@ export default function EventScreen({route, navigation}) {
               <View style={styles.body}>
                 <ScrollView style={[{marginBottom:200}]}>
                 <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
-                  <NotifBuble navigation={navigation}/>
+                  <TouchableOpacity style={styles.container_icon} onPress={()=>{navigation.navigate("Notifications"); setNotifVisible(false)}}>
+                          <Ionicons
+                            name="notifications"
+                            size={30}
+                            color={COLORS.white}
+                          />
+                    </TouchableOpacity>
                 </View>
                   <View style = {{flexDirection : 'row',justifyContent: "space-between", alignItems : 'center', width:'100%'}}>
                     <View style={styles.container_categorie}>
@@ -1144,4 +1170,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     paddingBottom: 20
   },
+  container_icon: {
+    backgroundColor: COLORS.red,
+    width:40,
+    height:40,
+    borderRadius:20,
+    borderColor: COLORS.black,
+    borderWidth:2,
+    alignItems:'center',
+    justifyContent:'center'
+  }
 });
