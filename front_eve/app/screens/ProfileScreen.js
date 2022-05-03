@@ -165,7 +165,7 @@ export default function ProfileScreen({route,navigation}) {
 
       if(retreive){      
         Promise.all([
-          fetch('https://eve-back.herokuapp.com/getUserInfo',{
+          fetch('http://192.168.1.66:3000/getUserAdmin',{
             method: "POST",
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({
@@ -194,7 +194,7 @@ export default function ProfileScreen({route,navigation}) {
           // You would do something with both sets of data here
           data.map((item,index)=>{
             if(index===0){
-              console.log(item[0])
+              console.log(item)
               setuserInfo(item[0])
             }
             else if(index===1){
@@ -304,7 +304,7 @@ export default function ProfileScreen({route,navigation}) {
                         </TouchableOpacity>
                         
                   </View>
-                  <View style= {[styles.content_report,{display:(profileInfo.admin===1)? "flex" : "none"}]}>
+                  <View style= {[styles.content_report,{display:(userInfo.admin===1)? "flex" : "none"}]}>
                       <TouchableOpacity style={[styles.button_report]}>
                             <Text style={styles.text_report}>Block {profileInfo.name} {profileInfo.surname}</Text>
                       </TouchableOpacity>
