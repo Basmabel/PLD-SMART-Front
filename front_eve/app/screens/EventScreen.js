@@ -35,14 +35,15 @@ export default function EventScreen({route, navigation}) {
   const [infoEvent, setInfoEvent] = React.useState([])
   const [participation, setParticipation] = React.useState(null);
   const [reviewedParticipation, setReviewedParticipation] = React.useState(null);
+  const [reviewedParticipant, setReviewedParticipant] = React.useState(null)
+  const [reviewedParticipantID, setReviewedParticipantID] = React.useState(-1)
+  const [freshValueParticipant, setFreshValueParticipant] = React.useState(false)
+  const [reviewIdParti,setReviewIdParti] = React.useState(false)
   const [review, setReviewEvent] = React.useState(null);
   const [new_review, setNew_Review] = React.useState("");
   const [defaultRating, setDefaultRating] = React.useState(0)
   const [maxRating, setMaxRating] = React.useState([1, 2, 3, 4, 5])
   const [like, setLike] = React.useState(0)
-  const [reviewedParticipant, setReviewedParticipant] = React.useState("hello")
-  const [reviewedParticipantID, setReviewedParticipantID] = React.useState(-1)
-  const [reviewIdParti,setReviewIdParti] = React.useState(false)
   const eventId = route.params.eventId
   const [notifVisible, setNotifVisible] = React.useState(false)
   const socketRef = useRef();
@@ -87,7 +88,7 @@ export default function EventScreen({route, navigation}) {
 
   const participateFetch = async()=>{
 
-    fetch("http://192.168.98.166:3000/demandParticipation",{
+    fetch("http://10.43.8.247:3000/demandParticipation",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({user_id: userId, event_id: eventId}),
@@ -110,7 +111,7 @@ export default function EventScreen({route, navigation}) {
 
   const LikeFetch = async(like)=>{
 
-    fetch("http://192.168.98.166:3000/setLiked",{
+    fetch("http://10.43.8.247:3000/setLiked",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({user_id: userId, event_id: eventId, liked: like}),
@@ -150,7 +151,7 @@ export default function EventScreen({route, navigation}) {
 
   const cancelFetch = async(participants)=>{
 
-    fetch("http://192.168.98.166:3000/cancelEvent",{
+    fetch("http://10.43.8.247:3000/cancelEvent",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({event_id: eventId}),
@@ -189,7 +190,7 @@ export default function EventScreen({route, navigation}) {
 
   const deleteFetch = async()=>{
 
-    fetch("http://192.168.98.166:3000/cancelEvent",{
+    fetch("http://10.43.8.247:3000/cancelEvent",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({event_id: eventId}),
@@ -228,7 +229,7 @@ export default function EventScreen({route, navigation}) {
 
   const withdrawFetch = async()=>{
 
-    fetch("http://192.168.98.166:3000/removeParticipant",{
+    fetch("http://10.43.8.247:3000/removeParticipant",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({user_id:userId, event_id: eventId}),
@@ -266,8 +267,8 @@ export default function EventScreen({route, navigation}) {
   }
 
   const reviewFetch = async(id)=>{
-   
-    fetch("http://192.168.98.166:3000/addReview",{
+    console.log(id)
+    fetch("http://10.43.8.247:3000/addReview",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({score:defaultRating, review: new_review, creator:infoEvent.user_is_creator, writer_id:userId, target_id:id, event_id: eventId}),
@@ -304,7 +305,7 @@ export default function EventScreen({route, navigation}) {
 
   const fetchReport = async ()=>{
     setCauseVisible(false)
-    fetch("http://192.168.98.166:3000/createReportEvent",{
+    fetch("http://10.43.8.247:3000/createReportEvent",{
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ event_id: eventId, type_id: causeId}),
@@ -396,7 +397,7 @@ export default function EventScreen({route, navigation}) {
     React.useCallback(() => {
       // Do something when the screen is focused
       if(!textIn){
-        socketRef.current = io("http://192.168.98.166:3000");
+        socketRef.current = io("http://10.43.8.247:3000");
         socketRef.current.emit('userId',(userId))
         return () => {
             socketRef.current.disconnect();
@@ -405,6 +406,24 @@ export default function EventScreen({route, navigation}) {
       
     }, [])
   );
+
+  useEffect(() => {
+    console.log("IM INSIDE USE EFFECT")
+    try{
+      fetch('http://10.43.8.247:3000/getnonReviewedParticipants',{
+        method: "POST",
+        headers: {'content-type': 'application/json'},
+        body: JSON.stringify({"event_id": eventId})
+      }).then((response) => {
+        return response.json()
+      }).then(data=>{setReviewedParticipation(data.participantstoReview)})
+      console.log("List of New Non Reviewed Participants :")
+      console.log(reviewedParticipation)
+    } catch (error) {
+      console.log(error)
+    }
+
+  },[freshValueParticipant])
 
   useEffect(() => {
     
@@ -441,30 +460,30 @@ export default function EventScreen({route, navigation}) {
 
     if(retreive){
       Promise.all([
-        fetch('http://192.168.98.166:3000/getUserInfo',{
+        fetch('http://10.43.8.247:3000/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('http://192.168.98.166:3000/getInfoEvent',{
+        fetch('http://10.43.8.247:3000/getInfoEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id":eventId , "user_id": userId})
         }),
-        fetch('http://192.168.98.166:3000/getReviewEvent',{
+        fetch('http://10.43.8.247:3000/getReviewEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "event_id":eventId,
           })}),
-        fetch('http://192.168.98.166:3000/getEventParticipants',{
+        fetch('http://10.43.8.247:3000/getEventParticipants',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id": eventId})
         }),
-        fetch('http://192.168.98.166:3000/getReportTypesEvent'),
-        fetch('http://192.168.98.166:3000/getnonReviewedParticipants',{
+        fetch('http://10.43.8.247:3000/getReportTypesEvent'),
+        fetch('http://10.43.8.247:3000/getnonReviewedParticipants',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id": eventId})
@@ -487,7 +506,7 @@ export default function EventScreen({route, navigation}) {
           }else if(index==1){
             setInfoEvent(item[0])
             console.log(item)
-            fetch('http://192.168.98.166:3000/getReviewId',{
+            fetch('http://10.43.8.247:3000/getReviewId',{
               method: "POST",
               headers: {'content-type': 'application/json'},
               body: JSON.stringify({"writer_id":userId, "target_id":item[0].creator_id,"event_id": eventId})
@@ -530,6 +549,7 @@ export default function EventScreen({route, navigation}) {
             setReportTypes(item)
           }else if(index==5){
             setReviewedParticipation(item.participantstoReview)
+            setReviewedParticipantID(item.participantstoReview[0].user_id)
           }              
         });
       }).catch(function (error) {
@@ -732,13 +752,17 @@ export default function EventScreen({route, navigation}) {
                                   iconStyle={styles.iconStyle}
                                   data={reviewedParticipation}
                                   maxHeight={nb_registered*50}
-                                  labelField="surname"
-                                  placeholder={(reviewedParticipant === "hello")? "Select a report type" : reviewedParticipant}
+                                  labelField="name"
+                                  placeholder={(reviewedParticipant === null)? "Select a report type" : reviewedParticipant}
                                   onFocus={() => setIsFocus(true)}
                                   onBlur={() => setIsFocus(false)}
                                   onChange={(item) => {
+                                    console.log(item)
                                     setReviewedParticipant(item.name);
-                                    setReviewedParticipantID(item.user_id)
+                                    setReviewedParticipantID(item.user_id);
+                                    console.log('The ID f the reviewed participant is :')
+                                    console.log(reviewedParticipantID)
+
                                     setIsFocus(false);
                                   }}
                                   renderLeftIcon={() => (
@@ -751,19 +775,25 @@ export default function EventScreen({route, navigation}) {
                                   )}
                                 />
                   <TextInput
-                    style={[styles.input,{display: (reviewedParticipantID==-1)? "flex":"none"}]}
+                    style={styles.input}
                     placeholder="Post a review"
                     placeholderTextColor={COLORS.black}
                     onChangeText={(value) => {setNew_Review(value);setTextIn(true)}}
                     onEndEditing={() =>{setTextIn(false)}}                    
                   />
-                  <CustomRatingBar style={{display: (reviewedParticipantID==-1)? "flex":"none"}}/>
+                  <CustomRatingBar/>
                   <View style={{justifyContent:"space-around",
                            flexDirection:'row', marginTop : 10, 
                            marginBottom: 20}}>
                   <TouchableOpacity activeOpacity={0.7} 
-                                    style={[styles.button, {marginRight: 10, display: (reviewedParticipantID==-1)? "flex":"none"}]} 
-                                    onPress={()=>{reviewEvent(reviewedParticipantID)}}>
+                                    style={styles.button} 
+                                    onPress={()=>{
+                                      reviewEvent(reviewedParticipantID)
+                                      setFreshValueParticipant(true)
+
+                                      console.log("The Fresh Value ISSS : ")
+                                      console.log(freshValueParticipant)
+                                      }}>
                      <Text style={styles.text_button}> Post !</Text> 
                   </TouchableOpacity>
                   <TouchableOpacity activeOpacity={0.7} 

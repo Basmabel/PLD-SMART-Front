@@ -10,7 +10,7 @@ export default function UploadImage( {imgProfil,id}) {
 
   const [img, setImg] = React.useState(imgProfil)
 const uploadImg = (img)=>{
-  fetch('http://192.168.98.166:3000/editImageProfil',{
+  fetch('http://10.43.8.247:3000/editImageProfil',{
       method: "POST",
       headers: {'content-type': 'application/json'},
       body: JSON.stringify({

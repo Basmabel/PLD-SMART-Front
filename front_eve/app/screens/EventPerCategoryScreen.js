@@ -57,7 +57,7 @@ export default function EventPerCategoryScreen({route, navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
-      socketRef.current = io("http://192.168.98.166:3000");
+      socketRef.current = io("http://10.43.8.247:3000");
       socketRef.current.emit('userId',(userId))
       return () => {
           socketRef.current.disconnect();
@@ -96,13 +96,13 @@ export default function EventPerCategoryScreen({route, navigation}) {
      
     if(retreive){      
       Promise.all([
-        fetch('http://192.168.98.166:3000/getUserInfo',{
+        fetch('http://10.43.8.247:3000/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('http://192.168.98.166:3000/getEventByCategory',{
+        fetch('http://10.43.8.247:3000/getEventByCategory',{
             method: "POST",
             headers: {'content-type': 'application/json',userToken},
             body: JSON.stringify({

@@ -44,8 +44,8 @@ const FilterScreen = ({ navigation, route }) => {
   };
 
   const filterData = async () => {
-    fetch("http://192.168.98.166:3000/getFilteredEvents", {
-      //  fetch("http://192.168.98.166:3000/getFilteredEvents",{
+    fetch("http://10.43.8.247:3000/getFilteredEvents", {
+      //  fetch("http://10.43.8.247:3000/getFilteredEvents",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -75,9 +75,9 @@ const FilterScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     Promise.all([
-      //fetch("http://192.168.98.166:3000/getCategories"),
-      fetch("http://192.168.98.166:3000/getCategories"),
-      // fetch('http://192.168.98.166:3000/getEventsByCategory')
+      //fetch("http://10.43.8.247:3000/getCategories"),
+      fetch("http://10.43.8.247:3000/getCategories"),
+      // fetch('http://10.43.8.247:3000/getEventsByCategory')
     ])
       .then(function (responses) {
         // Get a JSON object from each of the responses
