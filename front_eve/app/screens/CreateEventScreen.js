@@ -138,13 +138,15 @@ const CreateEventScreen = ({ navigation }) => {
     console.log(photo)
     data.append('photo', {
       name: nameImg,
-      type: photo.type,
+      type: 'image/jpeg',
       uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
     });
   
     Object.keys(body).forEach((key) => {
       data.append(key, body[key]);
     });
+
+    console.log(data)
   
     return data;
   };
@@ -163,7 +165,7 @@ const CreateEventScreen = ({ navigation }) => {
       setImage(_image)
       var name = _image.uri.substring(_image.uri.lastIndexOf("/")+1,_image.uri.lastIndexOf("."))
       setImageName(name)
-      await fetchImage(name)
+      await fetchImage(_image,name)
     }
   };
 
@@ -171,17 +173,25 @@ const CreateEventScreen = ({ navigation }) => {
     return streetNumber + " " + street + " " + zipCode + " " + city;
   }
 
-  const fetchImage = async (name) =>{
+  const fetchImage = async (imageF, name) =>{
+    console.log(imageF)
     const config = {
       method: 'POST',
       headers: {
        'Accept': 'application/json',
        'Content-Type': 'multipart/form-data',
       },
-      body: createFormData(image,name),
+      body: createFormData(imageF,name,{userId : userId}),
      };
 
-     fetch("http://10.43.9.158:3000/upload", config)
+     fetch("http://192.168.52.1:3000/upload", {
+      method: 'POST',
+      headers: {
+       'Accept': 'application/json',
+       'Content-Type': 'multipart/form-data',
+      },
+      body: createFormData(imageF,name,{userId : userId}),
+     })
       .then((checkStatusAndGetJSONResponse)=>{       
         console.log(checkStatusAndGetJSONResponse);
       }).catch((err)=>{console.log(err)});
