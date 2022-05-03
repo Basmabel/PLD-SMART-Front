@@ -611,6 +611,7 @@ export default function EventScreen({route, navigation}) {
     console.log('generate Participant Page')
     if(infoEvent.status_id===1){
       console.log('Event has not happened yet')
+      console.log(infoEvent.latitude)
       return (
         <View>
           <View style={styles.events}>

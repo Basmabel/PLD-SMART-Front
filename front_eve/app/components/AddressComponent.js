@@ -37,16 +37,17 @@ const AddressComponent= ({city,address,latitude,longitude,font}) => {
     },
   })
 
-  
-
   const initialMapState = {
     region: {
-      latitude: latitude,
-      longitude: longitude,
+      latitude: 45.783,
+      longitude: 4.87503,
       latitudeDelta: 0.04864195044303443,
       longitudeDelta: 0.040142817690068,
     },
   };
+  
+ 
+  
 
   const [state, setState] = React.useState(initialMapState);
   const [hideMap, setHideMap]= React.useState(true);
@@ -54,6 +55,17 @@ const AddressComponent= ({city,address,latitude,longitude,font}) => {
   const _map = React.useRef(null);
   let mapIndex = 0;
   let mapAnimation = new Animated.Value(0);
+
+  useEffect(()=>{
+
+    setState({region: {
+      latitude: latitude,
+      longitude: longitude,
+      latitudeDelta: 0.04864195044303443,
+      longitudeDelta: 0.040142817690068,
+    }})
+
+  },[latitude, longitude])
 
   useEffect(()=>{
     mapAnimation.addListener(({ value }) => {
@@ -75,6 +87,10 @@ const AddressComponent= ({city,address,latitude,longitude,font}) => {
       }, 10);
     });
   })
+
+  useEffect(()=>{
+
+  },[hideMap])
 
   
     return (
