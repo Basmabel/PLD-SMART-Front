@@ -164,8 +164,8 @@ const CreateEventScreen = ({ navigation }) => {
       setImage(_image)
       var name = _image.uri.substring(_image.uri.lastIndexOf("/")+1)
       setImageName(name)
-     // setImgUri("https://eve-back.herokuapp.com/images/"+name);
-     setImgUri("http://192.168.52.1:3000/images/"+name)
+      setImgUri("https://eve-back.herokuapp.com/images/"+name);
+     //setImgUri("http://192.168.52.1:3000/images/"+name)
     }
   };
 
@@ -175,7 +175,7 @@ const CreateEventScreen = ({ navigation }) => {
 
   const fetchImage = async () =>{
 
-     fetch("http://192.168.52.1:3000/upload", {
+     fetch("https://eve-back.herokuapp.com/upload", {
       method: 'POST',
       headers: {
        'Accept': 'application/json',
@@ -293,7 +293,7 @@ const CreateEventScreen = ({ navigation }) => {
 
   const getLocation = async (adress) => {
     // Check if foreground permission is granted
-    let { status } = await Location.requestForegroundPermissionsAsync();
+    /*let { status } = await Location.requestForegroundPermissionsAsync();
     
     if (status !== 'granted') {
       Alert.alert(
@@ -303,7 +303,7 @@ const CreateEventScreen = ({ navigation }) => {
         { cancelable: false }
       );
     }
-    console.log("la")
+    console.log("la")*/
     Location.geocodeAsync(adress)
     .then((res) => {
       //console.log(res)

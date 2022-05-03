@@ -122,7 +122,7 @@ export default function HomePageScreen() {
 
   },[socketRef.current])
 
-  // Request permissions right after starting the app
+  //Request permissions right after starting the app
   // useEffect(() => {
   //   const requestPermissions = async () => {
   //     const foreground = await Location.requestForegroundPermissionsAsync()
@@ -146,8 +146,8 @@ export default function HomePageScreen() {
   //     );
   //   }
   //   console.log("la")
-
-  //   Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest, maximumAge: 10000})
+    
+  //   Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Balanced , maximumAge: 10000})
   //   .then((res) => {
   //     var {coords} = res
   //     const {latitude,longitude} = coords
@@ -155,12 +155,14 @@ export default function HomePageScreen() {
   //     Location.reverseGeocodeAsync({latitude, longitude}).then((res)=>{
   //       res.map((item)=>{
   //          var address = `${item.name}, ${item.street}, ${item.postalCode}, ${item.city}`;
-
   //          setPosition(address)
   //       })
   //     })
   //   })
   //   .catch(e => console.log(e))
+
+    
+
   // }
 
   //   let { coords } = await Location.getCurrentPositionAsync();
@@ -212,7 +214,7 @@ export default function HomePageScreen() {
     console.log(socketRef.current?.id)*/
     
     if(retreive){   
-      //console.log(position)   
+      console.log(position)   
       Promise.all([
         fetch('https://eve-back.herokuapp.com/getPopular'),
         fetch('https://eve-back.herokuapp.com/getUserInfo',{

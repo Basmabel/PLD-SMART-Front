@@ -17,6 +17,7 @@ import EventScreen from "./EventScreen.js";
 import CreateEventScreen from "./CreateEventScreen.js";
 import { useFocusEffect } from "@react-navigation/native";
 import React, { useEffect } from "react";
+import ParticipationDemandScreen from "./ParticipationDemandScreen.js";
 
 
 const Tab = createBottomTabNavigator();
@@ -157,7 +158,14 @@ export default function NavigatorBar() {
         headerShown: false,
         tabBarButton: () => null,
       }}
-    />
+    /><Tab.Screen
+    name="Demand"
+    component={ParticipationDemandScreen}
+    options={{
+      headerShown: false,
+      tabBarButton: () => null,
+    }}
+  />
 
     </Tab.Navigator>
   );

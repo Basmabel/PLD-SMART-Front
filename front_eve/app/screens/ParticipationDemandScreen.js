@@ -88,6 +88,8 @@ export default function ParticipationDemandScreen({route,navigation}) {
     const user_targeted_id = null
     const participation_demand_id = null
     socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
+    navigation.navigate("Event",{event_id:demandInfo.event_id})
+    alert("A notification has been sent")
   }
 
   const acceptFetch = async()=>{
@@ -105,7 +107,9 @@ export default function ParticipationDemandScreen({route,navigation}) {
       const user_targeted_id = null
       const participation_demand_id = null
       socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
-  }
+      navigation.navigate("Event",{event_id:demandInfo.event_id})
+      alert("A notification has been sent")
+    }
 
   const signoutFetch = async ()=>{
     fetch("https://eve-back.herokuapp.com/signoutDemand",{

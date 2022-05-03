@@ -42,7 +42,7 @@ export default function UploadImage( {imgProfil,id}) {
 
 const fetchImage = async (image,imageName) =>{
 
-  fetch("http://192.168.52.1:3000/upload", {
+  fetch("https://eve-back.herokuapp.com/upload", {
    method: 'POST',
    headers: {
     'Accept': 'application/json',
@@ -67,7 +67,7 @@ const fetchImage = async (image,imageName) =>{
 
    if (!_image.cancelled) {
     var name = _image.uri.substring(_image.uri.lastIndexOf("/")+1)
-    var imgNam = "http://192.168.52.1:3000/images/"+name
+    var imgNam = "https://eve-back.herokuapp.com/images/"+name
      uploadImg(imgNam,name,_image)
      setImg(imgNam)
    }
