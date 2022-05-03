@@ -39,8 +39,8 @@ const AddressComponent= ({city,address,latitude,longitude,font}) => {
 
   const initialMapState = {
     region: {
-      latitude: 45.783,
-      longitude: 4.87503,
+      latitude: latitude,
+      longitude: longitude,
       latitudeDelta: 0.04864195044303443,
       longitudeDelta: 0.040142817690068,
     },
@@ -56,16 +56,7 @@ const AddressComponent= ({city,address,latitude,longitude,font}) => {
   let mapIndex = 0;
   let mapAnimation = new Animated.Value(0);
 
-  useEffect(()=>{
-
-    setState({region: {
-      latitude: latitude,
-      longitude: longitude,
-      latitudeDelta: 0.04864195044303443,
-      longitudeDelta: 0.040142817690068,
-    }})
-
-  },[latitude, longitude])
+  
 
   useEffect(()=>{
     mapAnimation.addListener(({ value }) => {
@@ -111,10 +102,11 @@ const AddressComponent= ({city,address,latitude,longitude,font}) => {
                                                   Hide Map
                                 </Text>
           </TouchableOpacity>
-          <MapView
+          {hideMap? null: 
+          (<MapView
                 ref={_map}
                 initialRegion={state.region}
-                style={[styles.map,{display: (!hideMap)? "flex" : "none"}]}
+                style={[styles.map]}
                 showsUserLocation={true}
                 provider={PROVIDER_GOOGLE}
                 customMapStyle={mapLigthMode}
@@ -134,7 +126,8 @@ const AddressComponent= ({city,address,latitude,longitude,font}) => {
                         />
                       </Animated.View>
                     </MapView.Marker>
-              </MapView>    
+              </MapView> )  
+          } 
       </View>
     )
   
