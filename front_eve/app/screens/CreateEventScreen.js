@@ -165,7 +165,7 @@ const CreateEventScreen = ({ navigation }) => {
       var name = _image.uri.substring(_image.uri.lastIndexOf("/")+1)
       setImageName(name)
       setImgUri("https://eve-back.herokuapp.com/images/"+name);
-     //setImgUri("http://192.168.52.1:3000/images/"+name)
+     //setImgUri("https://eve-back.herokuapp.com/images/"+name)
     }
   };
 

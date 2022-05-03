@@ -57,6 +57,7 @@ export default function EventScreen({route, navigation}) {
   const [isRported, setReported] =  React.useState(false);
   const [nbParticipant, setnbParticipant] = React.useState(false)
   const [nb_registered, setnbRegistered] = React.useState(0)
+  const [adminId,setAdminId]= React.useState(0)
 
 
   const starImgFilled = 'https://raw.githubusercontent.com/tranhonghan/images/main/star_filled.png'
@@ -167,14 +168,14 @@ export default function EventScreen({route, navigation}) {
       alertRedirection("Your event has been canceled, participants have been warned")
   }
 
-  const deleteEvent = async ()=>{
+  const deleteEvent = async (participants)=>{
     Alert.alert(
       "Do you really want to delete this event?",
       ``,
       [
         {
           text: "Yes",
-          onPress: () => {deleteFetch()}
+          onPress: () => {deleteFetch(participants)}
         },
         {
           text: "Cancel",
@@ -187,23 +188,23 @@ export default function EventScreen({route, navigation}) {
     
   }
 
-  const deleteFetch = async()=>{
+  const deleteFetch = async(participants)=>{
 
-    fetch("http://192.168.98.166:3000/cancelEvent",{
+    fetch("https://eve-back.herokuapp.com/deleteEvent",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({event_id: eventId}),
     }).catch((error)=>console.error(error));
     //console.log(participants)
-    const message = ""
-      const type = 12
+      const message = ""
+      const type = 14
       const event_id = eventId
       const user_id = infoEvent.creator_id
       const review_id = null
       const user_targeted_id = null
       const participation_demand_id = null
       socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id,participants})
-      alertRedirection("Your event has been erased completely!")
+      alertRedirection("Event has been erased completely!")
   }
 
   const withdrawEvent = async ()=>{
@@ -318,15 +319,22 @@ export default function EventScreen({route, navigation}) {
     var participation_demand_id = null
     socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
 
-    type = 10
-    event_id = eventId
-    user_id = 1
-    review_id = null
-    user_targeted_id = null
-    participation_demand_id = null
-    socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
-    alert("Event has been reported")
-    setReported(true)
+    fetch("https://eve-back.herokuapp.com/getAdminId").then((response) => {
+      return response.json()
+    }).then(async (json) => {
+      json.map((item)=>{
+        type = 10
+        event_id = eventId
+        user_id = item.id
+        review_id = null
+        user_targeted_id = null
+        participation_demand_id = null
+        socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
+      })
+    })
+    .catch((error)=>console.error(error))
+    .finally(()=>{alert("Event has been reported")
+    setReported(true)});   
 
 
   }
@@ -488,7 +496,12 @@ export default function EventScreen({route, navigation}) {
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id": eventId})
-        }),
+        }),fetch('https://eve-back.herokuapp.com/getUserAdmin',{
+          method: "POST",
+          headers: {'content-type': 'application/json'},
+          body: JSON.stringify({
+            "id":userId
+          })}),
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
         return Promise.all(responses.map(function (response) {
@@ -503,6 +516,7 @@ export default function EventScreen({route, navigation}) {
           //console.log(index)
           if(index==0){
             setUserInfo(item[0])
+            console.log(item)
             //console.log(item[0])
           }else if(index==1){
             setInfoEvent(item[0])
@@ -551,7 +565,10 @@ export default function EventScreen({route, navigation}) {
           }else if(index==5){
             setReviewedParticipation(item.participantstoReview)
             console.log(item)
-          }              
+          }else if(index==6){
+            console.log(item)
+            setAdminId(item[0].admin)
+          }               
         });
       }).catch(function (error) {
         // if there's an error, log it
@@ -792,7 +809,7 @@ export default function EventScreen({route, navigation}) {
                                     style={[styles.button, 
                                             {backgroundColor: COLORS.red, 
                                             marginLeft:10}]} 
-                                    onPress={()=>{deleteFetch(); navigation.navigate("NavigatorBar")}}>
+                                    onPress={()=>{deleteEvent(participation); navigation.navigate("NavigatorBar")}}>
                       <Text style={[styles.text_button, {color: COLORS.white}]}>Delete Event</Text>
                   </TouchableOpacity>
                   </View>
@@ -934,6 +951,14 @@ export default function EventScreen({route, navigation}) {
                                     </TouchableOpacity>
                               </View>
                             </View>
+                            <TouchableOpacity activeOpacity={0.7} 
+                                    style={[styles.button, 
+                                            {backgroundColor: COLORS.red, 
+                                            marginLeft:10,
+                                          display: (adminId===0)? "none":"flex"}]} 
+                                    onPress={()=>{deleteEvent(participation); navigation.navigate("NavigatorBar")}}>
+                                <Text style={[styles.text_button, {color: COLORS.white}]}>Delete Event</Text>
+                            </TouchableOpacity>
                       </View>
                 </ScrollView>
               </View>
