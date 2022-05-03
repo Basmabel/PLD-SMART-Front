@@ -484,6 +484,11 @@ export default function EventScreen({route, navigation}) {
           body: JSON.stringify({"event_id": eventId})
         }),
         fetch('https://eve-back.herokuapp.com/getReportTypesEvent'),
+        fetch('https://eve-back.herokuapp.com/getnonReviewedParticipants',{
+          method: "POST",
+          headers: {'content-type': 'application/json'},
+          body: JSON.stringify({"event_id": eventId})
+        }),
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
         return Promise.all(responses.map(function (response) {
@@ -545,6 +550,7 @@ export default function EventScreen({route, navigation}) {
             setReportTypes(item)
           }else if(index==5){
             setReviewedParticipation(item.participantstoReview)
+            console.log(item)
           }              
         });
       }).catch(function (error) {
@@ -738,7 +744,7 @@ export default function EventScreen({route, navigation}) {
               <MaterialIcons name="person" color={COLORS.lightBlue} size={26}/>
             </View>
             
-            <View style={[styles.reviewContent,{ display: "flex"}]}>
+            <View style={[styles.reviewContent,{ display: (reviewedParticipation!=null)? "flex":"none"}]}>
                                 <Dropdown
                                   style={[styles.dropdown,{backgroundColor:COLORS.white}, isFocus && { borderColor: "blue" }]}
                                   placeholderStyle={styles.placeholderStyle}
@@ -807,8 +813,8 @@ export default function EventScreen({route, navigation}) {
     }else if(infoEvent.particip_id){
       return generate_participant_page();
     }else{
-      //return generate_non_participant_page();
-      return  generate_organizer_page();
+      return generate_non_participant_page();
+      // return  generate_organizer_page();
     }
 
   }
