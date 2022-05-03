@@ -283,7 +283,14 @@ export default function EventScreen({route, navigation}) {
       const user_targeted_id = null
       const participation_demand_id = null
       socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
-      alertRedirection("Your review has been posted")
+      
+      if(infoEvent.creator_id===userId){
+        setFreshValueParticipant(true)
+        fetchReviewParticipant()
+      }else{
+        alertRedirection("Your review has been posted")
+      }
+      
     }).catch((error)=>console.error(error));
 
     
@@ -406,8 +413,8 @@ export default function EventScreen({route, navigation}) {
       
     }, [])
   );
-
-  useEffect(() => {
+  
+  const fetchReviewParticipant = () => {
     console.log("IM INSIDE USE EFFECT")
     try{
       fetch('http://10.43.11.197:3000/getnonReviewedParticipants',{
@@ -423,7 +430,7 @@ export default function EventScreen({route, navigation}) {
       console.log(error)
     }
 
-  },[freshValueParticipant])
+  }
 
   useEffect(() => {
     
@@ -454,7 +461,7 @@ export default function EventScreen({route, navigation}) {
       setNotifVisible(true)
     })
     
-    if(isFocused && !textIn) {
+    if(isFocused && freshValueParticipant) {
       setLoading(true)
     }
 
@@ -555,9 +562,11 @@ export default function EventScreen({route, navigation}) {
       }).catch(function (error) {
         // if there's an error, log it
         console.log(error);
-      }).finally(()=> setLoading(false));
+      }).finally(()=> {setLoading(false);
+                        setFreshValueParticipant(false);
+                        setDefaultRating(0)});
     }
-  }, [retreive,isFocused]);
+  }, [retreive,isFocused, freshValueParticipant]);
 
   const generate_cancelled_event = () =>{
       return(<View style={{alignItems:"center", marginBottom: 30,
@@ -789,9 +798,7 @@ export default function EventScreen({route, navigation}) {
                                     style={styles.button} 
                                     onPress={()=>{
                                       reviewEvent(reviewedParticipantID)
-                                      setFreshValueParticipant(true)
-
-
+                                      
                                       }}>
                      <Text style={styles.text_button}> Post !</Text> 
                   </TouchableOpacity>
