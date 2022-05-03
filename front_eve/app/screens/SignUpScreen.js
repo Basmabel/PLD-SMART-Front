@@ -1,5 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
-import React, {useState} from 'react';
+import { StatusBar } from "expo-status-bar";
+import React, { useState } from "react";
 //import { useDimensions, useDeviceOrientation } from '@react-native-community/hooks';
 
 import { COLORS } from "../config/colors";
@@ -27,7 +27,7 @@ import * as Animatable from "react-native-animatable";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Feather from "react-native-vector-icons/Feather";
 //import RNPickerSelect from 'react-native-picker-select';
-import {Picker} from '@react-native-picker/picker';
+import { Picker } from "@react-native-picker/picker";
 
 export default function SignUpScreen({ navigation }) {
   const [name, onChangeName] = React.useState("");
@@ -51,143 +51,158 @@ export default function SignUpScreen({ navigation }) {
     secureTextEntry: true,
     isValidPassword: true,
     isCompatiblePassword: true,
-    check_textInputChange:false,
-    isValidUser: true
+    check_textInputChange: false,
+    isValidUser: true,
   });
-  const [date, setDate] = useState('09-10-2020');
+  const [date, setDate] = useState("09-10-2020");
   const [selectedGender, setSelectedGender] = useState();
 
-  const valuesNotNul = () =>{
-    if(name!="" && surname!="" && phone!="" && birthDate!="" && email!="" && data.password!=""&& data.confirmedPassword!=""){
+  const valuesNotNul = () => {
+    if (
+      name != "" &&
+      surname != "" &&
+      phone != "" &&
+      birthDate != "" &&
+      email != "" &&
+      data.password != "" &&
+      data.confirmedPassword != ""
+    ) {
       return true;
-    }else{
+    } else {
       return false;
     }
-  }
+  };
 
-  const fetchSignUpVal = async () =>{
-    var status=0
-    if(data.isValidUser && data.isValidPassword && !data.isCompatiblePassword && valuesNotNul() && validPhone() && ((validZip() && zip_code!="")||zip_code==="")){
-      fetch('http://169.254.3.246:3000/signup',
-        {method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({"name": name,
-                              "surname":surname, 
-                              "email":email, 
-                              "city":city,
-                              "street":street,
-                              "streetNb":street_number,
-                              "region":region,
-                              "zipCode":zip_code,
-                              "addressComplement":address_complement,
-                              "password":data.password, 
-                              "confirmedPassword":"",
-                              "phone":phone, 
-                              "address":address_complement, 
-                              "gender":gender,
-                              "birthDate":birthDate,
-                              "description":description
-                  })
-          }).then((response)=>{
-              status = response.status;
-              return response.text()
-              
-          }).then(async (json)=>{
-            if(status===401 || status===400){
-              alert(json)
-            }else{
-              navigation.navigate("SignInScreen");
-            }  
-          }).catch((error)=>console.error(error))
-           
-    }else{
-      if(!data.isValidUser){
+  const fetchSignUpVal = async () => {
+    var status = 0;
+    if (
+      data.isValidUser &&
+      data.isValidPassword &&
+      !data.isCompatiblePassword &&
+      valuesNotNul() &&
+      validPhone() &&
+      ((validZip() && zip_code != "") || zip_code === "")
+    ) {
+      fetch("http://eve-back.herokuapp.com/signup", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          name: name,
+          surname: surname,
+          email: email,
+          city: city,
+          street: street,
+          streetNb: street_number,
+          region: region,
+          zipCode: zip_code,
+          addressComplement: address_complement,
+          password: data.password,
+          confirmedPassword: "",
+          phone: phone,
+          address: address_complement,
+          gender: gender,
+          birthDate: birthDate,
+          description: description,
+        }),
+      })
+        .then((response) => {
+          status = response.status;
+          return response.text();
+        })
+        .then(async (json) => {
+          if (status === 401 || status === 400) {
+            alert(json);
+          } else {
+            navigation.navigate("SignInScreen");
+          }
+        })
+        .catch((error) => console.error(error));
+    } else {
+      if (!data.isValidUser) {
         alert("Your email is not valid");
-      }else if(!data.isValidPassword){
-        alert("Your password is not valid")
-      }else if(data.isCompatiblePassword){
-        alert("The two passwords do not match")
-      }else if(!valuesNotNul()){
-        alert("You didn't fill every mandatory field")
-      }else if(!validPhone()){
-        alert("Phone number has to contain 10 digits")
-      }else if(!validZip() && zip_code!=""){
-        alert("Zip code number has to contain 5 digits")
+      } else if (!data.isValidPassword) {
+        alert("Your password is not valid");
+      } else if (data.isCompatiblePassword) {
+        alert("The two passwords do not match");
+      } else if (!valuesNotNul()) {
+        alert("You didn't fill every mandatory field");
+      } else if (!validPhone()) {
+        alert("Phone number has to contain 10 digits");
+      } else if (!validZip() && zip_code != "") {
+        alert("Zip code number has to contain 5 digits");
       }
     }
-    
- }
+  };
 
- const textInputChange = (val) => {
-  if (val.includes("@") && val.includes(".")) {
+  const textInputChange = (val) => {
+    if (val.includes("@") && val.includes(".")) {
+      setData({
+        ...data,
+        check_textInputChange: true,
+        isValidUser: true,
+      });
+      onChangeEmail(val);
+    } else {
+      setData({
+        ...data,
+        check_textInputChange: false,
+        isValidUser: false,
+      });
+      onChangePassword(val);
+    }
+  };
+
+  //(in)visible password
+  const updateSecureTextEntry = () => {
     setData({
       ...data,
-      check_textInputChange: true,
-      isValidUser: true,
+      secureTextEntry: !data.secureTextEntry,
     });
-    onChangeEmail(val);
-  } else {
-    setData({
-      ...data,
-      check_textInputChange: false,
-      isValidUser: false,
-    });
-    onChangePassword(val);
-  }
-};
+  };
 
- //(in)visible password
- const updateSecureTextEntry = () => {
-  setData({
-    ...data,
-    secureTextEntry: !data.secureTextEntry,
-  });
-};
+  const handleValidUser = (val) => {
+    if (val.trim().length >= 4) {
+      setData({
+        ...data,
+        isValidUser: true,
+      });
+    } else {
+      setData({
+        ...data,
+        isValidUser: false,
+      });
+    }
+  };
 
-const handleValidUser = (val) => {
-  if (val.trim().length >= 4) {
-    setData({
-      ...data,
-      isValidUser: true,
-    });
-  } else {
-    setData({
-      ...data,
-      isValidUser: false,
-    });
-  }
-};
+  const handlePasswordChange = (val) => {
+    if (val.trim().length >= 8) {
+      setData({
+        ...data,
+        password: val,
+        isValidPassword: true,
+      });
+    } else {
+      setData({
+        ...data,
+        password: val,
+        isValidPassword: false,
+      });
+    }
+  };
 
-const handlePasswordChange = (val) => {
-  if (val.trim().length >= 8) {
-    setData({
-      ...data,
-      password: val,
-      isValidPassword: true,
-    });
-  } else {
-    setData({
-      ...data,
-      password: val,
-      isValidPassword: false,
-    });
-  }
-};
+  const validPhone = () => {
+    if (phone.length != 10) {
+      return false;
+    }
+    return true;
+  };
 
-const validPhone =()=>{
-  if(phone.length!=10){
-    return false
-  }
-  return true
-}
-
-const validZip =()=>{
-  if(zip_code.length!=5){
-    return false
-  }
-  return true
-}
-
+  const validZip = () => {
+    if (zip_code.length != 5) {
+      return false;
+    }
+    return true;
+  };
 
   //(in)compatible passwords
   const confirmPasswordChange = (val, pswd) => {
@@ -221,7 +236,6 @@ const validZip =()=>{
           <Text style={[styles.text_footer, { color: COLORS.lightBlue }]}>
             Lastname *
           </Text>
-          
 
           <View style={styles.action}>
             <FontAwesome name="user-o" color={COLORS.lightBlue} size={20} />
@@ -234,288 +248,337 @@ const validZip =()=>{
             />
           </View>
 
-          <Text style={[styles.text_footer,
-              {
-                color: COLORS.lightBlue,
-                marginTop: 35,
-              },
-            ]}>
-            Name *
-          </Text>
-          
-          <View style={styles.action}>
-          <FontAwesome name="user-o" color={COLORS.lightBlue} size={20} />
-              <TextInput style={styles.textInput}
-                    placeholder="Please enter your name"
-                    placeholderTextColor={COLORS.lightBlue}
-                    onChangeText={onChangeSurName}
-                />  
-          </View>
-
-          <Text style={[styles.text_footer,
-              {
-                color: COLORS.lightBlue,
-                marginTop: 35,
-              },
-            ]}>
-            Email *
-          </Text>
-         
-          <View style={styles.action}>
-          <FontAwesome name="envelope-o" color={COLORS.lightBlue} size={20} />
-              <TextInput style={styles.textInput}
-                    placeholder="Veuillez entrer votre email"
-                    placeholderTextColor={COLORS.lightBlue}
-                    autoCapitalize="none"
-                    onChangeText={(val) => textInputChange(val)}
-                    onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
-                />  
-                {data.check_textInputChange ? (
-                  <Animatable.View animation="bounceIn">
-                    <Feather name="check-circle" color="green" size={20} />
-                  </Animatable.View>
-                ) : null}
-          </View>
-          {data.isValidUser ? null : (
-                  <Animatable.View animation="fadeInLeft" duration={500}>
-                    <Text style={styles.errorMsg}>
-                      Invalid email
-                    </Text>
-                  </Animatable.View>
-          )}
-        <Text
-          style={[
-            styles.text_footer,
-            {
-              color: COLORS.lightBlue,
-              marginTop: 35,
-            },
-          ]}
-        >
-          Password *
-        </Text>
-        
-        <View style={styles.action}>
-          <Feather name="lock" color={COLORS.lightBlue} size={20} />
-          <TextInput
-            placeholder="Please enter your password"
-            placeholderTextColor={COLORS.lightBlue}
-            secureTextEntry={data.secureTextEntry ? true : false}
+          <Text
             style={[
-              styles.textInput,
+              styles.text_footer,
               {
                 color: COLORS.lightBlue,
+                marginTop: 35,
               },
             ]}
-            autoCapitalize="none"
-            onChangeText={(val) => handlePasswordChange(val)}
-          />
-          <TouchableOpacity onPress={updateSecureTextEntry}>
-            {data.secureTextEntry ? (
-              <Feather name="eye-off" color={COLORS.lightBlue} size={20} />
-            ) : (
-              <Feather name="eye" color={COLORS.lightBlue} size={20} />
-            )}
-          </TouchableOpacity>
-        </View>
-        {data.isValidPassword ? null : (
-          <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>
-              Password must be 8 characters long.
-            </Text>
-          </Animatable.View>
-        )}
+          >
+            Name *
+          </Text>
 
-          <Text style={[styles.text_footer,
+          <View style={styles.action}>
+            <FontAwesome name="user-o" color={COLORS.lightBlue} size={20} />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Please enter your name"
+              placeholderTextColor={COLORS.lightBlue}
+              onChangeText={onChangeSurName}
+            />
+          </View>
+
+          <Text
+            style={[
+              styles.text_footer,
               {
                 color: COLORS.lightBlue,
                 marginTop: 35,
               },
-            ]}>
-            Password Confirmation *
+            ]}
+          >
+            Email *
           </Text>
-          
+
+          <View style={styles.action}>
+            <FontAwesome name="envelope-o" color={COLORS.lightBlue} size={20} />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Veuillez entrer votre email"
+              placeholderTextColor={COLORS.lightBlue}
+              autoCapitalize="none"
+              onChangeText={(val) => textInputChange(val)}
+              onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
+            />
+            {data.check_textInputChange ? (
+              <Animatable.View animation="bounceIn">
+                <Feather name="check-circle" color="green" size={20} />
+              </Animatable.View>
+            ) : null}
+          </View>
+          {data.isValidUser ? null : (
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.errorMsg}>Invalid email</Text>
+            </Animatable.View>
+          )}
+          <Text
+            style={[
+              styles.text_footer,
+              {
+                color: COLORS.lightBlue,
+                marginTop: 35,
+              },
+            ]}
+          >
+            Password *
+          </Text>
+
           <View style={styles.action}>
             <Feather name="lock" color={COLORS.lightBlue} size={20} />
-              <TextInput style={styles.textInput}
-                    placeholder="Please enter your password again"
-                    placeholderTextColor={COLORS.lightBlue}
-                    secureTextEntry={data.secureTextEntry ? true : false}
-                    autoCapitalize="none"
-                    onChangeText={(val) => confirmPasswordChange(val,data.password)}
-                />  
-                
+            <TextInput
+              placeholder="Please enter your password"
+              placeholderTextColor={COLORS.lightBlue}
+              secureTextEntry={data.secureTextEntry ? true : false}
+              style={[
+                styles.textInput,
+                {
+                  color: COLORS.lightBlue,
+                },
+              ]}
+              autoCapitalize="none"
+              onChangeText={(val) => handlePasswordChange(val)}
+            />
+            <TouchableOpacity onPress={updateSecureTextEntry}>
+              {data.secureTextEntry ? (
+                <Feather name="eye-off" color={COLORS.lightBlue} size={20} />
+              ) : (
+                <Feather name="eye" color={COLORS.lightBlue} size={20} />
+              )}
+            </TouchableOpacity>
           </View>
-          {(data.isCompatiblePassword && data.confirmedPassword!="") ? (
+          {data.isValidPassword ? null : (
             <Animatable.View animation="fadeInLeft" duration={500}>
               <Text style={styles.errorMsg}>
-              These passwords do not match.
+                Password must be 8 characters long.
               </Text>
+            </Animatable.View>
+          )}
+
+          <Text
+            style={[
+              styles.text_footer,
+              {
+                color: COLORS.lightBlue,
+                marginTop: 35,
+              },
+            ]}
+          >
+            Password Confirmation *
+          </Text>
+
+          <View style={styles.action}>
+            <Feather name="lock" color={COLORS.lightBlue} size={20} />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Please enter your password again"
+              placeholderTextColor={COLORS.lightBlue}
+              secureTextEntry={data.secureTextEntry ? true : false}
+              autoCapitalize="none"
+              onChangeText={(val) => confirmPasswordChange(val, data.password)}
+            />
+          </View>
+          {data.isCompatiblePassword && data.confirmedPassword != "" ? (
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.errorMsg}>These passwords do not match.</Text>
             </Animatable.View>
           ) : null}
 
-          <Text style={[styles.text_footer,
+          <Text
+            style={[
+              styles.text_footer,
               {
                 color: COLORS.lightBlue,
                 marginTop: 35,
               },
-            ]}>
+            ]}
+          >
             Phone number *
           </Text>
-          
+
           <View style={styles.action}>
-          <FontAwesome name="mobile" color={COLORS.lightBlue} size={20} />
-              <TextInput keyboardType="numeric" style={styles.textInput}
-                    placeholder="Please enter your phone number"
-                    placeholderTextColor={COLORS.lightBlue}
-                    onChangeText={onChangePhone}
-                    maxLength={10}
-                />  
+            <FontAwesome name="mobile" color={COLORS.lightBlue} size={20} />
+            <TextInput
+              keyboardType="numeric"
+              style={styles.textInput}
+              placeholder="Please enter your phone number"
+              placeholderTextColor={COLORS.lightBlue}
+              onChangeText={onChangePhone}
+              maxLength={10}
+            />
           </View>
 
-          <Text style={[styles.text_footer,
+          <Text
+            style={[
+              styles.text_footer,
               {
                 color: COLORS.lightBlue,
                 marginTop: 35,
               },
-            ]}>
+            ]}
+          >
             Gender
           </Text>
           <View style={styles.action}>
-            <FontAwesome name="transgender" color={COLORS.lightBlue} size={20} />
-            <Picker style={styles.pickerStyle}
+            <FontAwesome
+              name="transgender"
+              color={COLORS.lightBlue}
+              size={20}
+            />
+            <Picker
+              style={styles.pickerStyle}
               selectedValue={selectedGender}
               onValueChange={(itemValue, itemIndex) =>
                 setSelectedGender(itemValue)
               }
-              placeholder= "Please enter your gender"
+              placeholder="Please enter your gender"
               placeholderTextColor={COLORS.lightBlue}
-              >
-                
+            >
               <Picker.Item label="Homme" value="Homme" />
               <Picker.Item label="Femme" value="Femme" />
               <Picker.Item label="Autre" value="Autre" />
-            </Picker>       
+            </Picker>
           </View>
 
-          <Text style={[styles.text_footer,
+          <Text
+            style={[
+              styles.text_footer,
               {
                 color: COLORS.lightBlue,
                 marginTop: 35,
               },
-            ]}>
+            ]}
+          >
             Street number
           </Text>
           <View style={styles.action}>
             <Feather name="home" color={COLORS.lightBlue} size={20} />
-              <TextInput keyboardType="numeric" style={styles.textInput}
-                    placeholder="Pleaser enter your street number"
-                    placeholderTextColor={COLORS.lightBlue}
-                    onChangeText={onChangeStreetNumber}
-                />  
+            <TextInput
+              keyboardType="numeric"
+              style={styles.textInput}
+              placeholder="Pleaser enter your street number"
+              placeholderTextColor={COLORS.lightBlue}
+              onChangeText={onChangeStreetNumber}
+            />
           </View>
 
-          <Text style={[styles.text_footer,
+          <Text
+            style={[
+              styles.text_footer,
               {
                 color: COLORS.lightBlue,
                 marginTop: 35,
               },
-            ]}>
+            ]}
+          >
             Street
           </Text>
           <View style={styles.action}>
             <Feather name="home" color={COLORS.lightBlue} size={20} />
-              <TextInput style={styles.textInput}
-                    placeholder="Please enter your street"
-                    placeholderTextColor={COLORS.lightBlue}
-                    onChangeText={onChangeStreet}
-                />  
+            <TextInput
+              style={styles.textInput}
+              placeholder="Please enter your street"
+              placeholderTextColor={COLORS.lightBlue}
+              onChangeText={onChangeStreet}
+            />
           </View>
 
-          <Text style={[styles.text_footer,
+          <Text
+            style={[
+              styles.text_footer,
               {
                 color: COLORS.lightBlue,
                 marginTop: 35,
               },
-            ]}>
+            ]}
+          >
             Région
           </Text>
           <View style={styles.action}>
             <Feather name="home" color={COLORS.lightBlue} size={20} />
-              <TextInput style={styles.textInput}
-                    placeholder="Please enter your région"
-                    placeholderTextColor={COLORS.lightBlue}
-                    onChangeText={onChangeRegion}
-                />  
+            <TextInput
+              style={styles.textInput}
+              placeholder="Please enter your région"
+              placeholderTextColor={COLORS.lightBlue}
+              onChangeText={onChangeRegion}
+            />
           </View>
 
-          <Text style={[styles.text_footer,
+          <Text
+            style={[
+              styles.text_footer,
               {
                 color: COLORS.lightBlue,
                 marginTop: 35,
               },
-            ]}>
+            ]}
+          >
             City
           </Text>
           <View style={styles.action}>
             <Feather name="home" color={COLORS.lightBlue} size={20} />
-              <TextInput style={styles.textInput}
-                    placeholder="Please enter your city"
-                    placeholderTextColor={COLORS.lightBlue}
-                    onChangeText={onChangeCity}
-                />  
+            <TextInput
+              style={styles.textInput}
+              placeholder="Please enter your city"
+              placeholderTextColor={COLORS.lightBlue}
+              onChangeText={onChangeCity}
+            />
           </View>
 
-          <Text style={[styles.text_footer,
+          <Text
+            style={[
+              styles.text_footer,
               {
                 color: COLORS.lightBlue,
                 marginTop: 35,
               },
-            ]}>
+            ]}
+          >
             Adress' Complements
           </Text>
           <View style={styles.action}>
             <Feather name="home" color={COLORS.lightBlue} size={20} />
-              <TextInput style={styles.textInput}
-                    placeholder="Please enter your adress' complements if needed"
-                    placeholderTextColor={COLORS.lightBlue}
-                    onChangeText={onChangeAddressComplement}
-                />  
+            <TextInput
+              style={styles.textInput}
+              placeholder="Please enter your adress' complements if needed"
+              placeholderTextColor={COLORS.lightBlue}
+              onChangeText={onChangeAddressComplement}
+            />
           </View>
 
-          <Text style={[styles.text_footer,
+          <Text
+            style={[
+              styles.text_footer,
               {
                 color: COLORS.lightBlue,
                 marginTop: 35,
               },
-            ]}>
+            ]}
+          >
             Zip code
           </Text>
           <View style={styles.action}>
             <Feather name="home" color={COLORS.lightBlue} size={20} />
-              <TextInput keyboardType="numeric" style={styles.textInput}
-                    placeholder="Please enter your zip code"
-                    placeholderTextColor={COLORS.lightBlue}
-                    onChangeText={onChangeZipCode}
-                />  
+            <TextInput
+              keyboardType="numeric"
+              style={styles.textInput}
+              placeholder="Please enter your zip code"
+              placeholderTextColor={COLORS.lightBlue}
+              onChangeText={onChangeZipCode}
+            />
           </View>
 
-          <Text style={[styles.text_footer,
+          <Text
+            style={[
+              styles.text_footer,
               {
                 color: COLORS.lightBlue,
                 marginTop: 35,
               },
-            ]}>
+            ]}
+          >
             Birthdate *
           </Text>
-          
+
           <View style={styles.action}>
             <Feather name="calendar" color={COLORS.lightBlue} size={20} />
-            <TextInput style={styles.textInput}
-                    placeholder="dd/mm/yyyy"
-                    placeholderTextColor={COLORS.lightBlue}
-                    onChangeText={onChangeBirthDate}
-                /> 
+            <TextInput
+              style={styles.textInput}
+              placeholder="dd/mm/yyyy"
+              placeholderTextColor={COLORS.lightBlue}
+              onChangeText={onChangeBirthDate}
+            />
           </View>
 
           <View style={styles.button}>
@@ -527,7 +590,7 @@ const validZip =()=>{
               </View>
             </TouchableOpacity>
           </View>
-          
+
           <TouchableOpacity>
             <Text
               style={{ color: COLORS.beige, marginTop: 15, borderRadius: 10 }}
@@ -535,9 +598,8 @@ const validZip =()=>{
               Vous avez déjà un compte?
             </Text>
           </TouchableOpacity>
-
         </Animatable.View>
-      </View>  
+      </View>
     </ScrollView>
   );
 }
@@ -561,7 +623,7 @@ const validZip =()=>{
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.beige
+    backgroundColor: COLORS.beige,
   },
   header: {
     flex: 2.25,

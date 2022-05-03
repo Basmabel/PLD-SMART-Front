@@ -1,25 +1,25 @@
-
-import { StyleSheet} from "react-native";
+import { StyleSheet } from "react-native";
 import LandingScreen from "./app/screens/LandingScreen.js";
 import SignInScreen from "./app/screens/SignInScreen.js";
 import SignUpScreen from "./app/screens/SignUpScreen.js";
 import EventPerCategoryScreen from "./app/screens/EventPerCategoryScreen.js";
 import NavigatorBar from "./app/screens/NavigatorBar.js";
-import ProfileScreen from './app/screens/ProfileScreen.js';
-import EventScreen from './app/screens/EventScreen.js';
+import ProfileScreen from "./app/screens/ProfileScreen.js";
+import EventScreen from "./app/screens/EventScreen.js";
 import { NavigationContainer } from "@react-navigation/native";
 import "react-native-gesture-handler";
 import { createStackNavigator } from "@react-navigation/stack";
 import SearchScreen from "./app/screens/SearchScreen.js";
 import ValidationCode from "./app/screens/ValidationCode";
 import FilterScreen from "./app/screens/FilterScreen.js";
-import CategorieCard from './app/components/CategorieCard.js';
-import CarouselCard from './app/components/CarouselCard';
-import ParticipationDemandScreen from './app/screens/ParticipationDemandScreen.js';
-import NotificationsScreen from './app/screens/NotificationsScreen.js'
-import MyAccountScreen from './app/screens/MyAccountScreen.js';
-import MyEventsScreen from './app/screens/MyEventsScreen'
-import NotifBuble from './app/components/NotifBuble.js';
+import CategorieCard from "./app/components/CategorieCard.js";
+import CarouselCard from "./app/components/CarouselCard";
+import ParticipationDemandScreen from "./app/screens/ParticipationDemandScreen.js";
+import ChangePasswordScreen from "./app/screens/ChangePasswordScreen.js";
+import NotificationsScreen from "./app/screens/NotificationsScreen.js";
+import MyAccountScreen from "./app/screens/MyAccountScreen.js";
+import MyEventsScreen from "./app/screens/MyEventsScreen";
+import NotifBuble from "./app/components/NotifBuble.js";
 import ResetPasswordMailScreen from "./app/screens/ResetPasswordMailScreen.js";
 
 const Stack = createStackNavigator();
@@ -57,7 +57,24 @@ export default function App() {
     </NavigationContainer>*/
     // <ValidationCode/>
     // <SearchScreen />
-    <ResetPasswordMailScreen />
+    // <ResetPasswordMailScreen />
+    // <ValidationCode />
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="SignInScreen" component={SignInScreen} />
+        <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+        <Stack.Screen
+          name="ResetPasswordMailScreen"
+          component={ResetPasswordMailScreen}
+        />
+        <Stack.Screen name="ValidationCode" component={ValidationCode} />
+        <Stack.Screen
+          name="ChangePasswordScreen"
+          component={ChangePasswordScreen}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+    //<ChangePasswordScreen />
   );
 }
 

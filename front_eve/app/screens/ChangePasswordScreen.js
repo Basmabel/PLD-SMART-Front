@@ -9,6 +9,7 @@ import {
   StyleSheet,
   StatusBar,
   Alert,
+  Image,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -16,59 +17,36 @@ import Feather from "react-native-vector-icons/Feather";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "react-native-paper";
 
-const SignInScreen = ({ navigation }) => {
+const ChangePasswordScreen = ({ navigation, route }) => {
   const [email, onChangeEmail] = React.useState("");
+  const { idUser } = route.params;
   const [password, onChangePassword] = React.useState("");
   const [data, setData] = React.useState({
-    email: "",
     password: "",
-    check_textInputChange: false,
     secureTextEntry: true,
     isValidUser: true,
     isValidPassword: true,
   });
 
   var status = 0;
-  const forgotPassword = async () => {
-    navigation.navigate("ResetPasswordMailScreen");
-  };
   const loginData = async () => {
-    if (
-      data.isValidUser &&
-      data.isValidPassword &&
-      data.password != "" &&
-      data.email != ""
-    ) {
-      fetch("http://192.168.56.1:3000/login", {
+    if (data.isValidPassword && data.password != "") {
+      fetch("https://eve-back.herokuapp.com/newPassword", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email: data.email, password: data.password }),
+        body: JSON.stringify({ id: idUser, newpassword: data.password }),
       })
         .then((response) => {
-          status = response.status;
-          console.log(response.status);
-          if (status == 400 || status == 401) {
-            return response.text();
-          } else {
-            return response.json();
-          }
+          return response.json();
         })
-        .then(async (json) => {
-          if (status == 400 || status == 401) {
-            alert(json);
-          } else {
-            await AsyncStorage.setItem("key", JSON.stringify(json.id));
-            await AsyncStorage.setItem("token", JSON.stringify(json.token));
-            navigation.navigate("NavigatorBar");
-          }
+        .then(function (data) {
+          navigation.navigate("SignInScreen");
         })
         .catch((error) => console.error(error));
     } else {
-      if (!data.isValidUser) {
-        alert("Your email is not valid");
-      } else if (!data.isValidPassword) {
+      if (!data.isValidPassword) {
         alert("Your password is not valid");
-      } else if (data.email === "" || data.password === "") {
+      } else if (data.password === "") {
         alert("Please fill in every field");
       }
     }
@@ -77,26 +55,6 @@ const SignInScreen = ({ navigation }) => {
   };
 
   const { colors } = useTheme();
-
-  const textInputChange = (val) => {
-    if (val.includes("@") && val.includes(".")) {
-      setData({
-        ...data,
-        email: val,
-        check_textInputChange: true,
-        isValidUser: true,
-      });
-      onChangeEmail(val);
-    } else {
-      setData({
-        ...data,
-        email: val,
-        check_textInputChange: false,
-        isValidUser: false,
-      });
-      onChangePassword(val);
-    }
-  };
 
   const handlePasswordChange = (val) => {
     if (val.trim().length >= 8) {
@@ -114,6 +72,20 @@ const SignInScreen = ({ navigation }) => {
     }
   };
 
+  const handlePasswordConfirm = (val) => {
+    if (val.trim() === { password }) {
+      setData({
+        ...data,
+        isValidPassword: true,
+      });
+    } else {
+      setData({
+        ...data,
+        isValidPassword: false,
+      });
+    }
+  };
+
   const updateSecureTextEntry = () => {
     setData({
       ...data,
@@ -121,25 +93,15 @@ const SignInScreen = ({ navigation }) => {
     });
   };
 
-  const handleValidUser = (val) => {
-    if (val.trim().length >= 4) {
-      setData({
-        ...data,
-        isValidUser: true,
-      });
-    } else {
-      setData({
-        ...data,
-        isValidUser: false,
-      });
-    }
-  };
-
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={COLORS.beige} barStyle="light-content" />
       <View style={styles.header}>
-        <Text style={styles.text_header}>Welcome!</Text>
+        <Image
+          style={styles.imageLogo}
+          source={require("../assets/images/e-mail.png")}
+        />
+        <Text style={styles.text_header}>Change your password</Text>
       </View>
       <Animatable.View
         animation="fadeInUpBig"
@@ -155,53 +117,16 @@ const SignInScreen = ({ navigation }) => {
             styles.text_footer,
             {
               color: COLORS.lightBlue,
-            },
-          ]}
-        >
-          Email
-        </Text>
-        <View style={styles.action}>
-          <FontAwesome name="user-o" color={COLORS.lightBlue} size={20} />
-          <TextInput
-            placeholder="Please enter your email"
-            placeholderTextColor={COLORS.lightBlue}
-            style={[
-              styles.textInput,
-              {
-                color: COLORS.lightBlue,
-              },
-            ]}
-            autoCapitalize="none"
-            onChangeText={(val) => textInputChange(val)}
-            onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
-          />
-          {data.check_textInputChange ? (
-            <Animatable.View animation="bounceIn">
-              <Feather name="check-circle" color="green" size={20} />
-            </Animatable.View>
-          ) : null}
-        </View>
-        {data.isValidUser ? null : (
-          <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>Invalid email.</Text>
-          </Animatable.View>
-        )}
-
-        <Text
-          style={[
-            styles.text_footer,
-            {
-              color: COLORS.lightBlue,
               marginTop: 35,
             },
           ]}
         >
-          Password
+          New Password
         </Text>
         <View style={styles.action}>
           <Feather name="lock" color={COLORS.lightBlue} size={20} />
           <TextInput
-            placeholder="Please enter your password"
+            placeholder="Please enter your new password"
             placeholderTextColor={COLORS.lightBlue}
             secureTextEntry={data.secureTextEntry ? true : false}
             style={[
@@ -229,11 +154,46 @@ const SignInScreen = ({ navigation }) => {
           </Animatable.View>
         )}
 
-        <TouchableOpacity onPress={forgotPassword}>
-          <Text style={{ color: COLORS.beige, marginTop: 15 }}>
-            Forgot password?
-          </Text>
-        </TouchableOpacity>
+        <Text
+          style={[
+            styles.text_footer,
+            {
+              color: COLORS.lightBlue,
+              marginTop: 35,
+            },
+          ]}
+        >
+          Confirm New Password
+        </Text>
+        <View style={styles.action}>
+          <Feather name="lock" color={COLORS.lightBlue} size={20} />
+          <TextInput
+            placeholder="Please confirm your new password"
+            placeholderTextColor={COLORS.lightBlue}
+            secureTextEntry={data.secureTextEntry ? true : false}
+            style={[
+              styles.textInput,
+              {
+                color: COLORS.lightBlue,
+              },
+            ]}
+            autoCapitalize="none"
+            onChangeText={(val) => handlePasswordConfirm(val)}
+          />
+          <TouchableOpacity onPress={updateSecureTextEntry}>
+            {data.secureTextEntry ? (
+              <Feather name="eye-off" color={COLORS.lightBlue} size={20} />
+            ) : (
+              <Feather name="eye" color={COLORS.lightBlue} size={20} />
+            )}
+          </TouchableOpacity>
+        </View>
+        {data.isValidPassword ? null : (
+          <Animatable.View animation="fadeInLeft" duration={500}>
+            <Text style={styles.errorMsg}>The Two Passwords don't match</Text>
+          </Animatable.View>
+        )}
+
         <View style={styles.button}>
           <TouchableOpacity style={styles.signIn} onPress={loginData}>
             <View style={styles.signIn}>
@@ -245,32 +205,9 @@ const SignInScreen = ({ navigation }) => {
                   },
                 ]}
               >
-                Login
+                Change Password
               </Text>
             </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => navigation.navigate("SignUpScreen")}
-            style={[
-              styles.signUp,
-              {
-                borderColor: COLORS.lightBlue,
-                borderWidth: 1,
-                marginTop: 15,
-              },
-            ]}
-          >
-            <Text
-              style={[
-                styles.textSign,
-                {
-                  color: COLORS.lightBlue,
-                },
-              ]}
-            >
-              Signup
-            </Text>
           </TouchableOpacity>
         </View>
       </Animatable.View>
@@ -278,7 +215,7 @@ const SignInScreen = ({ navigation }) => {
   );
 };
 
-export default SignInScreen;
+export default ChangePasswordScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -290,6 +227,13 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     paddingHorizontal: 20,
     paddingBottom: 50,
+  },
+  imageLogo: {
+    width: 150,
+    marginLeft: "30%",
+    height: 150,
+    marginBottom: 40,
+    justifyContent: "center",
   },
   footer: {
     flex: 4,
