@@ -9,15 +9,51 @@ import * as ImagePicker from 'expo-image-picker';
 export default function UploadImage( {imgProfil,id}) {
 
   const [img, setImg] = React.useState(imgProfil)
-const uploadImg = (img)=>{
-  fetch('https://eve-back.herokuapp.com/editImageProfil',{
-      method: "POST",
-      headers: {'content-type': 'application/json'},
-      body: JSON.stringify({
-        "photo":img,
-        "id":id}
-      )}).then((response)=>{
-    }).catch((error)=>console.error(error))
+
+  const uploadImg = (img, imageName, image)=>{
+    fetch('https://eve-back.herokuapp.com/editImageProfil',{
+        method: "POST",
+        headers: {'content-type': 'application/json'},
+        body: JSON.stringify({
+          "photo":img,
+          "id":id}
+        )}).then((response)=>{
+            fetchImage(image,imageName)
+      }).catch((error)=>console.error(error))
+  }
+
+  const createFormData = (photo,nameImg, body = {}) => {
+    const data = new FormData();
+    console.log(photo)
+    data.append('photo', {
+      name: nameImg,
+      type: 'image/jpeg',
+      uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
+    });
+  
+    Object.keys(body).forEach((key) => {
+      data.append(key, body[key]);
+    });
+
+    console.log(data)
+  
+    return data;
+  };
+
+const fetchImage = async (image,imageName) =>{
+
+  fetch("http://192.168.52.1:3000/upload", {
+   method: 'POST',
+   headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'multipart/form-data',
+   },
+   body: createFormData(image,imageName,{userId : id}),
+  })
+   .then((checkStatusAndGetJSONResponse)=>{       
+     console.log(checkStatusAndGetJSONResponse)        
+   }).catch((err)=>{console.log(err)});
+   
 }
  //Image
  const addImage = async () => {
@@ -30,8 +66,10 @@ const uploadImg = (img)=>{
     console.log(JSON.stringify(_image));
 
    if (!_image.cancelled) {
-     setImg(_image.uri);
-     uploadImg(_image.uri)
+    var name = _image.uri.substring(_image.uri.lastIndexOf("/")+1)
+    var imgNam = "http://192.168.52.1:3000/images/"+name
+     uploadImg(imgNam,name,_image)
+     setImg(imgNam)
    }
   };
 //Gallery permissions

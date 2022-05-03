@@ -161,11 +161,11 @@ const CreateEventScreen = ({ navigation }) => {
     console.log(JSON.stringify(_image));
 
     if (!_image.cancelled) {
-      setImgUri(_image.uri);
       setImage(_image)
-      var name = _image.uri.substring(_image.uri.lastIndexOf("/")+1,_image.uri.lastIndexOf("."))
+      var name = _image.uri.substring(_image.uri.lastIndexOf("/")+1)
       setImageName(name)
-      await fetchImage(_image,name)
+     // setImgUri("https://eve-back.herokuapp.com/images/"+name);
+     setImgUri("http://192.168.52.1:3000/images/"+name)
     }
   };
 
@@ -173,16 +173,7 @@ const CreateEventScreen = ({ navigation }) => {
     return streetNumber + " " + street + " " + zipCode + " " + city;
   }
 
-  const fetchImage = async (imageF, name) =>{
-    console.log(imageF)
-    const config = {
-      method: 'POST',
-      headers: {
-       'Accept': 'application/json',
-       'Content-Type': 'multipart/form-data',
-      },
-      body: createFormData(imageF,name,{userId : userId}),
-     };
+  const fetchImage = async () =>{
 
      fetch("http://192.168.52.1:3000/upload", {
       method: 'POST',
@@ -190,10 +181,10 @@ const CreateEventScreen = ({ navigation }) => {
        'Accept': 'application/json',
        'Content-Type': 'multipart/form-data',
       },
-      body: createFormData(imageF,name,{userId : userId}),
+      body: createFormData(image,imageName,{userId : userId}),
      })
       .then((checkStatusAndGetJSONResponse)=>{       
-        console.log(checkStatusAndGetJSONResponse);
+        console.log(checkStatusAndGetJSONResponse)        
       }).catch((err)=>{console.log(err)});
       
   }
@@ -201,13 +192,16 @@ const CreateEventScreen = ({ navigation }) => {
   const fetchCreateEventVal = async (res) => {
     var status = 0;
     console.log(selectedActivity)
+    const splitted = date.split("/");
+    const newDate = `${splitted[2]}-${splitted[1]}-${splitted[0]} 00:00:00`;
+    console.log(newDate)
     if (data.isValidTitle && data.isValidDate && valuesNotNul()) {
       fetch("https://eve-back.herokuapp.com/createevent", {
         method: "POST",
         headers: { "content-type": "application/json",Authorization: "bearer " + userToken,},
         body: JSON.stringify({
           name: title,
-          date: date,
+          date: newDate,
           description: description,
           creatorId: userId,
           city:city,
@@ -314,6 +308,7 @@ const CreateEventScreen = ({ navigation }) => {
     .then((res) => {
       //console.log(res)
       fetchCreateEventVal(res)
+      fetchImage()
       
     }).catch(e => console.log(e))
   }
@@ -485,10 +480,7 @@ const CreateEventScreen = ({ navigation }) => {
                 },
               }}
               onDateChange={(date) => {
-                const splitted = date.split("/");
-                const newDate = `${splitted[2]}-${splitted[1]}-${splitted[0]} 00:00:00`;
-                console.log(newDate)
-                setDate(newDate);
+                setDate(date);
               }}
             />
           </View>
