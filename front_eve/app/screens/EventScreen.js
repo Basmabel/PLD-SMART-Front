@@ -88,7 +88,7 @@ export default function EventScreen({route, navigation}) {
 
   const participateFetch = async()=>{
 
-    fetch("http://10.43.8.247:3000/demandParticipation",{
+    fetch("http://10.43.11.197:3000/demandParticipation",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({user_id: userId, event_id: eventId}),
@@ -111,7 +111,7 @@ export default function EventScreen({route, navigation}) {
 
   const LikeFetch = async(like)=>{
 
-    fetch("http://10.43.8.247:3000/setLiked",{
+    fetch("http://10.43.11.197:3000/setLiked",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({user_id: userId, event_id: eventId, liked: like}),
@@ -151,7 +151,7 @@ export default function EventScreen({route, navigation}) {
 
   const cancelFetch = async(participants)=>{
 
-    fetch("http://10.43.8.247:3000/cancelEvent",{
+    fetch("http://10.43.11.197:3000/cancelEvent",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({event_id: eventId}),
@@ -190,7 +190,7 @@ export default function EventScreen({route, navigation}) {
 
   const deleteFetch = async()=>{
 
-    fetch("http://10.43.8.247:3000/cancelEvent",{
+    fetch("http://10.43.11.197:3000/cancelEvent",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({event_id: eventId}),
@@ -229,7 +229,7 @@ export default function EventScreen({route, navigation}) {
 
   const withdrawFetch = async()=>{
 
-    fetch("http://10.43.8.247:3000/removeParticipant",{
+    fetch("http://10.43.11.197:3000/removeParticipant",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({user_id:userId, event_id: eventId}),
@@ -267,8 +267,8 @@ export default function EventScreen({route, navigation}) {
   }
 
   const reviewFetch = async(id)=>{
-    console.log(id)
-    fetch("http://10.43.8.247:3000/addReview",{
+    //console.log(id)
+    fetch("http://10.43.11.197:3000/addReview",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({score:defaultRating, review: new_review, creator:infoEvent.user_is_creator, writer_id:userId, target_id:id, event_id: eventId}),
@@ -305,7 +305,7 @@ export default function EventScreen({route, navigation}) {
 
   const fetchReport = async ()=>{
     setCauseVisible(false)
-    fetch("http://10.43.8.247:3000/createReportEvent",{
+    fetch("http://10.43.11.197:3000/createReportEvent",{
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ event_id: eventId, type_id: causeId}),
@@ -397,7 +397,7 @@ export default function EventScreen({route, navigation}) {
     React.useCallback(() => {
       // Do something when the screen is focused
       if(!textIn){
-        socketRef.current = io("http://10.43.8.247:3000");
+        socketRef.current = io("http://10.43.11.197:3000");
         socketRef.current.emit('userId',(userId))
         return () => {
             socketRef.current.disconnect();
@@ -410,14 +410,14 @@ export default function EventScreen({route, navigation}) {
   useEffect(() => {
     console.log("IM INSIDE USE EFFECT")
     try{
-      fetch('http://10.43.8.247:3000/getnonReviewedParticipants',{
+      fetch('http://10.43.11.197:3000/getnonReviewedParticipants',{
         method: "POST",
         headers: {'content-type': 'application/json'},
         body: JSON.stringify({"event_id": eventId})
       }).then((response) => {
         return response.json()
       }).then(data=>{setReviewedParticipation(data.participantstoReview)})
-      console.log("List of New Non Reviewed Participants :")
+      console.log("List of New Non Reviewed Participants : ")
       console.log(reviewedParticipation)
     } catch (error) {
       console.log(error)
@@ -460,30 +460,30 @@ export default function EventScreen({route, navigation}) {
 
     if(retreive){
       Promise.all([
-        fetch('http://10.43.8.247:3000/getUserInfo',{
+        fetch('http://10.43.11.197:3000/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('http://10.43.8.247:3000/getInfoEvent',{
+        fetch('http://10.43.11.197:3000/getInfoEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id":eventId , "user_id": userId})
         }),
-        fetch('http://10.43.8.247:3000/getReviewEvent',{
+        fetch('http://10.43.11.197:3000/getReviewEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "event_id":eventId,
           })}),
-        fetch('http://10.43.8.247:3000/getEventParticipants',{
+        fetch('http://10.43.11.197:3000/getEventParticipants',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id": eventId})
         }),
-        fetch('http://10.43.8.247:3000/getReportTypesEvent'),
-        fetch('http://10.43.8.247:3000/getnonReviewedParticipants',{
+        fetch('http://10.43.11.197:3000/getReportTypesEvent'),
+        fetch('http://10.43.11.197:3000/getnonReviewedParticipants',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id": eventId})
@@ -505,15 +505,15 @@ export default function EventScreen({route, navigation}) {
             //console.log(item[0])
           }else if(index==1){
             setInfoEvent(item[0])
-            console.log(item)
-            fetch('http://10.43.8.247:3000/getReviewId',{
+            //console.log(item)
+            fetch('http://10.43.11.197:3000/getReviewId',{
               method: "POST",
               headers: {'content-type': 'application/json'},
               body: JSON.stringify({"writer_id":userId, "target_id":item[0].creator_id,"event_id": eventId})
             }).then((response) => {
               return response.json()
             }).then(async (json) => {
-              console.log(json)
+              //console.log(json)
               if(json[0].id!=-1){
                 setReviewIdParti(true)
               }
@@ -545,7 +545,7 @@ export default function EventScreen({route, navigation}) {
             //console.log(item.participants)
             //console.log(item.reviews)
           }else if(index==4){
-            console.log(item)
+            //console.log(item)
             setReportTypes(item)
           }else if(index==5){
             setReviewedParticipation(item.participantstoReview)
@@ -791,8 +791,7 @@ export default function EventScreen({route, navigation}) {
                                       reviewEvent(reviewedParticipantID)
                                       setFreshValueParticipant(true)
 
-                                      console.log("The Fresh Value ISSS : ")
-                                      console.log(freshValueParticipant)
+
                                       }}>
                      <Text style={styles.text_button}> Post !</Text> 
                   </TouchableOpacity>

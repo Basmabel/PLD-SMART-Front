@@ -101,7 +101,7 @@ const SearchScreen = ({ navigation, route }) => {
   useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
-      socketRef.current = io("http://10.43.8.247:3000");
+      socketRef.current = io("http://10.43.11.197:3000");
       socketRef.current.emit('userId',(userId))
       return () => {
           socketRef.current.disconnect();
@@ -160,8 +160,8 @@ const SearchScreen = ({ navigation, route }) => {
      })
     if (retreive) {
       Promise.all([
-        //fetch("http://10.43.8.247:3000/getMapEvents"),
-        fetch("http://10.43.8.247:3000/getMapEvents"),
+        //fetch("http://10.43.11.197:3000/getMapEvents"),
+        fetch("http://10.43.11.197:3000/getMapEvents"),
       ])
         .then(function (responses) {
           // Get a JSON object from each of the responses

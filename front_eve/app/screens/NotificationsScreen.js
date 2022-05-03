@@ -134,7 +134,7 @@ export default function HomePageScreen({navigation}) {
    }
 
    const deleteNotifFetch = async(id)=>{
-    fetch("http://10.43.8.247:3000/setNotifDone",{
+    fetch("http://10.43.11.197:3000/setNotifDone",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ id: id }),
@@ -143,7 +143,7 @@ export default function HomePageScreen({navigation}) {
    
    const fetchNotif = async ()=>{
     console.log("fetch")
-    fetch('http://10.43.8.247:3000/getNotifications',{
+    fetch('http://10.43.11.197:3000/getNotifications',{
       method: "POST",
       headers: {'content-type': 'application/json'},
       body: JSON.stringify({
@@ -160,7 +160,7 @@ export default function HomePageScreen({navigation}) {
    useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
-      socketRef.current = io("http://10.43.8.247:3000");
+      socketRef.current = io("http://10.43.11.197:3000");
       socketRef.current.emit('userId',(userId))
       return () => {
           socketRef.current.disconnect();
@@ -199,13 +199,13 @@ export default function HomePageScreen({navigation}) {
 
     if(retreive){    
       Promise.all([
-        fetch('http://10.43.8.247:3000/getUserInfo',{
+        fetch('http://10.43.11.197:3000/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-          fetch('http://10.43.8.247:3000/getNotifications',{
+          fetch('http://10.43.11.197:3000/getNotifications',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({

@@ -149,7 +149,7 @@ const CreateEventScreen = ({ navigation }) => {
   useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
-      socketRef.current = io("http://10.43.8.247:3000");
+      socketRef.current = io("http://10.43.11.197:3000");
       socketRef.current.emit('userId',(userId))
       
       return () => {
@@ -190,8 +190,8 @@ const CreateEventScreen = ({ navigation }) => {
     
     if(retreive){ 
       Promise.all([
-        //fetch("http://10.43.8.247:3000/getCategories"),
-        fetch("http://10.43.8.247:3000/getCategories"),
+        //fetch("http://10.43.11.197:3000/getCategories"),
+        fetch("http://10.43.11.197:3000/getCategories"),
         // fetch('https://eve-back.herokuapp.com/getEventsByCategory')
       ])
         .then(function (responses) {
