@@ -71,7 +71,9 @@ const CreateEventScreen = ({ navigation }) => {
   const [description, onChangeDescription] = React.useState("");
   const [isFocus, setIsFocus] = useState(false);
   const [place,onChangePlace] = useState("");
-  const [img, setImg] = React.useState();
+  const [img, setImgUri] = React.useState(null);
+  const [image, setImage] = React.useState(null);
+  const [imageName, setImageName] = React.useState(null);
   const [isLoading, setLoading] = React.useState(true);
   const [data, setData] = React.useState({
     check_textInputChange: false,
@@ -131,11 +133,11 @@ const CreateEventScreen = ({ navigation }) => {
     }
   };
 
-  const createFormData = (photo, body = {}) => {
+  const createFormData = (photo,nameImg, body = {}) => {
     const data = new FormData();
-  
+    console.log(photo)
     data.append('photo', {
-      name: photo.fileName,
+      name: nameImg,
       type: photo.type,
       uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
     });
@@ -157,12 +159,33 @@ const CreateEventScreen = ({ navigation }) => {
     console.log(JSON.stringify(_image));
 
     if (!_image.cancelled) {
-      setImg(_image.uri);
+      setImgUri(_image.uri);
+      setImage(_image)
+      var name = _image.uri.substring(_image.uri.lastIndexOf("/")+1,_image.uri.lastIndexOf("."))
+      setImageName(name)
+      await fetchImage(name)
     }
   };
 
   const formatAdress = () =>{
     return streetNumber + " " + street + " " + zipCode + " " + city;
+  }
+
+  const fetchImage = async (name) =>{
+    const config = {
+      method: 'POST',
+      headers: {
+       'Accept': 'application/json',
+       'Content-Type': 'multipart/form-data',
+      },
+      body: createFormData(image,name),
+     };
+
+     fetch("http://10.43.9.158:3000/upload", config)
+      .then((checkStatusAndGetJSONResponse)=>{       
+        console.log(checkStatusAndGetJSONResponse);
+      }).catch((err)=>{console.log(err)});
+      
   }
 
   const fetchCreateEventVal = async (res) => {
