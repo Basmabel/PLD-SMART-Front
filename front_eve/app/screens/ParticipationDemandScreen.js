@@ -215,7 +215,7 @@ export default function ParticipationDemandScreen({route,navigation}) {
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('https://eve-back.herokuapp.com/getInfoDemanderNotif',{
+        fetch('http://192.168.52.1:3000/getInfoDemanderNotif',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
