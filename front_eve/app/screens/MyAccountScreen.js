@@ -332,6 +332,7 @@ export default function MyAccountScreen({ navigation }) {
                   }}
                 >
                   <UploadImage imgProfil={userInfo.photo} id={userId} />
+                </View>
                
 
                 <View style={styles.content_info}>
@@ -578,11 +579,12 @@ export default function MyAccountScreen({ navigation }) {
                         <Text style={[styles.text_button, {color: COLORS.greyBlue}]}>Log out</Text>
                     </TouchableOpacity>   
                   </View>
+            </ScrollView>
                                  
 
-              </View>
-            </ScrollView>
-            </View>
+          </View>
+            
+
           </View>
         )}
       </SafeAreaView>

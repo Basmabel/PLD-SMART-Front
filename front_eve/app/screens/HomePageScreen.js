@@ -18,7 +18,6 @@ import {io} from "socket.io-client"
 import NotifBuble from "../components/NotifBuble.js";
 import { Ionicons } from '@expo/vector-icons'; 
 import { TouchableOpacity} from "react-native";
-import {stopForegroundUpdate,startForegroundUpdate,startBackgroundUpdate,stopBackgroundUpdate} from "../utils/location.js"
 import * as TaskManager from "expo-task-manager"
 import * as Location from "expo-location"
 
