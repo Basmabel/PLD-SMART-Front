@@ -72,6 +72,28 @@ export default function App() {
           name="ChangePasswordScreen"
           component={ChangePasswordScreen}
         />
+        <Stack.Screen name="NavigatorBar" component={NavigatorBar} />
+        <Stack.Screen name="CategorieCard" component={CategorieCard} />
+        <Stack.Screen
+          name="EventPerCategoryScreen"
+          component={EventPerCategoryScreen}
+        />
+        <Stack.Screen name="Demand" component={ParticipationDemandScreen} />
+        <Stack.Screen name="Notifications" component={NotificationsScreen} />
+        <Stack.Screen name="Profile" component={MyAccountScreen} />
+        <Stack.Screen name="CarousselCard" component={CarouselCard} />
+        <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+        <Stack.Screen name="MyEventsScreen" component={MyEventsScreen} />
+        <Stack.Screen name="Buble" component={NotifBuble} />
+        <Stack.Screen name="MyAccount" component={MyAccountScreen} />
+        <Stack.Screen
+          name="Previous"
+          component={NavigatorBar}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen name="FilterScreen" component={FilterScreen} />
+        <Stack.Screen name="SearchScreen" component={SearchScreen} />
+        <Stack.Screen name="EventScreen" component={EventScreen} />
       </Stack.Navigator>
     </NavigationContainer>
     //<ChangePasswordScreen />
