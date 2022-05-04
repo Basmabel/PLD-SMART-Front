@@ -35,7 +35,11 @@ const ResetPasswordMailScreen = ({ navigation }) => {
       })
         .then((response) => {
           const idUser = data.id;
-          navigation.navigate("ValidationCode", { idUser: idUser });
+          navigation.navigate("ValidationCode", {
+            idUser: idUser,
+            email: data.email,
+            isReset: true,
+          });
         })
 
         .catch((error) => console.error(error));

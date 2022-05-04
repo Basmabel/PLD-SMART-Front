@@ -31,6 +31,7 @@ import { Picker } from "@react-native-picker/picker";
 
 export default function SignUpScreen({ navigation }) {
   const [name, onChangeName] = React.useState("");
+  const [userId, setUserId] = React.useState("");
   const [surname, onChangeSurName] = React.useState("");
   const [email, onChangeEmail] = React.useState("");
   const [password, onChangePassword] = React.useState("");
@@ -90,30 +91,26 @@ export default function SignUpScreen({ navigation }) {
           name: name,
           surname: surname,
           email: email,
-          city: city,
-          street: street,
-          streetNb: street_number,
-          region: region,
-          zipCode: zip_code,
-          addressComplement: address_complement,
           password: data.password,
           confirmedPassword: "",
           phone: phone,
-          address: address_complement,
           gender: gender,
           birthDate: birthDate,
           description: description,
         }),
       })
-        .then((response) => {
-          status = response.status;
-          return response.text();
+        .then(function (data) {
+          setUserId(userId);
         })
         .then(async (json) => {
           if (status === 401 || status === 400) {
             alert(json);
           } else {
-            navigation.navigate("SignInScreen");
+            navigation.navigate("ValidationCode", {
+              idUser: idUser,
+              email: data.email,
+              isReset: false,
+            });
           }
         })
         .catch((error) => console.error(error));
@@ -429,134 +426,6 @@ export default function SignUpScreen({ navigation }) {
               <Picker.Item label="Femme" value="Femme" />
               <Picker.Item label="Autre" value="Autre" />
             </Picker>
-          </View>
-
-          <Text
-            style={[
-              styles.text_footer,
-              {
-                color: COLORS.lightBlue,
-                marginTop: 35,
-              },
-            ]}
-          >
-            Street number
-          </Text>
-          <View style={styles.action}>
-            <Feather name="home" color={COLORS.lightBlue} size={20} />
-            <TextInput
-              keyboardType="numeric"
-              style={styles.textInput}
-              placeholder="Pleaser enter your street number"
-              placeholderTextColor={COLORS.lightBlue}
-              onChangeText={onChangeStreetNumber}
-            />
-          </View>
-
-          <Text
-            style={[
-              styles.text_footer,
-              {
-                color: COLORS.lightBlue,
-                marginTop: 35,
-              },
-            ]}
-          >
-            Street
-          </Text>
-          <View style={styles.action}>
-            <Feather name="home" color={COLORS.lightBlue} size={20} />
-            <TextInput
-              style={styles.textInput}
-              placeholder="Please enter your street"
-              placeholderTextColor={COLORS.lightBlue}
-              onChangeText={onChangeStreet}
-            />
-          </View>
-
-          <Text
-            style={[
-              styles.text_footer,
-              {
-                color: COLORS.lightBlue,
-                marginTop: 35,
-              },
-            ]}
-          >
-            Région
-          </Text>
-          <View style={styles.action}>
-            <Feather name="home" color={COLORS.lightBlue} size={20} />
-            <TextInput
-              style={styles.textInput}
-              placeholder="Please enter your région"
-              placeholderTextColor={COLORS.lightBlue}
-              onChangeText={onChangeRegion}
-            />
-          </View>
-
-          <Text
-            style={[
-              styles.text_footer,
-              {
-                color: COLORS.lightBlue,
-                marginTop: 35,
-              },
-            ]}
-          >
-            City
-          </Text>
-          <View style={styles.action}>
-            <Feather name="home" color={COLORS.lightBlue} size={20} />
-            <TextInput
-              style={styles.textInput}
-              placeholder="Please enter your city"
-              placeholderTextColor={COLORS.lightBlue}
-              onChangeText={onChangeCity}
-            />
-          </View>
-
-          <Text
-            style={[
-              styles.text_footer,
-              {
-                color: COLORS.lightBlue,
-                marginTop: 35,
-              },
-            ]}
-          >
-            Adress' Complements
-          </Text>
-          <View style={styles.action}>
-            <Feather name="home" color={COLORS.lightBlue} size={20} />
-            <TextInput
-              style={styles.textInput}
-              placeholder="Please enter your adress' complements if needed"
-              placeholderTextColor={COLORS.lightBlue}
-              onChangeText={onChangeAddressComplement}
-            />
-          </View>
-
-          <Text
-            style={[
-              styles.text_footer,
-              {
-                color: COLORS.lightBlue,
-                marginTop: 35,
-              },
-            ]}
-          >
-            Zip code
-          </Text>
-          <View style={styles.action}>
-            <Feather name="home" color={COLORS.lightBlue} size={20} />
-            <TextInput
-              keyboardType="numeric"
-              style={styles.textInput}
-              placeholder="Please enter your zip code"
-              placeholderTextColor={COLORS.lightBlue}
-              onChangeText={onChangeZipCode}
-            />
           </View>
 
           <Text

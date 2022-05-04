@@ -25,7 +25,7 @@ import {
 } from "@expo-google-fonts/dev";
 
 export default function ValidationCode({ navigation, route }) {
-  const { idUser } = route.params;
+  const { idUser, email, isReset } = route.params;
   const [code, setCode] = React.useState("000000");
   const [isValidCode, setValidCode] = React.useState(false);
 
@@ -46,17 +46,31 @@ export default function ValidationCode({ navigation, route }) {
 
   const sendNum = () => {
     if (isValidCode) {
-      alert("the code is valid");
-      fetch("https://eve-back.herokuapp.com/resetPasswordVerifyToken", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ id: idUser, token: code }),
-      })
-        .then((response) => {
-          
-          navigation.navigate("ChangePasswordScreen", { idUser: idUser });
-          
-        .catch((error) => console.error(error));
+      if (isReset) {
+        alert("the code is valid");
+        fetch("https://eve-back.herokuapp.com/resetPasswordVerifyToken", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ id: idUser, token: code }),
+        })
+          .then((response) => {
+            navigation.navigate("ChangePasswordScreen", { idUser: idUser });
+          })
+
+          .catch((error) => console.error(error));
+      } else {
+        alert("the code is valid");
+        fetch("https://eve-back.herokuapp.com/verifyAccount", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ userId: idUser, verificationToken: code }),
+        })
+          .then((response) => {
+            navigation.navigate("SignInScreen");
+          })
+
+          .catch((error) => console.error(error));
+      }
     } else {
       alert("The code is invalid");
     }
