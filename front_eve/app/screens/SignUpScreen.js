@@ -107,7 +107,7 @@ export default function SignUpScreen({ navigation }) {
             alert(json);
           } else {
             navigation.navigate("ValidationCode", {
-              idUser: idUser,
+              idUser: userId,
               email: data.email,
               isReset: false,
             });
