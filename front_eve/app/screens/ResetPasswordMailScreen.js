@@ -34,12 +34,10 @@ const ResetPasswordMailScreen = ({ navigation }) => {
         body: JSON.stringify({ email: data.email }),
       })
         .then((response) => {
-          return response.json();
-        })
-        .then(function (data) {
           const idUser = data.id;
           navigation.navigate("ValidationCode", { idUser: idUser });
         })
+
         .catch((error) => console.error(error));
     } else {
       if (!data.isValidUser) {

@@ -53,11 +53,9 @@ export default function ValidationCode({ navigation, route }) {
         body: JSON.stringify({ id: idUser, token: code }),
       })
         .then((response) => {
-          return response.json();
-        })
-        .then(function (data) {
+          
           navigation.navigate("ChangePasswordScreen", { idUser: idUser });
-        })
+          
         .catch((error) => console.error(error));
     } else {
       alert("The code is invalid");

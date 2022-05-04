@@ -30,6 +30,7 @@ const ChangePasswordScreen = ({ navigation, route }) => {
 
   var status = 0;
   const loginData = async () => {
+    console.log(idUser);
     if (data.isValidPassword && data.password != "") {
       fetch("https://eve-back.herokuapp.com/newPassword", {
         method: "POST",
@@ -37,11 +38,9 @@ const ChangePasswordScreen = ({ navigation, route }) => {
         body: JSON.stringify({ id: idUser, newpassword: data.password }),
       })
         .then((response) => {
-          return response.json();
-        })
-        .then(function (data) {
           navigation.navigate("SignInScreen");
         })
+
         .catch((error) => console.error(error));
     } else {
       if (!data.isValidPassword) {
@@ -73,7 +72,8 @@ const ChangePasswordScreen = ({ navigation, route }) => {
   };
 
   const handlePasswordConfirm = (val) => {
-    if (val.trim() === { password }) {
+    console.log(data.password);
+    if (val.trim() === data.password) {
       setData({
         ...data,
         isValidPassword: true,
