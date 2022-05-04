@@ -680,6 +680,7 @@ export default function EventScreen({route, navigation}) {
               </View>
               <MyCarousel data={participation} type={{ event: "participant" }} navigation={navigation} />
             </View>
+            
             <View style= {{justifyContent: "space-evenly", 
                                 alignItems: "center", 
                                 position: 'relative',

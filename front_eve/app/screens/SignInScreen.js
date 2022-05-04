@@ -9,6 +9,8 @@ import {
   StyleSheet,
   StatusBar,
   Alert,
+  KeyboardAvoidingView,
+  ScrollView,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -150,7 +152,8 @@ const SignInScreen = ({ navigation,route }) => {
   },[isFocused])
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+    <KeyboardAvoidingView style={styles.container}>
       <StatusBar backgroundColor={COLORS.beige} barStyle="light-content" />
       <View style={styles.header}>
         <Text style={styles.text_header}>Welcome!</Text>
@@ -290,7 +293,8 @@ const SignInScreen = ({ navigation,route }) => {
           </TouchableOpacity>
         </View>
       </Animatable.View>
-    </View>
+    </KeyboardAvoidingView>
+    </ScrollView>
   );
 };
 
