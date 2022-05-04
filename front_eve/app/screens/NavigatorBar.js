@@ -20,6 +20,7 @@ import React, { useEffect } from "react";
 import EditEventScreen from "./EditEventScreen.js";
 
 
+
 const Tab = createBottomTabNavigator();
 
 export default function NavigatorBar() {
@@ -154,6 +155,14 @@ export default function NavigatorBar() {
       /><Tab.Screen
       name="Create event"
       component={CreateEventScreen}
+      options={{
+        headerShown: false,
+        tabBarButton: () => null,
+      }}
+    />
+    <Tab.Screen
+      name="EventScreen"
+      component={EventScreen}
       options={{
         headerShown: false,
         tabBarButton: () => null,

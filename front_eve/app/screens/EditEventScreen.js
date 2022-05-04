@@ -1008,7 +1008,7 @@ export default function EventScreen({route, navigation}) {
                                     style={[styles.button, 
                                             {backgroundColor: COLORS.green, 
                                             marginLeft:10,alignSelf:"center"}]} 
-                                    onPress={()=>{deleteFetch(); navigation.navigate("NavigatorBar")}}>
+                                    onPress={()=>{deleteFetch(); navigation.navigate("EventScreen", {eventId:eventId})}}>
                               <Text style={[styles.text_button, {color: COLORS.white}]}>Validate</Text>
                               </TouchableOpacity>
                       </View>

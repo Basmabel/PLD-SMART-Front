@@ -793,7 +793,7 @@ export default function EventScreen({route, navigation}) {
                                     style={[styles.button, 
                                             {backgroundColor: COLORS.grey, 
                                             marginLeft:10}]} 
-                                    onPress={()=>{navigation.navigate("EditEventScreen")}}>
+                                    onPress={()=>{navigation.navigate("EditEventScreen", {eventId:eventId})}}>
                       <Text style={[styles.text_button, {color: COLORS.white}]}>Edit Event
                       <Feather name="edit-2" color={COLORS.white} size={20}/>
                       </Text>

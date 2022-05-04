@@ -53,7 +53,6 @@ export default function App() {
         />
         <Stack.Screen name="FilterScreen" component={FilterScreen} />
         <Stack.Screen name="SearchScreen" component={SearchScreen} />
-        <Stack.Screen name="EventScreen" component={EventScreen} />
 
       
       </Stack.Navigator>
