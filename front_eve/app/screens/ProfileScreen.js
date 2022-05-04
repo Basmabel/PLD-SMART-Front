@@ -13,7 +13,7 @@ import React, { useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useEffect} from "react";
 import { COLORS } from "../config/colors.js";
-import {  MaterialIcons } from "@expo/vector-icons";
+import {  MaterialIcons , MaterialCommunityIcons} from "@expo/vector-icons";
 import MyCarousel from "../components/MyCarousel";
 import { Dropdown } from "react-native-element-dropdown";
 import formatageDate from '../utils/date_formatage';
@@ -69,46 +69,13 @@ export default function ProfileScreen({route,navigation}) {
   const [isRported, setReported] =  React.useState(false);
   const [isBlocked, setBlocked] =  React.useState(false);
   const [notifVisible, setNotifVisible] = React.useState(false)
+  const [countFollower, setCountFollower] = React.useState(0)
+  const [following, setFollowing] = React.useState(0)
+
  const socketRef = useRef();
  const isFocused = useIsFocused();
 
  console.log("///////////////////FRESH START///////////////")
-
-  const fetchReport = async ()=>{
-    setCauseVisible(false)
-    fetch("https://eve-back.herokuapp.com/createReport",{
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ user_id: profile_id, type_id: causeId}),
-    }).catch((error)=>console.error(error));
-
-    var message = "hello"
-    var type = 6
-    var event_id = null
-    var user_id = profile_id
-    var review_id = null
-    var user_targeted_id = null
-    var participation_demand_id = null
-    socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
-
-    fetch("https://eve-back.herokuapp.com/getAdminId").then((response) => {
-      return response.json()
-    }).then(async (json) => {
-      json.map((item)=>{
-        type = 11
-        event_id = null
-        user_id = item.id
-        review_id = null
-        user_targeted_id = profile_id
-        participation_demand_id = null
-        socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
-      })
-    })
-    .catch((error)=>console.error(error))
-    .finally(()=>{alert("User has been reported")
-    setReported(true)});   
-  }
-
 
   const blockUser = async (blocked)=>{
     var message =""
@@ -172,6 +139,27 @@ export default function ProfileScreen({route,navigation}) {
     
   }
 
+  //const countFollow
+
+  const followFetch = async ()=>{
+
+    if(!following){
+    fetch("https://eve-back.herokuapp.com/addFollower",{
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ "user_id" : profile_id, "follower_id": userId}),
+    }).catch((error)=>console.error(error));
+    setFollowing(true)
+  }else{
+    fetch("https://eve-back.herokuapp.com/unfollow",{
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ "user_id" : profile_id, "follower_id": userId}),
+    }).catch((error)=>console.error(error));
+    setFollowing(false)
+  }
+
+  }
   useFocusEffect(
     React.useCallback(() => {
       console.log("connected")
@@ -256,6 +244,15 @@ export default function ProfileScreen({route,navigation}) {
               "id":profile_id,
             })}),
           fetch('https://eve-back.herokuapp.com/getReportTypes'),
+          fetch('http://10.43.11.25:3000/countFollower',{
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ "user_id": profile_id}),
+          }),fetch('http://10.43.11.25:3000/getFollowerStatus',{
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ "user_id": profile_id, "follower_id" : userId}),
+          }),
         ]).then(function (responses) {
           // Get a JSON object from each of the responses
           return Promise.all(responses.map(function (response) {
@@ -284,6 +281,11 @@ export default function ProfileScreen({route,navigation}) {
               setReviewUser(item)
             }else if(index===3){
               setReportTypes(item)
+            }else if(index===4){
+              console.log("THIS ISSS : ",item)
+              setCountFollower(item.results[0].count)
+            }else if(index===5){
+              setFollowing(item.results[0].following)
             }
           });
         }).catch(function (error) {
@@ -291,14 +293,13 @@ export default function ProfileScreen({route,navigation}) {
           console.log(error);
         }).finally(()=> setLoading(false));
       }
-    }, [retreive,isFocused]);
-    
+    }, [retreive,isFocused,following]);
     
 
   if(!fontsLoaded){
     return(<AppLoading/>)
   }else{
-
+    console.log("count follower is : ", countFollower)
     //console.log(userInfo.admin)
     return (
 
@@ -333,15 +334,20 @@ export default function ProfileScreen({route,navigation}) {
               </View>
 
               <View style= {styles.content_info_name}>
-                  <Text style={[styles.text_footer]}>
-                  {profileInfo.name} {profileInfo.surname}
-                  </Text>
+                  <View style={{flexDirection:"row"}}>
+                    <Text style={[styles.text_footer]}>
+                    {profileInfo.name} {profileInfo.surname}
+                    </Text>
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => followFetch() }>
+                      <MaterialCommunityIcons name= {following? "account-remove" : "account-plus"} size={30} color={COLORS.lightBlue}/>
+                    </TouchableOpacity>
+                    </View>
                   <Text style={[styles.subtext_footer]}>
                   {profileInfo.mail}
                   </Text>
                   <Text style={[styles.subtext_footer]}>
-                  {profileInfo.phone}
-                  </Text>
+                     {countFollower} followers
+                     </Text>
               </View>            
 
               <View style= {styles.content_info}>  
@@ -351,6 +357,9 @@ export default function ProfileScreen({route,navigation}) {
                     </View>
                     <View style={[{flexDirection: "row"}]}>
                       <Text style={styles.text_body}><Text style={{fontWeight: "bold"}}>School :  </Text> {profileInfo.school_name}</Text>
+                    </View>
+                    <View style={[{flexDirection: "row"}]}>
+                    <Text style={styles.text_body}><Text style={{fontWeight: "bold"}}>Phone Number : </Text>{profileInfo.phone}</Text>
                     </View>
                     <View style={[{flexDirection: "row"}]}>
                     <Text style={styles.text_body}><Text style={{fontWeight: "bold"}}>Participation : </Text></Text>
