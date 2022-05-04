@@ -36,7 +36,10 @@ import { io } from "socket.io-client";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from '@expo/vector-icons';
 
-export default function MyAccountScreen({ navigation }) {
+
+
+
+export default function MyAccountScreen({navigation}) {
   const tabBarHeight = useBottomTabBarHeight() * 2;
   const [notifVisible, setNotifVisible] = React.useState(false);
   const socketRef = useRef();

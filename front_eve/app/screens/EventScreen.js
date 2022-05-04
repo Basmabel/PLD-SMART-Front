@@ -21,6 +21,9 @@ import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import AddressComponent from "../components/AddressComponent.js";
 import { Ionicons } from '@expo/vector-icons'; 
+import Spinner from 'react-native-loading-spinner-overlay';
+import Feather from "react-native-vector-icons/Feather";
+
 
 //Retreive Data of the Event
 
@@ -621,7 +624,6 @@ export default function EventScreen({route, navigation}) {
                     <View style={[styles.categorieEvents, {marginBottom: 20}]}>
                       <Text style={styles.title_body}>Reviews</Text>
                       <MaterialIcons name="preview" color={COLORS.lightBlue} size={26}/>
-                      <MyCarousel data={review} type={{ event: "review" }} navigation={navigation}/>
                     </View>
                     
                     <CustomLike/>
@@ -808,13 +810,23 @@ export default function EventScreen({route, navigation}) {
                   </TouchableOpacity>
                   <TouchableOpacity activeOpacity={0.7} 
                                     style={[styles.button, 
+                                            {backgroundColor: COLORS.grey, 
+                                            marginLeft:10}]} 
+                                    onPress={()=>{navigation.navigate("EditEventScreen", {eventId:eventId})}}>
+                      <Text style={[styles.text_button, {color: COLORS.white}]}>Edit Event
+                      <Feather name="edit-2" color={COLORS.white} size={20}/>
+                      </Text>
+                  </TouchableOpacity>
+                  </View>
+                  <View>
+                  <TouchableOpacity activeOpacity={0.7} 
+                                    style={[styles.button, 
                                             {backgroundColor: COLORS.red, 
-                                            marginLeft:10
-                                           }]} 
+                                            marginLeft:10,alignSelf:"center"}]} 
                                     onPress={()=>{deleteEvent(participation); navigation.navigate("NavigatorBar")}}>
                       <Text style={[styles.text_button, {color: COLORS.white}]}>Delete Event</Text>
                   </TouchableOpacity>
-                  </View>
+                   </View>
             </View>
             <CustomLike/>
         </View>
@@ -824,6 +836,12 @@ export default function EventScreen({route, navigation}) {
 
   }
 
+  const startLoading = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  };
   
   const bodyGen = () =>{
 
@@ -854,7 +872,16 @@ export default function EventScreen({route, navigation}) {
       
       <SafeAreaView style={StyleSheet.container}>
 
-        {isLoading ? (<Text>Loading...</Text>) :
+        {isLoading ? (
+            <Spinner
+              //visibility of Overlay Loading Spinner
+              visible={isLoading}
+              //Text with the Spinner
+              textContent={'Loading...'}
+              //Text style of the Spinner Text
+              textStyle={styles.spinnerTextStyle}
+            />
+      ) :
           ( <View>
               <View style={styles.header}>
                     <Text style={styles.title_header}>Home</Text>
@@ -881,7 +908,7 @@ export default function EventScreen({route, navigation}) {
                                 style={styles.image_cat}
                             />
                         </View>  
-                        <Text style={styles.name_cat}>{infoEvent.categorie_name}</Text>    
+                        <Text style={styles.name_cat}>{infoEvent.categorie_name}</Text>
                       </View>
                       <View style={styles.locationView}>
                             <Text style={styles.text_header}> Lyon </Text>
@@ -952,6 +979,7 @@ export default function EventScreen({route, navigation}) {
                                     <Text style={styles.text_report}>Cancel</Text>
                                     </TouchableOpacity>
                               </View>
+
                             </View>
                             <TouchableOpacity activeOpacity={0.7} 
                                     style={[styles.button, 
