@@ -17,6 +17,7 @@ import EventScreen from "./EventScreen.js";
 import CreateEventScreen from "./CreateEventScreen.js";
 import { useFocusEffect } from "@react-navigation/native";
 import React, { useEffect } from "react";
+import EditEventScreen from "./EditEventScreen.js";
 
 
 const Tab = createBottomTabNavigator();
@@ -153,6 +154,14 @@ export default function NavigatorBar() {
       /><Tab.Screen
       name="Create event"
       component={CreateEventScreen}
+      options={{
+        headerShown: false,
+        tabBarButton: () => null,
+      }}
+    />
+      <Tab.Screen
+      name="EditEventScreen"
+      component={EditEventScreen}
       options={{
         headerShown: false,
         tabBarButton: () => null,

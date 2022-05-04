@@ -38,6 +38,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 
 
+
 export default function MyAccountScreen({navigation}) {
   const tabBarHeight = useBottomTabBarHeight() * 2;
   const [notifVisible, setNotifVisible] = React.useState(false)

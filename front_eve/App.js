@@ -21,6 +21,8 @@ import MyAccountScreen from './app/screens/MyAccountScreen.js';
 import MyEventsScreen from './app/screens/MyEventsScreen'
 import NotifBuble from './app/components/NotifBuble.js';
 import CreateEventScreen from "./app/screens/CreateEventScreen";
+import EditEventScreen from "./app/screens/EditEventScreen";
+
 
 const Stack = createStackNavigator();
 
@@ -52,6 +54,7 @@ export default function App() {
         <Stack.Screen name="FilterScreen" component={FilterScreen} />
         <Stack.Screen name="SearchScreen" component={SearchScreen} />
         <Stack.Screen name="EventScreen" component={EventScreen} />
+
       
       </Stack.Navigator>
     </NavigationContainer>
