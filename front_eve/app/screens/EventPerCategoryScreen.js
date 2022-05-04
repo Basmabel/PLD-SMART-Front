@@ -59,7 +59,7 @@ export default function EventPerCategoryScreen({route, navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       console.log("connected")
-      socketRef.current=io("https://eve-back.herokuapp.com")
+      socketRef.current=io("http://192.168.52.1:3000")
      
       return () => {
         socketRef.current?.disconnect();
@@ -120,13 +120,13 @@ export default function EventPerCategoryScreen({route, navigation}) {
      
     if(retreive){      
       Promise.all([
-        fetch('https://eve-back.herokuapp.com/getUserInfo',{
+        fetch('http://192.168.52.1:3000/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('https://eve-back.herokuapp.com/getEventByCategory',{
+        fetch('http://192.168.52.1:3000/getEventByCategory',{
             method: "POST",
             headers: {'content-type': 'application/json',userToken},
             body: JSON.stringify({

@@ -164,8 +164,8 @@ const CreateEventScreen = ({ navigation }) => {
       setImage(_image)
       var name = _image.uri.substring(_image.uri.lastIndexOf("/")+1)
       setImageName(name)
-      setImgUri("https://eve-back.herokuapp.com/images/"+name);
-     //setImgUri("https://eve-back.herokuapp.com/images/"+name)
+      setImgUri("http://192.168.52.1:3000/images/"+name);
+     //setImgUri("http://192.168.52.1:3000/images/"+name)
     }
   };
 
@@ -175,7 +175,7 @@ const CreateEventScreen = ({ navigation }) => {
 
   const fetchImage = async () =>{
 
-     fetch("https://eve-back.herokuapp.com/upload", {
+     fetch("http://192.168.52.1:3000/upload", {
       method: 'POST',
       headers: {
        'Accept': 'application/json',
@@ -196,7 +196,7 @@ const CreateEventScreen = ({ navigation }) => {
     const newDate = `${splitted[2]}-${splitted[1]}-${splitted[0]} 00:00:00`;
     console.log(newDate)
     if (data.isValidTitle && data.isValidDate && valuesNotNul()) {
-      fetch("https://eve-back.herokuapp.com/createevent", {
+      fetch("http://192.168.52.1:3000/createevent", {
         method: "POST",
         headers: { "content-type": "application/json",Authorization: "bearer " + userToken,},
         body: JSON.stringify({
@@ -246,7 +246,7 @@ const CreateEventScreen = ({ navigation }) => {
   useFocusEffect(
     React.useCallback(() => {
       console.log("connected")
-      socketRef.current=io("https://eve-back.herokuapp.com")
+      socketRef.current=io("http://192.168.52.1:3000")
      
       return () => {
         socketRef.current?.disconnect();
@@ -341,9 +341,9 @@ const CreateEventScreen = ({ navigation }) => {
     
     if(retreive){ 
       Promise.all([
-        //fetch("https://eve-back.herokuapp.com/getCategories"),
-        fetch("https://eve-back.herokuapp.com/getCategories"),
-        // fetch('https://eve-back.herokuapp.com/getEventsByCategory')
+        //fetch("http://192.168.52.1:3000/getCategories"),
+        fetch("http://192.168.52.1:3000/getCategories"),
+        // fetch('http://192.168.52.1:3000/getEventsByCategory')
       ])
         .then(function (responses) {
           // Get a JSON object from each of the responses

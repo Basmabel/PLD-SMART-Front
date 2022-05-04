@@ -15,7 +15,7 @@ import * as ImagePicker from "expo-image-picker";
 export default function UploadImage({ id }) {
   const [img, setImg] = React.useState();
   const uploadImg = (img) => {
-    fetch("https://eve-back.herokuapp.com/editImageEvent", {
+    fetch("http://192.168.52.1:3000/editImageEvent", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({

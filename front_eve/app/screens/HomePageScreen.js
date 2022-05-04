@@ -87,7 +87,7 @@ export default function HomePageScreen() {
     React.useCallback(() => {
       console.log(notifVisible)
       console.log("connected")
-      socketRef.current=io("https://eve-back.herokuapp.com")
+      socketRef.current=io("http://192.168.52.1:3000")
      
       return () => {
         socketRef.current?.disconnect();
@@ -216,8 +216,8 @@ export default function HomePageScreen() {
     if(retreive){   
       console.log(position)   
       Promise.all([
-        fetch('https://eve-back.herokuapp.com/getPopular'),
-        fetch('https://eve-back.herokuapp.com/getUserInfo',{
+        fetch('http://192.168.52.1:3000/getPopular'),
+        fetch('http://192.168.52.1:3000/getUserInfo',{
           method: "POST",
           headers: {
             "content-type": "application/json",
@@ -226,8 +226,8 @@ export default function HomePageScreen() {
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('https://eve-back.herokuapp.com/getCategories'),
-        fetch('https://eve-back.herokuapp.com/getEventsByCategory')
+        fetch('http://192.168.52.1:3000/getCategories'),
+        fetch('http://192.168.52.1:3000/getEventsByCategory')
       ]).then(function (responses) {
         // Get a JSON object from each of the responses
         return Promise.all(responses.map(function (response) {

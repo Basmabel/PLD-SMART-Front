@@ -136,7 +136,7 @@ export default function HomePageScreen({navigation}) {
    }
 
    const deleteNotifFetch = async(id)=>{
-    fetch("https://eve-back.herokuapp.com/setNotifDone",{
+    fetch("http://192.168.52.1:3000/setNotifDone",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ id: id }),
@@ -145,7 +145,7 @@ export default function HomePageScreen({navigation}) {
    
    const fetchNotif = async ()=>{
     console.log("fetch")
-    fetch('https://eve-back.herokuapp.com/getNotifications',{
+    fetch('http://192.168.52.1:3000/getNotifications',{
       method: "POST",
       headers: {'content-type': 'application/json'},
       body: JSON.stringify({
@@ -162,7 +162,7 @@ export default function HomePageScreen({navigation}) {
    useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
-      socketRef.current = io("https://eve-back.herokuapp.com");
+      socketRef.current = io("http://192.168.52.1:3000");
       socketRef.current.emit('userId',(userId))
       return () => {
           socketRef.current.disconnect();
@@ -201,13 +201,13 @@ export default function HomePageScreen({navigation}) {
 
     if(retreive){    
       Promise.all([
-        fetch('https://eve-back.herokuapp.com/getUserInfo',{
+        fetch('http://192.168.52.1:3000/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-          fetch('https://eve-back.herokuapp.com/getNotifications',{
+          fetch('http://192.168.52.1:3000/getNotifications',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({

@@ -67,14 +67,16 @@ export default function ProfileScreen({route,navigation}) {
   const [causeVisible, setCauseVisible] = React.useState(false);
   const [causeId, setCauseId] =  React.useState(1);
   const [isRported, setReported] =  React.useState(false);
+  const [isBlocked, setBlocked] =  React.useState(false);
   const [notifVisible, setNotifVisible] = React.useState(false)
  const socketRef = useRef();
  const isFocused = useIsFocused();
 
  console.log("///////////////////FRESH START///////////////")
+
   const fetchReport = async ()=>{
     setCauseVisible(false)
-    fetch("https://eve-back.herokuapp.com/createReport",{
+    fetch("http://192.168.52.1:3000/createReport",{
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ user_id: profile_id, type_id: causeId}),
@@ -89,21 +91,91 @@ export default function ProfileScreen({route,navigation}) {
     var participation_demand_id = null
     socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
 
-    type = 11
-    event_id = null
-    user_id = 1
-    review_id = null
-    user_targeted_id = profile_id
-    participation_demand_id = null
+    fetch("http://192.168.52.1:3000/getAdminId").then((response) => {
+      return response.json()
+    }).then(async (json) => {
+      json.map((item)=>{
+        type = 11
+        event_id = null
+        user_id = item.id
+        review_id = null
+        user_targeted_id = profile_id
+        participation_demand_id = null
+        socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
+      })
+    })
+    .catch((error)=>console.error(error))
+    .finally(()=>{alert("User has been reported")
+    setReported(true)});   
+  }
+
+
+  const blockUser = async (blocked)=>{
+    var message =""
+
+    if(blocked){
+      message = "Do you really want to block this user?"
+    }else{
+      message = "Do you really want to unblock this user?"
+    }
+    Alert.alert(
+      message,
+      ``,
+      [
+        {
+          text: "Yes",
+          onPress: () => {blockFetch(blocked)}
+        },
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel"
+        }
+      ],
+      { cancelable: false }
+    );
+    
+  }
+
+  const blockFetch = async (blocked)=>{
+   
+    fetch("http://192.168.52.1:3000/editUserBlockStatus",{
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ id: profile_id, block_status: blocked}),
+    }).catch((error)=>console.error(error));
+
+    var alertMessage = ""
+    var type = 7
+    if(isBlocked){
+      alertMessage ="User is not blocked anymore : he can access the application again"
+      type=15
+    }else{
+      alertMessage ="User has been blocked : he can't access the application anymore"
+    }
+
+    var message = "hello"
+    var event_id = null
+    var user_id = profile_id
+    var review_id = null
+    var user_targeted_id = null
+    var participation_demand_id = null
     socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
-    alert("User has been reported")
-    setReported(true)
+    
+    if(isBlocked){
+      alert(alertMessage)
+    }else{
+      alert(alertMessage)
+    }
+
+    setBlocked(!isBlocked)
+    
   }
 
   useFocusEffect(
     React.useCallback(() => {
       console.log("connected")
-      socketRef.current=io("https://eve-back.herokuapp.com")
+      socketRef.current=io("http://192.168.52.1:3000")
      
       return () => {
         socketRef.current?.disconnect();
@@ -165,25 +237,25 @@ export default function ProfileScreen({route,navigation}) {
 
       if(retreive){      
         Promise.all([
-          fetch('http://192.168.1.66:3000/getUserAdmin',{
+          fetch('http://192.168.52.1:3000/getUserAdmin',{
             method: "POST",
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({
               "id":userId,
             })}),
-          fetch('https://eve-back.herokuapp.com/getMyAccountInfo',{
+          fetch('http://192.168.52.1:3000/getMyAccountInfo',{
             method: "POST",
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({
               "id":profile_id,
             })}),
-          fetch('https://eve-back.herokuapp.com/getReviewUser',{
+          fetch('http://192.168.52.1:3000/getReviewUser',{
             method: "POST",
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({
               "id":profile_id,
             })}),
-          fetch('https://eve-back.herokuapp.com/getReportTypes'),
+          fetch('http://192.168.52.1:3000/getReportTypes'),
         ]).then(function (responses) {
           // Get a JSON object from each of the responses
           return Promise.all(responses.map(function (response) {
@@ -204,6 +276,7 @@ export default function ProfileScreen({route,navigation}) {
               }else{
                 setReported(false)
               }
+              setBlocked(item.global_infos[0].blocked)
               console.log(item)
               setCreatorRating(item.creator_rating[0].score)
               setParticipantRating(item.participant_rating[0].score)
@@ -304,9 +377,10 @@ export default function ProfileScreen({route,navigation}) {
                         </TouchableOpacity>
                         
                   </View>
-                  <View style= {[styles.content_report,{display:(userInfo.admin===1)? "flex" : "none"}]}>
-                      <TouchableOpacity style={[styles.button_report]}>
-                            <Text style={styles.text_report}>Block {profileInfo.name} {profileInfo.surname}</Text>
+                  <View style= {[styles.content_report,{display:(userInfo.admin===1 && isRported)? "flex" : "none"}]}>
+                      <TouchableOpacity style={[styles.button_report]} onPress={()=>{blockUser(!isBlocked)}}>
+                            <Text style={[styles.text_report,{display:(!isBlocked)? "flex" : "none"}]}> Block {profileInfo.name} {profileInfo.surname}</Text>
+                            <Text style={[styles.text_report,{display:(isBlocked)? "flex" : "none"}]}> Unblock {profileInfo.name} {profileInfo.surname}</Text>
                       </TouchableOpacity>
                   </View>
                   <View style={[styles.reportCause,{ display: (causeVisible)? "flex" : "none"}]}>

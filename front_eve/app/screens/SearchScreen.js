@@ -101,7 +101,7 @@ const SearchScreen = ({ navigation, route }) => {
   useFocusEffect(
     React.useCallback(() => {
       console.log("connected")
-      socketRef.current=io("https://eve-back.herokuapp.com")
+      socketRef.current=io("http://192.168.52.1:3000")
      
       return () => {
         socketRef.current?.disconnect();
@@ -184,8 +184,8 @@ const SearchScreen = ({ navigation, route }) => {
      
     if (retreive) {
       Promise.all([
-        //fetch("https://eve-back.herokuapp.com/getMapEvents"),
-        fetch("https://eve-back.herokuapp.com/getMapEvents"),
+        //fetch("http://192.168.52.1:3000/getMapEvents"),
+        fetch("http://192.168.52.1:3000/getMapEvents"),
       ])
         .then(function (responses) {
           // Get a JSON object from each of the responses
