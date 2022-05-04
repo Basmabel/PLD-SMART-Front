@@ -39,7 +39,7 @@ const SignInScreen = ({ navigation }) => {
       data.password != "" &&
       data.email != ""
     ) {
-      fetch("http://192.168.56.1:3000/login", {
+      fetch("https://eve-back.herokuapp.com/login", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: data.email, password: data.password }),
