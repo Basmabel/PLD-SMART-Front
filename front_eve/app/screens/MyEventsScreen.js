@@ -32,7 +32,10 @@ if(light==="light"){
 export default function MyEventsScreen({navigation,route}) {
   const tabBarHeight = useBottomTabBarHeight() * 2;
   console.log(route)
-  var state = route.params.state
+  var state = ""
+  if(route.params!=undefined){
+    state=route.params.state
+  }
   
 
    const [userInfo, setUserInfo] = React.useState(null);

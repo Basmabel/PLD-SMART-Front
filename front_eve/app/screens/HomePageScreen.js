@@ -31,9 +31,15 @@ if (light === "light") {
   colorText = COLORS.greyBlue;
 }
 
-export default function HomePageScreen() {
+export default function HomePageScreen({route}) {
   const tabBarHeight = useBottomTabBarHeight() * 2;
   const navigation = useNavigation();
+  console.log("errrr ",route)
+  var state = ""
+  if(route.params!=undefined){
+    state=route.params.state
+  }
+ 
    const [popularEvents,setPopularEvents] = React.useState([]);
    const [userInfo, setUserInfo] = React.useState(null);
    const [isLoading, setLoading] = React.useState(true);
@@ -212,6 +218,13 @@ export default function HomePageScreen() {
     /*socketRef.current?.emit('userId',(userId))
     console.log("co")
     console.log(socketRef.current?.id)*/
+    if(route.params!=undefined){
+      state=route.params.state
+    }
+
+    if(state==="event update" && isFocused) {
+      setLoading(true)
+    }
     
     if(retreive){   
       console.log(position)   
@@ -285,7 +298,7 @@ export default function HomePageScreen() {
         })
         .finally(() => setLoading(false));
     }
-  }, [retreive]);
+  }, [retreive,isFocused]);
 
   
 

@@ -296,7 +296,7 @@ export default function EventScreen({route, navigation}) {
       [
         {
           text: "Ok",
-          onPress: () => {navigation.navigate("Home")}
+          onPress: () => {navigation.navigate("Home"), {state: "event update"}}
         }
       ],
       { cancelable: false }
@@ -705,7 +705,7 @@ export default function EventScreen({route, navigation}) {
 
   const generate_organizer_page = () =>{
     console.log('generate Organizer Page')
-    if(infoEvent.status_id==11){
+    if(infoEvent.status_id==1){
       console.log('Event has not happened yet')
       return(
         <View>
@@ -734,7 +734,7 @@ export default function EventScreen({route, navigation}) {
             <CustomLike/>
         </View>
       )
-    }else if(infoEvent.status_id==1){
+    }else if(infoEvent.status_id==3){
       console.log('Event has happened')
       console.log('The value of reviewedParticipant is ', reviewedParticipant)
       return(
@@ -808,7 +808,8 @@ export default function EventScreen({route, navigation}) {
                   <TouchableOpacity activeOpacity={0.7} 
                                     style={[styles.button, 
                                             {backgroundColor: COLORS.red, 
-                                            marginLeft:10}]} 
+                                            marginLeft:10
+                                           }]} 
                                     onPress={()=>{deleteEvent(participation); navigation.navigate("NavigatorBar")}}>
                       <Text style={[styles.text_button, {color: COLORS.white}]}>Delete Event</Text>
                   </TouchableOpacity>
@@ -955,7 +956,7 @@ export default function EventScreen({route, navigation}) {
                                     style={[styles.button, 
                                             {backgroundColor: COLORS.red, 
                                             marginLeft:10,
-                                          display: (adminId===0)? "none":"flex"}]} 
+                                          display: (adminId===0 || !isRported)? "none":"flex"}]} 
                                     onPress={()=>{deleteEvent(participation); navigation.navigate("NavigatorBar")}}>
                                 <Text style={[styles.text_button, {color: COLORS.white}]}>Delete Event</Text>
                             </TouchableOpacity>

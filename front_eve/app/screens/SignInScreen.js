@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { COLORS } from "../config/colors";
 import {
   View,
@@ -15,8 +15,10 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Feather from "react-native-vector-icons/Feather";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "react-native-paper";
+import { useIsFocused } from "@react-navigation/native";
 
-const SignInScreen = ({ navigation }) => {
+
+const SignInScreen = ({ navigation,route }) => {
   const [email, onChangeEmail] = React.useState("");
   const [password, onChangePassword] = React.useState("");
   const [data, setData] = React.useState({
@@ -27,6 +29,8 @@ const SignInScreen = ({ navigation }) => {
     isValidUser: true,
     isValidPassword: true,
   });
+
+  const isFocused =useIsFocused();
 
   var status = 0;
   const loginData = async () => {
@@ -129,6 +133,22 @@ const SignInScreen = ({ navigation }) => {
     }
   };
 
+  const emailInput =useRef()
+  const passwordInput =useRef()
+
+  useEffect(()=>{
+    setData({
+      email: "",
+      password: "",
+      check_textInputChange: false,
+      secureTextEntry: true,
+      isValidUser: true,
+      isValidPassword: true,
+    });
+    emailInput.current.clear()
+    passwordInput.current.clear()
+  },[isFocused])
+
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={COLORS.beige} barStyle="light-content" />
@@ -157,6 +177,7 @@ const SignInScreen = ({ navigation }) => {
         <View style={styles.action}>
           <FontAwesome name="user-o" color={COLORS.lightBlue} size={20} />
           <TextInput
+            ref={emailInput}
             placeholder="Please enter your email"
             placeholderTextColor={COLORS.lightBlue}
             style={[
@@ -195,6 +216,7 @@ const SignInScreen = ({ navigation }) => {
         <View style={styles.action}>
           <Feather name="lock" color={COLORS.lightBlue} size={20} />
           <TextInput
+            ref={passwordInput}
             placeholder="Please enter your password"
             placeholderTextColor={COLORS.lightBlue}
             secureTextEntry={data.secureTextEntry ? true : false}

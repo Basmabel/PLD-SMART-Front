@@ -710,6 +710,17 @@ export default function MyAccountScreen({navigation}) {
                   </View>
                   <MyCarousel data={review} type={{ event: "review" }} navigation={navigation}/>
                   </View>
+                  <View style={{width:'100%', flexDirection: 'row', justifyContent:'center'}}>
+                    <TouchableOpacity activeOpacity={0.7} 
+                                      style={[styles.button, 
+                                              {backgroundColor: COLORS.lightBlue, 
+                                              marginLeft:10
+                                            }]} 
+                                      onPress={()=>{navigation.navigate("SignInScreen")}}>
+                        <Text style={[styles.text_button, {color: COLORS.greyBlue}]}>Log out</Text>
+                    </TouchableOpacity>   
+                  </View>
+                                 
 
               </View>
             </ScrollView>
@@ -839,6 +850,19 @@ const styles = StyleSheet.create({
     borderWidth:2,
     alignItems:'center',
     justifyContent:'center'
+  },
+  button: {
+    borderRadius : 10,
+    backgroundColor : COLORS.lightBlue,
+    width : 140,
+    height: 40,
+    justifyContent: "center",
+    alignItems: 'center'
+  },
+  text_button: {
+    color: COLORS.purple,
+    fontSize: 15,
+    fontFamily: 'Montserrat_600SemiBold',
   }
   
 });

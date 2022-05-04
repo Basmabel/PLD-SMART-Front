@@ -12,8 +12,8 @@ import {
 import { useTheme } from "react-native-paper";
 
 const LandingScreen = ({ navigation }) => {
-  const goToInscription = () => navigation.navigate("Inscription");
-  const goToConnexion = () => navigation.navigate("Connexion");
+  const goToInscription = () => navigation.navigate("SignUpScreen");
+  const goToConnexion = () => navigation.navigate("SignInScreen");
   const [email, onChangeEmail] = React.useState("");
   const [password, onChangePassword] = React.useState("");
   const [data, setData] = React.useState({

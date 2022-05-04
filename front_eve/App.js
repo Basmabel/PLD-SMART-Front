@@ -31,7 +31,8 @@ export default function App() {
     //<LandingScreen/>
     <NavigationContainer>
       <Stack.Navigator>
-         <Stack.Screen name="SignInScreen" component={SignInScreen} />
+       <Stack.Screen name="LandingScreen" component={LandingScreen} />
+       <Stack.Screen name="SignInScreen" component={SignInScreen} />
         <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
         <Stack.Screen name="NavigatorBar" component={NavigatorBar} />
         <Stack.Screen name="CategorieCard" component={CategorieCard} />
