@@ -1,12 +1,11 @@
-
-import { StyleSheet} from "react-native";
+import { StyleSheet } from "react-native";
 import LandingScreen from "./app/screens/LandingScreen.js";
 import SignInScreen from "./app/screens/SignInScreen.js";
 import SignUpScreen from "./app/screens/SignUpScreen.js";
 import EventPerCategoryScreen from "./app/screens/EventPerCategoryScreen.js";
 import NavigatorBar from "./app/screens/NavigatorBar.js";
-import ProfileScreen from './app/screens/ProfileScreen.js';
-import EventScreen from './app/screens/EventScreen.js';
+import ProfileScreen from "./app/screens/ProfileScreen.js";
+import EventScreen from "./app/screens/EventScreen.js";
 import { NavigationContainer } from "@react-navigation/native";
 import "react-native-gesture-handler";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -21,6 +20,8 @@ import MyAccountScreen from './app/screens/MyAccountScreen.js';
 import MyEventsScreen from './app/screens/MyEventsScreen'
 import NotifBuble from './app/components/NotifBuble.js';
 import CreateEventScreen from "./app/screens/CreateEventScreen";
+import ResetPasswordMailScreen from "./app/screens/ResetPasswordMailScreen.js";
+import ChangePasswordScreen from "./app/screens/ChangePasswordScreen.js";
 
 const Stack = createStackNavigator();
 
@@ -29,7 +30,7 @@ export default function App() {
     //<SignUpScreen/>
     //<NavigatorBar/>
     //<LandingScreen/>
-    <NavigationContainer>
+    /*<NavigationContainer>
       <Stack.Navigator>
        <Stack.Screen name="LandingScreen" component={LandingScreen} />
        <Stack.Screen name="SignInScreen" component={SignInScreen} />
@@ -55,9 +56,49 @@ export default function App() {
         <Stack.Screen name="EventScreen" component={EventScreen} />
       
       </Stack.Navigator>
-    </NavigationContainer>
+    </NavigationContainer>*/
     // <ValidationCode/>
     // <SearchScreen />
+    // <ResetPasswordMailScreen />
+    // <ValidationCode />
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="SignInScreen" component={SignInScreen} />
+        <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+        <Stack.Screen
+          name="ResetPasswordMailScreen"
+          component={ResetPasswordMailScreen}
+        />
+        <Stack.Screen name="ValidationCode" component={ValidationCode} />
+        <Stack.Screen
+          name="ChangePasswordScreen"
+          component={ChangePasswordScreen}
+        />
+        <Stack.Screen name="NavigatorBar" component={NavigatorBar} />
+        <Stack.Screen name="CategorieCard" component={CategorieCard} />
+        <Stack.Screen
+          name="EventPerCategoryScreen"
+          component={EventPerCategoryScreen}
+        />
+        <Stack.Screen name="Demand" component={ParticipationDemandScreen} />
+        <Stack.Screen name="Notifications" component={NotificationsScreen} />
+        <Stack.Screen name="Profile" component={MyAccountScreen} />
+        <Stack.Screen name="CarousselCard" component={CarouselCard} />
+        <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+        <Stack.Screen name="MyEventsScreen" component={MyEventsScreen} />
+        <Stack.Screen name="Buble" component={NotifBuble} />
+        <Stack.Screen name="MyAccount" component={MyAccountScreen} />
+        <Stack.Screen
+          name="Previous"
+          component={NavigatorBar}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen name="FilterScreen" component={FilterScreen} />
+        <Stack.Screen name="SearchScreen" component={SearchScreen} />
+        <Stack.Screen name="EventScreen" component={EventScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+    //<ChangePasswordScreen />
   );
 }
 

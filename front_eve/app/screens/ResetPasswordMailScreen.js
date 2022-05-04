@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { COLORS } from "../config/colors";
 import {
   View,
@@ -9,79 +9,49 @@ import {
   StyleSheet,
   StatusBar,
   Alert,
-  KeyboardAvoidingView,
-  ScrollView,
+  Image,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Feather from "react-native-vector-icons/Feather";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "react-native-paper";
-import { useIsFocused } from "@react-navigation/native";
 
-
-const SignInScreen = ({ navigation,route }) => {
+const ResetPasswordMailScreen = ({ navigation }) => {
   const [email, onChangeEmail] = React.useState("");
-  const [password, onChangePassword] = React.useState("");
   const [data, setData] = React.useState({
     email: "",
-    password: "",
     check_textInputChange: false,
-    secureTextEntry: true,
     isValidUser: true,
-    isValidPassword: true,
   });
 
-  const isFocused =useIsFocused();
-
   var status = 0;
-  const forgotPassword = async () => {
-    navigation.navigate("ResetPasswordMailScreen");
-  };
   const loginData = async () => {
-    if (
-      data.isValidUser &&
-      data.isValidPassword &&
-      data.password != "" &&
-      data.email != ""
-    ) {
-      fetch("https://eve-back.herokuapp.com/login", {
+    if (data.isValidUser && data.email != "") {
+      fetch("http://eve-back.herokuapp.com/resetPassword", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email: data.email, password: data.password }),
+        body: JSON.stringify({ email: data.email }),
       })
-        .then((response) => {
-          status = response.status;
-          console.log(response.status);
-          if (status == 400 || status == 401 || status==402) {
-            return response.text();
-          } else {
-            return response.json();
-          }
-        })
-        .then(async (json) => {
-       
-          if (status == 400 || status == 401 || status==402) {
-            alert(json);
-          } else {
-            await AsyncStorage.setItem("key", JSON.stringify(json.id));
-            await AsyncStorage.setItem("token", JSON.stringify(json.token));
-            navigation.navigate("NavigatorBar");
-          }
+        .then((response) => response.json())
+        .then((data) => {
+          const idUser = data.id;
+          console.log("User id", idUser);
+
+          navigation.navigate("ValidationCode", {
+            idUser: idUser,
+            email: data.email,
+            isReset: true,
+          });
         })
         .catch((error) => console.error(error));
     } else {
       if (!data.isValidUser) {
         alert("Your email is not valid");
-      } else if (!data.isValidPassword) {
-        alert("Your password is not valid");
-      } else if (data.email === "" || data.password === "") {
-        alert("Please fill in every field");
       }
     }
-     
-   
-      //const response = await fetch("https://eve-back.herokuapp.com/login"
+
+    //const response = await fetch("http://169.254.3.246:3000/login"
   };
 
   const { colors } = useTheme();
@@ -102,31 +72,8 @@ const SignInScreen = ({ navigation,route }) => {
         check_textInputChange: false,
         isValidUser: false,
       });
-      onChangePassword(val);
+      onChangeEmail(val);
     }
-  };
-
-  const handlePasswordChange = (val) => {
-    if (val.trim().length >= 8) {
-      setData({
-        ...data,
-        password: val,
-        isValidPassword: true,
-      });
-    } else {
-      setData({
-        ...data,
-        password: val,
-        isValidPassword: false,
-      });
-    }
-  };
-
-  const updateSecureTextEntry = () => {
-    setData({
-      ...data,
-      secureTextEntry: !data.secureTextEntry,
-    });
   };
 
   const handleValidUser = (val) => {
@@ -143,28 +90,15 @@ const SignInScreen = ({ navigation,route }) => {
     }
   };
 
-  const emailInput =useRef()
-  const passwordInput =useRef()
-
-  useEffect(()=>{
-    setData({
-      email: "",
-      password: "",
-      check_textInputChange: false,
-      secureTextEntry: true,
-      isValidUser: true,
-      isValidPassword: true,
-    });
-    emailInput.current.clear()
-    passwordInput.current.clear()
-  },[isFocused])
-
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-    <KeyboardAvoidingView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar backgroundColor={COLORS.beige} barStyle="light-content" />
       <View style={styles.header}>
-        <Text style={styles.text_header}>Welcome!</Text>
+        <Image
+          style={styles.imageLogo}
+          source={require("../assets/images/e-mail.png")}
+        />
+        <Text style={styles.text_header}>Reset your password</Text>
       </View>
       <Animatable.View
         animation="fadeInUpBig"
@@ -188,7 +122,6 @@ const SignInScreen = ({ navigation,route }) => {
         <View style={styles.action}>
           <FontAwesome name="user-o" color={COLORS.lightBlue} size={20} />
           <TextInput
-            ref={emailInput}
             placeholder="Please enter your email"
             placeholderTextColor={COLORS.lightBlue}
             style={[
@@ -213,54 +146,6 @@ const SignInScreen = ({ navigation,route }) => {
           </Animatable.View>
         )}
 
-        <Text
-          style={[
-            styles.text_footer,
-            {
-              color: COLORS.lightBlue,
-              marginTop: 35,
-            },
-          ]}
-        >
-          Password
-        </Text>
-        <View style={styles.action}>
-          <Feather name="lock" color={COLORS.lightBlue} size={20} />
-          <TextInput
-            ref={passwordInput}
-            placeholder="Please enter your password"
-            placeholderTextColor={COLORS.lightBlue}
-            secureTextEntry={data.secureTextEntry ? true : false}
-            style={[
-              styles.textInput,
-              {
-                color: COLORS.lightBlue,
-              },
-            ]}
-            autoCapitalize="none"
-            onChangeText={(val) => handlePasswordChange(val)}
-          />
-          <TouchableOpacity onPress={updateSecureTextEntry}>
-            {data.secureTextEntry ? (
-              <Feather name="eye-off" color={COLORS.lightBlue} size={20} />
-            ) : (
-              <Feather name="eye" color={COLORS.lightBlue} size={20} />
-            )}
-          </TouchableOpacity>
-        </View>
-        {data.isValidPassword ? null : (
-          <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>
-              Password must be 8 characters long.
-            </Text>
-          </Animatable.View>
-        )}
-
-        <TouchableOpacity onPress={forgotPassword}>
-          <Text style={{ color: COLORS.beige, marginTop: 15 }}>
-            Forgot password?
-          </Text>
-        </TouchableOpacity>
         <View style={styles.button}>
           <TouchableOpacity style={styles.signIn} onPress={loginData}>
             <View style={styles.signIn}>
@@ -272,41 +157,17 @@ const SignInScreen = ({ navigation,route }) => {
                   },
                 ]}
               >
-                Login
+                Send Code
               </Text>
             </View>
           </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => navigation.navigate("SignUpScreen")}
-            style={[
-              styles.signUp,
-              {
-                borderColor: COLORS.lightBlue,
-                borderWidth: 1,
-                marginTop: 15,
-              },
-            ]}
-          >
-            <Text
-              style={[
-                styles.textSign,
-                {
-                  color: COLORS.lightBlue,
-                },
-              ]}
-            >
-              Signup
-            </Text>
-          </TouchableOpacity>
         </View>
       </Animatable.View>
-    </KeyboardAvoidingView>
-    </ScrollView>
+    </View>
   );
 };
 
-export default SignInScreen;
+export default ResetPasswordMailScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -324,6 +185,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
+
     paddingHorizontal: 20,
     paddingVertical: 30,
   },
@@ -335,10 +197,12 @@ const styles = StyleSheet.create({
   text_footer: {
     color: "#05375a",
     fontSize: 18,
+    marginTop: 40,
   },
   action: {
     flexDirection: "row",
     marginTop: 10,
+    marginBottom: 60,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.beige,
     paddingBottom: 5,
@@ -359,6 +223,13 @@ const styles = StyleSheet.create({
   errorMsg: {
     color: "#FF0000",
     fontSize: 14,
+  },
+  imageLogo: {
+    width: 150,
+    marginLeft: "30%",
+    height: 150,
+    marginBottom: 40,
+    justifyContent: "center",
   },
   button: {
     alignItems: "center",
