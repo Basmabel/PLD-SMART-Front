@@ -44,8 +44,8 @@ const FilterScreen = ({ navigation, route }) => {
   };
 
   const filterData = async () => {
-    fetch("http://192.168.52.1:3000/getFilteredEvents", {
-      //  fetch("http://192.168.52.1:3000/getFilteredEvents",{
+    fetch("https://eve-back.herokuapp.com/getFilteredEvents", {
+      //  fetch("https://eve-back.herokuapp.com/getFilteredEvents",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -75,9 +75,9 @@ const FilterScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     Promise.all([
-      //fetch("http://192.168.52.1:3000/getCategories"),
-      fetch("http://192.168.52.1:3000/getCategories"),
-      // fetch('http://192.168.52.1:3000/getEventsByCategory')
+      //fetch("https://eve-back.herokuapp.com/getCategories"),
+      fetch("https://eve-back.herokuapp.com/getCategories"),
+      // fetch('https://eve-back.herokuapp.com/getEventsByCategory')
     ])
       .then(function (responses) {
         // Get a JSON object from each of the responses

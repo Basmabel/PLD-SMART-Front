@@ -61,7 +61,7 @@ export default function HomePageScreen({navigation}) {
         }else{
             return photoUser
         }
-    }else if(type===6 || type===7){
+    }else if(type===6 || type===7 || type===15){
         return "https://thumbs.dreamstime.com/b/generic-warning-20896820.jpg"
     }else{
         if(photoEvent==="0"){
@@ -79,7 +79,7 @@ export default function HomePageScreen({navigation}) {
             return content +" "+eventName
         }else if(type===5){
             return content + " " + userName
-        }else if(type===6 || type===7){
+        }else if(type===6 || type===7 || type===15){
             return content
         }else if(type===10 || type===12){
             return eventName + " "+content
@@ -136,7 +136,7 @@ export default function HomePageScreen({navigation}) {
    }
 
    const deleteNotifFetch = async(id)=>{
-    fetch("http://192.168.52.1:3000/setNotifDone",{
+    fetch("https://eve-back.herokuapp.com/setNotifDone",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ id: id }),
@@ -145,7 +145,7 @@ export default function HomePageScreen({navigation}) {
    
    const fetchNotif = async ()=>{
     console.log("fetch")
-    fetch('http://192.168.52.1:3000/getNotifications',{
+    fetch('https://eve-back.herokuapp.com/getNotifications',{
       method: "POST",
       headers: {'content-type': 'application/json'},
       body: JSON.stringify({
@@ -162,7 +162,7 @@ export default function HomePageScreen({navigation}) {
    useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
-      socketRef.current = io("http://192.168.52.1:3000");
+      socketRef.current = io("https://eve-back.herokuapp.com");
       socketRef.current.emit('userId',(userId))
       return () => {
           socketRef.current.disconnect();
@@ -201,13 +201,13 @@ export default function HomePageScreen({navigation}) {
 
     if(retreive){    
       Promise.all([
-        fetch('http://192.168.52.1:3000/getUserInfo',{
+        fetch('https://eve-back.herokuapp.com/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-          fetch('http://192.168.52.1:3000/getNotifications',{
+          fetch('https://eve-back.herokuapp.com/getNotifications',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({

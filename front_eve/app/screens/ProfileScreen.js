@@ -76,7 +76,7 @@ export default function ProfileScreen({route,navigation}) {
 
   const fetchReport = async ()=>{
     setCauseVisible(false)
-    fetch("http://192.168.52.1:3000/createReport",{
+    fetch("https://eve-back.herokuapp.com/createReport",{
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ user_id: profile_id, type_id: causeId}),
@@ -91,7 +91,7 @@ export default function ProfileScreen({route,navigation}) {
     var participation_demand_id = null
     socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
 
-    fetch("http://192.168.52.1:3000/getAdminId").then((response) => {
+    fetch("https://eve-back.herokuapp.com/getAdminId").then((response) => {
       return response.json()
     }).then(async (json) => {
       json.map((item)=>{
@@ -139,7 +139,7 @@ export default function ProfileScreen({route,navigation}) {
 
   const blockFetch = async (blocked)=>{
    
-    fetch("http://192.168.52.1:3000/editUserBlockStatus",{
+    fetch("https://eve-back.herokuapp.com/editUserBlockStatus",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ id: profile_id, block_status: blocked}),
@@ -175,7 +175,7 @@ export default function ProfileScreen({route,navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       console.log("connected")
-      socketRef.current=io("http://192.168.52.1:3000")
+      socketRef.current=io("https://eve-back.herokuapp.com")
      
       return () => {
         socketRef.current?.disconnect();
@@ -237,25 +237,25 @@ export default function ProfileScreen({route,navigation}) {
 
       if(retreive){      
         Promise.all([
-          fetch('http://192.168.52.1:3000/getUserAdmin',{
+          fetch('https://eve-back.herokuapp.com/getUserAdmin',{
             method: "POST",
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({
               "id":userId,
             })}),
-          fetch('http://192.168.52.1:3000/getMyAccountInfo',{
+          fetch('https://eve-back.herokuapp.com/getMyAccountInfo',{
             method: "POST",
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({
               "id":profile_id,
             })}),
-          fetch('http://192.168.52.1:3000/getReviewUser',{
+          fetch('https://eve-back.herokuapp.com/getReviewUser',{
             method: "POST",
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({
               "id":profile_id,
             })}),
-          fetch('http://192.168.52.1:3000/getReportTypes'),
+          fetch('https://eve-back.herokuapp.com/getReportTypes'),
         ]).then(function (responses) {
           // Get a JSON object from each of the responses
           return Promise.all(responses.map(function (response) {

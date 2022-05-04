@@ -88,7 +88,7 @@ export default function EventScreen({route, navigation}) {
 
   const participateFetch = async()=>{
 
-    fetch("http://192.168.52.1:3000/demandParticipation",{
+    fetch("https://eve-back.herokuapp.com/demandParticipation",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({user_id: userId, event_id: eventId}),
@@ -111,7 +111,7 @@ export default function EventScreen({route, navigation}) {
 
   const LikeFetch = async(like)=>{
 
-    fetch("http://192.168.52.1:3000/setLiked",{
+    fetch("https://eve-back.herokuapp.com/setLiked",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({user_id: userId, event_id: eventId, liked: like}),
@@ -151,7 +151,7 @@ export default function EventScreen({route, navigation}) {
 
   const cancelFetch = async(participants)=>{
 
-    fetch("http://192.168.52.1:3000/cancelEvent",{
+    fetch("https://eve-back.herokuapp.com/cancelEvent",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({event_id: eventId}),
@@ -190,7 +190,7 @@ export default function EventScreen({route, navigation}) {
 
   const deleteFetch = async(participants)=>{
 
-    fetch("http://192.168.52.1:3000/deleteEvent",{
+    fetch("https://eve-back.herokuapp.com/deleteEvent",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({event_id: eventId}),
@@ -229,7 +229,7 @@ export default function EventScreen({route, navigation}) {
 
   const withdrawFetch = async()=>{
 
-    fetch("http://192.168.52.1:3000/removeParticipant",{
+    fetch("https://eve-back.herokuapp.com/removeParticipant",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({user_id:userId, event_id: eventId}),
@@ -268,7 +268,7 @@ export default function EventScreen({route, navigation}) {
 
   const reviewFetch = async(id)=>{
    
-    fetch("http://192.168.52.1:3000/addReview",{
+    fetch("https://eve-back.herokuapp.com/addReview",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({score:defaultRating, review: new_review, creator:infoEvent.user_is_creator, writer_id:userId, target_id:id, event_id: eventId}),
@@ -305,7 +305,7 @@ export default function EventScreen({route, navigation}) {
 
   const fetchReport = async ()=>{
     setCauseVisible(false)
-    fetch("http://192.168.52.1:3000/createReportEvent",{
+    fetch("https://eve-back.herokuapp.com/createReportEvent",{
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ event_id: eventId, type_id: causeId}),
@@ -319,7 +319,7 @@ export default function EventScreen({route, navigation}) {
     var participation_demand_id = null
     socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
 
-    fetch("http://192.168.52.1:3000/getAdminId").then((response) => {
+    fetch("https://eve-back.herokuapp.com/getAdminId").then((response) => {
       return response.json()
     }).then(async (json) => {
       json.map((item)=>{
@@ -403,7 +403,7 @@ export default function EventScreen({route, navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       console.log("connected")
-      socketRef.current=io("http://192.168.52.1:3000")
+      socketRef.current=io("https://eve-back.herokuapp.com")
      
       return () => {
         socketRef.current?.disconnect();
@@ -469,34 +469,34 @@ export default function EventScreen({route, navigation}) {
 
     if(retreive){
       Promise.all([
-        fetch('http://192.168.52.1:3000/getUserInfo',{
+        fetch('https://eve-back.herokuapp.com/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('http://192.168.52.1:3000/getInfoEvent',{
+        fetch('https://eve-back.herokuapp.com/getInfoEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id":eventId , "user_id": userId})
         }),
-        fetch('http://192.168.52.1:3000/getReviewEvent',{
+        fetch('https://eve-back.herokuapp.com/getReviewEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "event_id":eventId,
           })}),
-        fetch('http://192.168.52.1:3000/getEventParticipants',{
+        fetch('https://eve-back.herokuapp.com/getEventParticipants',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id": eventId})
         }),
-        fetch('http://192.168.52.1:3000/getReportTypesEvent'),
-        fetch('http://192.168.52.1:3000/getnonReviewedParticipants',{
+        fetch('https://eve-back.herokuapp.com/getReportTypesEvent'),
+        fetch('https://eve-back.herokuapp.com/getnonReviewedParticipants',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id": eventId})
-        }),fetch('http://192.168.52.1:3000/getUserAdmin',{
+        }),fetch('https://eve-back.herokuapp.com/getUserAdmin',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
@@ -521,7 +521,7 @@ export default function EventScreen({route, navigation}) {
           }else if(index==1){
             setInfoEvent(item[0])
             //console.log(item)
-            fetch('http://192.168.52.1:3000/getReviewId',{
+            fetch('https://eve-back.herokuapp.com/getReviewId',{
               method: "POST",
               headers: {'content-type': 'application/json'},
               body: JSON.stringify({"writer_id":userId, "target_id":item[0].creator_id,"event_id": eventId})

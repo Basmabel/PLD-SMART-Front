@@ -86,7 +86,7 @@ export default function MyAccountScreen({navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       console.log("connected")
-      socketRef.current=io("http://192.168.52.1:3000")
+      socketRef.current=io("https://eve-back.herokuapp.com")
      
       return () => {
         socketRef.current?.disconnect();
@@ -145,13 +145,13 @@ export default function MyAccountScreen({navigation}) {
 
       if(retreive){      
         Promise.all([
-          fetch('http://192.168.52.1:3000/getMyAccountInfo',{
+          fetch('https://eve-back.herokuapp.com/getMyAccountInfo',{
             method: "POST",
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({
               "id":userId,
             })}),
-          fetch('http://192.168.52.1:3000/getReviewUser',{
+          fetch('https://eve-back.herokuapp.com/getReviewUser',{
             method: "POST",
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({
@@ -236,7 +236,7 @@ export default function MyAccountScreen({navigation}) {
     })
 
     
-    fetch('http://192.168.52.1:3000/editProfile',{
+    fetch('https://eve-back.herokuapp.com/editProfile',{
       method: "POST",
       headers: {'content-type': 'application/json'},
       body: JSON.stringify({

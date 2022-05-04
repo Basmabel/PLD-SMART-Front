@@ -75,7 +75,7 @@ export default function ParticipationDemandScreen({route,navigation}) {
   }
 
   const refuseFetch = async()=>{
-    fetch("http://192.168.52.1:3000/refuseDemand",{
+    fetch("https://eve-back.herokuapp.com/refuseDemand",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ id: demandInfo.demand_id, notif_id:notif_id }),
@@ -93,7 +93,7 @@ export default function ParticipationDemandScreen({route,navigation}) {
   }
 
   const acceptFetch = async()=>{
-    fetch("http://192.168.52.1:3000/acceptDemand",{
+    fetch("https://eve-back.herokuapp.com/acceptDemand",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ demand_id: demandInfo.demand_id, user_id: demandInfo.user_id, event_id: demandInfo.event_id, notif_id: notif_id}),
@@ -112,7 +112,7 @@ export default function ParticipationDemandScreen({route,navigation}) {
     }
 
   const signoutFetch = async ()=>{
-    fetch("http://192.168.52.1:3000/signoutDemand",{
+    fetch("https://eve-back.herokuapp.com/signoutDemand",{
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ demand_id: demandInfo.demand_id, participation_id: demandInfo.particip_id}),
@@ -151,7 +151,7 @@ export default function ParticipationDemandScreen({route,navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       console.log("connected")
-      socketRef.current=io("http://192.168.52.1:3000")
+      socketRef.current=io("https://eve-back.herokuapp.com")
      
       return () => {
         socketRef.current?.disconnect();
@@ -209,13 +209,13 @@ export default function ParticipationDemandScreen({route,navigation}) {
    
     if(retreive){      
       Promise.all([
-        fetch('http://192.168.52.1:3000/getUserInfo',{
+        fetch('https://eve-back.herokuapp.com/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-        fetch('http://192.168.52.1:3000/getInfoDemanderNotif',{
+        fetch('https://eve-back.herokuapp.com/getInfoDemanderNotif',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({

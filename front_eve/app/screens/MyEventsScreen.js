@@ -63,7 +63,7 @@ export default function MyEventsScreen({navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       console.log("connected")
-      socketRef.current=io("http://192.168.52.1:3000")
+      socketRef.current=io("https://eve-back.herokuapp.com")
      
       return () => {
         socketRef.current?.disconnect();
@@ -122,41 +122,41 @@ export default function MyEventsScreen({navigation}) {
 
     if(retreive){      
       Promise.all([
-        fetch('http://192.168.52.1:3000/getComingEvents',{
+        fetch('https://eve-back.herokuapp.com/getComingEvents',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('http://192.168.52.1:3000/getUserInfo',{
+        fetch('https://eve-back.herokuapp.com/getUserInfo',{
           method: "POST",
           headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
           body: JSON.stringify({
             "id":userId
           })}),
-          fetch('http://192.168.52.1:3000/getMyHistoric',{
+          fetch('https://eve-back.herokuapp.com/getMyHistoric',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('http://192.168.52.1:3000/getMyFavorite',{
+        fetch('https://eve-back.herokuapp.com/getMyFavorite',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('http://192.168.52.1:3000/getUpcomingEvent',{
+        fetch('https://eve-back.herokuapp.com/getUpcomingEvent',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
             "id":userId
           })
         }),
-        fetch('http://192.168.52.1:3000/getHistoric',{
+        fetch('https://eve-back.herokuapp.com/getHistoric',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({
