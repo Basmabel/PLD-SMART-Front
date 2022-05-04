@@ -48,6 +48,8 @@ export default function ValidationCode({ navigation, route }) {
     if (isValidCode) {
       if (isReset) {
         alert("the code is valid");
+        const payload = { id: idUser, token: code };
+        console.log("USer id:", idUser);
         fetch("https://eve-back.herokuapp.com/resetPasswordVerifyToken", {
           method: "POST",
           headers: { "content-type": "application/json" },

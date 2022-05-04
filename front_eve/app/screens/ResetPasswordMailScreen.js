@@ -33,15 +33,17 @@ const ResetPasswordMailScreen = ({ navigation }) => {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: data.email }),
       })
-        .then((response) => {
+        .then((response) => response.json())
+        .then((data) => {
           const idUser = data.id;
+          console.log("User id", idUser);
+
           navigation.navigate("ValidationCode", {
             idUser: idUser,
             email: data.email,
             isReset: true,
           });
         })
-
         .catch((error) => console.error(error));
     } else {
       if (!data.isValidUser) {
