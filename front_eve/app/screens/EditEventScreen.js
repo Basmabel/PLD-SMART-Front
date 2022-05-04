@@ -77,8 +77,7 @@ export default function EventScreen({route, navigation}) {
   const [nb_registered, setnbRegistered] = React.useState(0)
   const [categories, setCategories] = React.useState(tmp);
   const [isSelected, setSelection] = React.useState(false);
-
-
+  const [selectedActivity, setSelectedActivity] = React.useState("Select a Category");
 
 
   const starImgFilled = 'https://raw.githubusercontent.com/tranhonghan/images/main/star_filled.png'
@@ -87,324 +86,41 @@ export default function EventScreen({route, navigation}) {
   const heartImgFilled =''
   const heartImgEmpty = ''
 
-  const demandParticipation = async ()=>{
-    Alert.alert(
-      "Do you really want to participate to this event?",
-      ``,
-      [
-        {
-          text: "Yes",
-          onPress: () => {participateFetch()}
-        },
-        {
-          text: "Cancel",
-          onPress: () => {},
-          style: "cancel"
+  var edit=[];
+  var editFetch = (i,val)=>{
+    const keys = Object.keys(infoEvent);
+    console.log(infoEvent);
+    keys.map((index)=>{
+      //if(index>=3){
+        if(index!=i){
+          edit.push(null);
+        }else{
+          edit.push(val)
         }
-      ],
-      { cancelable: false }
-    );
-    
+      //}
+    })
+    console.log(edit)
   }
-
-  const participateFetch = async()=>{
-
-    fetch("https://eve-back.herokuapp.com/demandParticipation",{
+    var validateModif = ()=>{
+      fetch("https://eve-back.herokuapp.com/modifyEvent",{
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({user_id: userId, event_id: eventId}),
-    }).then((response) => {
-      return response.json()
-    }).then(async (json) => {
-      const message = ""
-      const type = 1
-      const event_id = null
-      const user_id = infoEvent.creator_id
-      const review_id = null
-      const user_targeted_id = null
-      const participation_demand_id = json[0].id
-      socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
-      alertRedirection("A participation demand has been sent to organizer")
-    }).catch((error)=>console.error(error));
-
-    
-  }
-
-  const LikeFetch = async(like)=>{
-
-    fetch("https://eve-back.herokuapp.com/setLiked",{
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({user_id: userId, event_id: eventId, liked: like}),
-    }).catch((error)=>console.error(error));
-
-     const message = ""
-      const type = 9
-      const event_id = eventId
-      const user_id = infoEvent.creator_id
-      const review_id = null
-      const user_targeted_id = userId
-      const participation_demand_id = null
-      socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
-      
-  }
-
-
-  const cancelEvent = async (participants)=>{
-    Alert.alert(
-      "Do you really want to cancel this event?",
-      ``,
-      [
-        {
-          text: "Yes",
-          onPress: () => {cancelFetch(participants)}
-        },
-        {
-          text: "Cancel",
-          onPress: () => {},
-          style: "cancel"
-        }
-      ],
-      { cancelable: false }
-    );
-    
-  }
-
-  const cancelFetch = async(participants)=>{
-
-    fetch("https://eve-back.herokuapp.com/cancelEvent",{
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({event_id: eventId}),
-    }).catch((error)=>console.error(error));
-    //console.log(participants)
-    const message = ""
-      const type = 12
-      const event_id = eventId
-      const user_id = infoEvent.creator_id
-      const review_id = null
-      const user_targeted_id = null
-      const participation_demand_id = null
-      socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id,participants})
-      alertRedirection("Your event has been canceled, participants have been warned")
-  }
-
-  const deleteEvent = async ()=>{
-    Alert.alert(
-      "Do you really want to delete this event?",
-      ``,
-      [
-        {
-          text: "Yes",
-          onPress: () => {deleteFetch()}
-        },
-        {
-          text: "Cancel",
-          onPress: () => {},
-          style: "cancel"
-        }
-      ],
-      { cancelable: false }
-    );
-    
-  }
-
-  const deleteFetch = async()=>{
-
-    fetch("http://192.168.98.166:3000/cancelEvent",{
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({event_id: eventId}),
-    }).catch((error)=>console.error(error));
-    //console.log(participants)
-    const message = ""
-      const type = 12
-      const event_id = eventId
-      const user_id = infoEvent.creator_id
-      const review_id = null
-      const user_targeted_id = null
-      const participation_demand_id = null
-      socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id,participants})
-      alertRedirection("Your event has been erased completely!")
-  }
-
-  const withdrawEvent = async ()=>{
-    Alert.alert(
-      "Do you really want to withdraw from this event?",
-      ``,
-      [
-        {
-          text: "Yes",
-          onPress: () => {withdrawFetch()}
-        },
-        {
-          text: "Cancel",
-          onPress: () => {},
-          style: "cancel"
-        }
-      ],
-      { cancelable: false }
-    );
-    
-  }
-
-  const withdrawFetch = async()=>{
-
-    fetch("https://eve-back.herokuapp.com/removeParticipant",{
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({user_id:userId, event_id: eventId}),
-    }).catch((error)=>console.error(error));
-
-    const message = ""
-      const type = 8
-      const event_id = eventId
-      const user_id = infoEvent.creator_id
-      const review_id = null
-      const user_targeted_id = userId
-      const participation_demand_id = null
-      socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
-      alertRedirection("You are no longer a participant")
-  }
-
-  const reviewEvent = async (id)=>{
-    Alert.alert(
-      "Do you really want to send the review?",
-      ``,
-      [
-        {
-          text: "Yes",
-          onPress: () => {reviewFetch(id)}
-        },
-        {
-          text: "Cancel",
-          onPress: () => {},
-          style: "cancel"
-        }
-      ],
-      { cancelable: false }
-    );
-    
-  }
-
-  const reviewFetch = async(id)=>{
-   
-    fetch("https://eve-back.herokuapp.com/addReview",{
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({score:defaultRating, review: new_review, creator:infoEvent.user_is_creator, writer_id:userId, target_id:id, event_id: eventId}),
-    }).then((response) => {
-      return response.json()
-    }).then(async (json) => {
-      const message = ""
-      const type = 5
-      const event_id = null
-      const user_id = id
-      const review_id = json[0].id
-      const user_targeted_id = null
-      const participation_demand_id = null
-      socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
-      alertRedirection("Your review has been posted")
-    }).catch((error)=>console.error(error));
-
-    
-  }
-
-  const alertRedirection = (message)=>{
-    Alert.alert(
-      message,
-      ``,
-      [
-        {
-          text: "Ok",
-          onPress: () => {navigation.navigate("Home")}
-        }
-      ],
-      { cancelable: false }
-    );
-  }
-
-  const fetchReport = async ()=>{
-    setCauseVisible(false)
-    fetch("https://eve-back.herokuapp.com/createReportEvent",{
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ event_id: eventId, type_id: causeId}),
-    }).catch((error)=>console.error(error));
-    var message = "hello"
-    var type = 13
-    var event_id = eventId
-    var user_id = infoEvent.creator_id
-    var review_id = null
-    var user_targeted_id = null
-    var participation_demand_id = null
-    socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
-
-    type = 10
-    event_id = eventId
-    user_id = 1
-    review_id = null
-    user_targeted_id = null
-    participation_demand_id = null
-    socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
-    alert("Event has been reported")
-    setReported(true)
-
-
-  }
-
-
-
-  const CustomRatingBar = () => {
-    return(
-      <View style={styles.CustomRatingBarStyle}>
-        {
-          maxRating.map((item,key) => {
-            return (
-              <TouchableOpacity
-              activeOpacity={0.7}
-              key={item}
-              onPress={()=>setDefaultRating(item)}
-              >
-                  <Image
-                  style={styles.star}
-                  source={
-                    item <= defaultRating
-                      ? {uri : starImgFilled}
-                      : {uri: starImgEmpty}
-                  }
-                  />
-              </TouchableOpacity>
-            )
-          })
-        }
-      </View>
-    )
-  }
-  const CustomLike = () => {
-
-    if(like===1){
-      return(
-        <View style={{justifyContent:'center', flexDirection: 'row', width:'100%', 
-                      marginBottom: 10}}>
-        <TouchableOpacity activeOpacity={0.7} onPress={()=>{setLike(0), LikeFetch(0)}} >
-          <MaterialCommunityIcons name="heart" 
-              color={COLORS.lightBlue} 
-              size={30}
-              />
-        </TouchableOpacity>
-        </View>
-      )
-    }else{
-        return(
-          <View style={{justifyContent:'center', flexDirection: 'row',width:'100%',
-                marginBottom: 10}}>          
-          <TouchableOpacity activeOpacity={0.7} onPress={()=>{setLike(1), LikeFetch(1)}} >
-            <MaterialCommunityIcons name="heart-outline" color={COLORS.lightBlue} size={30} />
-          </TouchableOpacity>
-          </View>
-        )
-    }
+      body: JSON.stringify({
+        "categorie_image":edit[0],
+        "categorie_name":edit[0],
+        /*"date":edit[6],
+        "event_image":edit[9],
+        "event_name":edit[9],
+        "paying":edit[7],
+        "place":edit[8],
+        "street_number":edit[9],
+        "street":edit[9],
+        "zip_code":edit[9],
+        "id":infoEvent.id*/
+      }
+      )}).then((response)=>{
+    }).catch((error)=>console.error(error))
+  
   }
 
   var [fontsLoaded] = useFonts({
@@ -416,7 +132,6 @@ export default function EventScreen({route, navigation}) {
   
   useFocusEffect(
     React.useCallback(() => {
-      console.log("connected")
       socketRef.current=io("https://eve-back.herokuapp.com")
      
       return () => {
@@ -430,7 +145,6 @@ export default function EventScreen({route, navigation}) {
       socketRef.current?.emit('userId',(userId))
     }
     
-    console.log("in use effect"+userId)
     
   },[userId])
 
@@ -438,15 +152,12 @@ export default function EventScreen({route, navigation}) {
     if(userId!=''){
       socketRef.current?.emit('userId',(userId))
     }
-    
-    console.log("in use effect"+userId)
-    
+        
   },[socketRef.current])
 
   useEffect(()=>{
 
     socketRef.current?.on('message', (message)=>{
-      console.log("You received a notification")
       setNotifVisible(true)
     })
 
@@ -469,9 +180,7 @@ export default function EventScreen({route, navigation}) {
         console.log(error)
       }
     }
-    
-    console.log("////////////////////:FRESH START:///////////////////////////")
-    
+        
 
     retreiveData();
 
@@ -494,19 +203,7 @@ export default function EventScreen({route, navigation}) {
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id":eventId , "user_id": userId})
         }),
-        fetch('https://eve-back.herokuapp.com/getReviewEvent',{
-          method: "POST",
-          headers: {'content-type': 'application/json'},
-          body: JSON.stringify({
-            "event_id":eventId,
-          })}),
         fetch('https://eve-back.herokuapp.com/getEventParticipants',{
-          method: "POST",
-          headers: {'content-type': 'application/json'},
-          body: JSON.stringify({"event_id": eventId})
-        }),
-        fetch('https://eve-back.herokuapp.com/getReportTypesEvent'),
-        fetch('https://eve-back.herokuapp.com/getnonReviewedParticipants',{
           method: "POST",
           headers: {'content-type': 'application/json'},
           body: JSON.stringify({"event_id": eventId})
@@ -529,6 +226,7 @@ export default function EventScreen({route, navigation}) {
             setUserInfo(item[0])
             //console.log(item[0])
           }else if(index==1){
+            console.log(item[0]);
             setInfoEvent(item[0])
             //console.log(item)
             fetch('https://eve-back.herokuapp.com/getReviewId',{
@@ -563,19 +261,10 @@ export default function EventScreen({route, navigation}) {
             setnbRegistered(item[0].nb_registered)
             //console.log(item)
           }else if(index==2){
-             setReviewEvent(item.reviews)
-             //console.log(item.reviews)
-           }else if(index==3){
             setParticipation(item.participants)
             //console.log(item.participants)
             //console.log(item.reviews)
-          }else if(index==4){
-            //console.log(item)
-            setReportTypes(item)
-          }else if(index==5){
-            setReviewedParticipation(item.participantstoReview)
-            console.log(item)
-          }else if(index==6){
+          }else if(index==3){
             setCategories(item);
           }              
         });
@@ -586,250 +275,6 @@ export default function EventScreen({route, navigation}) {
     }
   }, [retreive,isFocused]);
 
-  const generate_cancelled_event = () =>{
-      return(<View style={{alignItems:"center", marginBottom: 30,
-      borderRadius: 10,
-      borderWidth: 5,
-      borderColor: COLORS.lightBlue }}>
-        <Text style={[styles.text_header, 
-          {borderColor: COLORS.lightBlue, 
-          fontWeight:"bold",
-          padding: 10}]}>THIS EVENT HAS BEEN CANCELLED</Text>
-      </View>)
-  }
-
-  const gen_report = () => {}
-
-  const generate_non_participant_page = () =>{
-    console.log('generate non Participant Page')
-    if(infoEvent.status_id==1){
-      console.log('Event has not happened yet')
-    return (
-            <View style= {{alignItems: "center", position: 'relative', top: -10}}>
-              <TouchableOpacity activeOpacity={0.7} style={[styles.button,{marginBottom: 20, display: (infoEvent.demand_id===0 && !nbParticipant)?"flex" : "none"}]} onPress={()=>{demandParticipation()}}>
-                <Text style={styles.text_button}>Participate !</Text>
-              </TouchableOpacity>
-              <Text style = {{color : COLORS.red,
-                              display: (infoEvent.demand_id!=0)? "flex" : "none",
-                              marginBottom: 10
-                            }}>
-                              Waiting for organizer to accept your demand
-              </Text>
-              <Text style = {{color : COLORS.red,
-                              display: (nbParticipant)? "flex" : "none",
-                              marginBottom: 10
-                            }}>
-                              Number of participant reached
-              </Text>
-              <CustomLike/>
-            </View>
-    )
-    }else if(infoEvent.status_id==3){
-      console.log('Event has happened')
-      return(     <View style={styles.events}>
-                    <View style={[styles.categorieEvents, {marginBottom: 20}]}>
-                      <Text style={styles.title_body}>Reviews</Text>
-                      <MaterialIcons name="preview" color={COLORS.lightBlue} size={26}/>
-                    </View>
-                    
-                    <CustomLike/>
-                  </View> 
-      )
-    }else if (infoEvent.status_id==2) {return generate_cancelled_event()}
-  }
-
-  const generate_participant_page = () =>{
-    console.log('generate Participant Page')
-    if(infoEvent.status_id===1){
-      console.log('Event has not happened yet')
-      return (
-        <View>
-          <View style={styles.events}>
-                <Text style={styles.title_body}>Address</Text>
-                <AddressComponent city={infoEvent.zip_code + " " + infoEvent.city } address={infoEvent.street_number +" " + infoEvent.street} latitude={infoEvent.latitude} longitude={infoEvent.longitude} font={"Montserrat_500Medium"}/>
-            </View>
-          <View style={styles.events}>
-                <View style={styles.events}>
-                  <View style={styles.categorieEvents}>
-                    <Text style={styles.title_body}>Participant</Text>
-                    <MaterialIcons name="verified-user" color={COLORS.lightBlue} size={26}/>
-                  </View>
-                  <MyCarousel data={participation} type={{ event: "participant" }} navigation={navigation} onPress={(item)=>console.log(item)}/>
-              </View>
-                <View style= {{alignItems: "center", position: 'relative', top: -10, marginBottom: 20}}>
-                  <TouchableOpacity activeOpacity={0.7} style={styles.button} onPress={()=>{withdrawEvent()}}>
-                    <Text style={styles.text_button}>Withdraw :(</Text>
-                  </TouchableOpacity>
-                </View>
-                <CustomLike/>
-          </View>
-        </View>
-      )
-    }else if(infoEvent.status_id===3){
-        console.log('Event has happened')
-        return(     
-        <View>
-         <View style={styles.events}>
-                <Text style={styles.title_body}>Address</Text>
-                <AddressComponent city={infoEvent.zip_code + " " + infoEvent.city } address={infoEvent.street_number +" " + infoEvent.street} latitude={infoEvent.latitude} longitude={infoEvent.longitude} font={"Montserrat_500Medium"}/>
-            </View>
-          <View style={styles.events}>
-              <View style={styles.categorieEvents}>
-                <Text style={styles.title_body}>Reviews </Text>
-                <MaterialIcons name="preview" color={COLORS.lightBlue} size={26}/>
-              </View>
-              <MyCarousel data={review} type={{ event: "review" }} navigation={navigation}/>
-            </View> 
-            <View style={styles.events}>
-              <View style={styles.categorieEvents}>
-                <Text style={styles.title_body}>Participants </Text>
-                <MaterialIcons name="verified-user" color={COLORS.lightBlue} size={26}/>
-              </View>
-              <MyCarousel data={participation} type={{ event: "participant" }} navigation={navigation} />
-            </View>
-            <View style= {{justifyContent: "space-evenly", 
-                                alignItems: "center", 
-                                position: 'relative',
-                                display: (!reviewIdParti)?"flex":"none",
-                                marginBottom: 20}}>
-                  <TextInput
-                    style={[styles.input]}
-                    placeholder="Post a review"
-                    placeholderTextColor={COLORS.black}
-                    onChangeText={(value) => {setNew_Review(value);setTextIn(true)}}
-                    onEndEditing={() =>{setTextIn(false)}}
-                  />
-                  <CustomRatingBar/>
-                  <TouchableOpacity activeOpacity={0.7} style={styles.button} onPress={()=>{reviewEvent(infoEvent.creator_id)}}>
-                    <Text style={styles.text_button}>Post !</Text>
-                  </TouchableOpacity>
-            </View>
-            <CustomLike/>
-        </View>
-        )
-      }else if (infoEvent.status_id==2) {return generate_cancelled_event()}
-    }
-
-  const generate_organizer_page = () =>{
-    console.log('generate Organizer Page')
-    if(infoEvent.status_id==11){
-      console.log('Event has not happened yet')
-      return(
-        <View>
-          <View style={styles.events}>
-                <Text style={styles.title_body}>Address</Text>
-                <AddressComponent city={infoEvent.zip_code + " " + infoEvent.city } address={infoEvent.street_number +" " + infoEvent.street} latitude={infoEvent.latitude} longitude={infoEvent.longitude} font={"Montserrat_500Medium"}/>
-            </View>
-          
-          <View style={styles.events}>
-              <View style={styles.categorieEvents}>
-                <Text style={styles.title_body}>Participant</Text>
-                <MaterialIcons name="verified-user" color={COLORS.lightBlue} size={26}/>
-              </View>
-              <MyCarousel data={participation} type={{ event: "participant" }} navigation={navigation} onPress={(item)=>console.log(item)}/>
-            </View>
-            <View style={{justifyContent:"space-around",
-                           flexDirection:'row', 
-                           marginBottom: 20}}>
-              <TouchableOpacity activeOpacity={0.7} style={styles.button} onPress={()=>{cancelEvent(participation)}}>
-                      <Text style={styles.text_button}>Cancel Event</Text>
-              </TouchableOpacity>
-              <TouchableOpacity activeOpacity={0.7} style={styles.button} onPress={()=>console.log('navigate to edit event page on process')}>
-                      <Text style={styles.text_button}>Edit</Text>
-              </TouchableOpacity>
-            </View>
-            <CustomLike/>
-        </View>
-      )
-    }else if(infoEvent.status_id==1){
-      console.log('Event has happened')
-      console.log('The value of reviewedParticipant is ', reviewedParticipant)
-      return(
-        <View>
-          <View style={styles.events}>
-                <Text style={styles.title_body}>Address</Text>
-                <AddressComponent city={infoEvent.zip_code + " " + infoEvent.city } address={infoEvent.street_number +" " + infoEvent.street} latitude={infoEvent.latitude} longitude={infoEvent.longitude} font={"Montserrat_500Medium"}/>
-            </View>
-          <View style={styles.events}>
-              <View style={styles.categorieEvents}>
-                <Text style={styles.title_body}>Participant</Text>
-                <MaterialIcons name="verified-user" color={COLORS.lightBlue} size={26}/>
-              </View>
-              <MyCarousel data={participation} type={{ event: "participant" }} navigation={navigation}/>
-            </View>
-          <View style={styles.events}>
-              <View style={styles.categorieEvents}>
-                <Text style={styles.title_body}>Reviews</Text>
-                <MaterialIcons name="preview" color={COLORS.lightBlue} size={26}/>
-              </View>
-              <MyCarousel data={review} type={{ event: "review" }} navigation={navigation}/>
-            </View>
-            <View style = {styles.categorieEvents}>
-              <Text style={styles.title_body}>Review A Participant</Text>
-              <MaterialIcons name="person" color={COLORS.lightBlue} size={26}/>
-            </View>
-            
-            <View style={[styles.reviewContent,{ display: (reviewedParticipation!=null)? "flex":"none"}]}>
-                                <Dropdown
-                                  style={[styles.dropdown,{backgroundColor:COLORS.white}, isFocus && { borderColor: "blue" }]}
-                                  placeholderStyle={styles.placeholderStyle}
-                                  selectedTextStyle={styles.selectedTextStyle}
-                                  inputSearchStyle={styles.inputSearchStyle}
-                                  iconStyle={styles.iconStyle}
-                                  data={reviewedParticipation}
-                                  maxHeight={nb_registered*50}
-                                  labelField="surname"
-                                  placeholder={(reviewedParticipant === "hello")? "Select a report type" : reviewedParticipant}
-                                  onFocus={() => setIsFocus(true)}
-                                  onBlur={() => setIsFocus(false)}
-                                  onChange={(item) => {
-                                    setReviewedParticipant(item.name);
-                                    setReviewedParticipantID(item.user_id)
-                                    setIsFocus(false);
-                                  }}
-                                  renderLeftIcon={() => (
-                                    <AntDesign
-                                      style={styles.icon}
-                                      color={isFocus ? "blue" : "black"}
-                                      name="Safety"
-                                      size={20}
-                                    />
-                                  )}
-                                />
-                  <TextInput
-                    style={[styles.input,{display: (reviewedParticipantID==-1)? "flex":"none"}]}
-                    placeholder="Post a review"
-                    placeholderTextColor={COLORS.black}
-                    onChangeText={(value) => {setNew_Review(value);setTextIn(true)}}
-                    onEndEditing={() =>{setTextIn(false)}}                    
-                  />
-                  <CustomRatingBar style={{display: (reviewedParticipantID==-1)? "flex":"none"}}/>
-                  <View style={{justifyContent:"space-around",
-                           flexDirection:'row', marginTop : 10, 
-                           marginBottom: 20}}>
-                  <TouchableOpacity activeOpacity={0.7} 
-                                    style={[styles.button, {marginRight: 10, display: (reviewedParticipantID==-1)? "flex":"none"}]} 
-                                    onPress={()=>{reviewEvent(reviewedParticipantID)}}>
-                     <Text style={styles.text_button}> Post !</Text> 
-                  </TouchableOpacity>
-                 
-                  
-                  <TouchableOpacity activeOpacity={0.7} 
-                                    style={[styles.button, 
-                                            {backgroundColor: COLORS.red, 
-                                            marginLeft:10}]} 
-                                    onPress={()=>{deleteFetch(); navigation.navigate("NavigatorBar")}}>
-                      <Text style={[styles.text_button, {color: COLORS.white}]}>Delete Event</Text>
-                  </TouchableOpacity>
-                  </View>
-            </View>
-            <CustomLike/>
-        </View>
-      )
-    }else if (infoEvent.status_id==2) { return generate_cancelled_event()}
-
-
-  }
 
   const startLoading = () => {
     setLoading(true);
@@ -838,35 +283,20 @@ export default function EventScreen({route, navigation}) {
     }, 1000);
   };
   
-  const bodyGen = () =>{
 
-    if (infoEvent.user_is_creator){
-      //return Generate_organizer_page();
-      return  generate_organizer_page();
-    }else if(infoEvent.particip_id){
-      return generate_participant_page();
-    }else{
-      return generate_non_participant_page();
-      // return  generate_organizer_page();
-    }
-
-  }
 
 
   var paying_line = "currency-eur-off"
   if (infoEvent.paying){
     paying_line = "currency-eur"
   }
-  //console.log('these are teh reviews :')
-  //console.log(review)
+
 
   if(!fontsLoaded){
     return(<AppLoading/>)
   }else{
     return(
-      
       <SafeAreaView style={StyleSheet.container}>
-
         {isLoading ? (
             <Spinner
               //visibility of Overlay Loading Spinner
@@ -906,17 +336,19 @@ export default function EventScreen({route, navigation}) {
               inputSearchStyle={styles.inputSearchStyle}
               iconStyle={styles.iconStyle}
               data={categories}
-              //search
               maxHeight={250}
               labelField="description"
               valueField="id"
               placeholder={infoEvent.categorie_name}
-              searchPlaceholder="Search..."
               //value={"test"}
               onFocus={() => setIsFocus(true)}
               onBlur={() => setIsFocus(false)}
               onChange={(item) => {
                 //setSelectedActivity(item.id);
+                setInfoEvent({ ...infoEvent,categorie_image: item.categorie_image,categorie_name: item.categorie_name});
+                editFetch(0,item.categorie_image);
+                editFetch(1,item.categorie_image);
+
               }}
               renderLeftIcon={() => (
                 <AntDesign
@@ -935,15 +367,19 @@ export default function EventScreen({route, navigation}) {
                     </View>
                         <View style={styles.contentContainer}>
                               <View style={styles.info_event}>                                
-                                  <View style={styles.photo_event}>
+                                  <View style={styles.action}>
                                   <UploadImageEvent imgEvent={infoEvent.event_image} id={infoEvent.id}/>
                                   </View>
-
-                                  <TextInput style={styles.title_info_event}
+                                  
+                                  <View style={styles.action}>
+                                  <TextInput style={styles.textInput}
                                   defaultValue={infoEvent.event_name}
-                                  //onChangeText={onChangeEmail}
+                                  placeholder="event name"
                                   />
-                                  <View style={styles.drop}>
+                                  </View>
+
+                                  
+                                  <View style={styles.action}>
                                   <Feather name="calendar" color={COLORS.lightBlue} size={30} />
                                   <DatePicker
                                     style={{ width: "90%" }}
@@ -983,18 +419,23 @@ export default function EventScreen({route, navigation}) {
                                     }}*/
                                   />
                                 </View>
-                                  <View>
-                                  <TextInput style={styles.title_info_event}
-                                  placeholder="place"
-                                  defaultValue={infoEvent.place}
-                                  //onChangeText={onChangeEmail}
-                                  /></View>
-                                  <View style={[styles.desc]}>
-                                  <TextInput
-                                  defaultValue={infoEvent.description}
-                                  placeholder="Description"
-                                  //onChangeText={onChangeEmail}
-                                  /></View>
+                                <View style={styles.action}>
+                                <TextInput style={styles.textInput}
+                                placeholder="place"
+                                placeholderTextColor={COLORS.lightBlue}
+                                defaultValue={infoEvent.place}
+                                />
+                                </View>
+                                
+                                <View style={styles.action}>
+                                <TextInput style={styles.textInput}
+                                placeholder="description"
+                                placeholderTextColor={COLORS.lightBlue}
+                                defaultValue={infoEvent.description}
+                                />
+                                </View>
+                                  
+                                  
                                   <View style={{flexDirection: 'row'}}>
                                   <CheckBox
                                   disabled={false}
@@ -1004,11 +445,115 @@ export default function EventScreen({route, navigation}) {
                                   />
                                   <Text style={styles.label}>Paid admission</Text></View>
                               </View> 
+                              
+                              <View style= {{marginHorizontal:25}}>
+                                <Text style={[styles.title_address, styles.titleTextInput]}>
+                                    Address
+                                </Text>
+                            </View>
+                            <View style={{flexDirection: "row",}}>
+                            <View style= {styles.content_info}>
+                                <Text style={[styles.text_footer, styles.titleTextInput, ]}>
+                                    Street n°
+                                </Text> 
+                                <View style={[styles.action,{width: (windowWidth/4)}]}>
+                                    <Feather name="home" color={COLORS.white} size={20} />
+                                    <TextInput style={styles.textInput}
+                                    defaultValue={infoEvent.street_number.toString()}
+                                    placeholder="n°"
+                                    placeholderTextColor={COLORS.lightBlue}
+                                    //onChangeText={onChangeEmail}
+                                    />                                 
+                                </View>
+                            </View>
+
+                            <View style= {styles.content_info}>
+                                <Text style={[styles.text_footer, styles.titleTextInput,{marginHorizontal:-50}]}>
+                                    Street
+                                </Text>
+
+                                <View style={[styles.action,{width: (windowWidth/2), marginHorizontal:-50}]}>
+                                    <TextInput style={styles.textInput}
+                                    defaultValue={infoEvent.street}
+                                    placeholder="Enter your street"
+                                    placeholderTextColor={COLORS.lightBlue}
+                                    />
+                                  
+                                    
+                                </View>
+                            </View>
+                            </View>                          
+
+                            <View style={{flexDirection: "row",}}>
+                            <View style= {styles.content_info}>
+                                <Text style={[styles.text_footer, styles.titleTextInput]}>
+                                    City
+                                </Text>
+
+                                <View style={[styles.action,{width: (windowWidth/3)}]}>
+                                    <Feather name="home" color={COLORS.white} size={20} />
+                                    <TextInput style={styles.textInput}
+                                    defaultValue={infoEvent.city}
+                                    placeholder="city"
+                                    placeholderTextColor={COLORS.lightBlue}
+                                    //onChangeText={onChangeEmail}
+                                    />
+                                </View>
+                            </View>
+                            <View style= {styles.content_info}>
+                                <Text style={[styles.text_footer, styles.titleTextInput, {marginHorizontal:-40}]}>
+                                    Region
+                                </Text>
+
+                                <View style={[styles.action,{width: (windowWidth/2.5), marginHorizontal:-40}]}>
+                                    <TextInput style={styles.textInput}
+                                    defaultValue={infoEvent.region}
+                                    placeholder="region"
+                                    placeholderTextColor={COLORS.lightBlue}
+                                    //onChangeText={onChangeEmail}
+                                    />
+                                </View>
+                            </View>
+                            </View>
+                            <View>
+                            <View style= {styles.content_info}>
+                                <Text style={[styles.text_footer, styles.titleTextInput]}>
+                                    Zip Code
+                                </Text>
+
+                                <View style={[styles.action,{width: (windowWidth/4)}]}>
+                                    <TextInput style={styles.textInput}
+                                    defaultValue={infoEvent.zip_code}
+                                    placeholder="code"
+                                    placeholderTextColor={COLORS.lightBlue}
+                                    />
+                                </View>
+                            </View>  
+                            </View>
+                            <Text style={[styles.text_footer,
+                              {color: COLORS.lightBlue,marginTop: 35,},]}
+                            >
+                              Number of participants
+                            </Text>
+                            <View style={styles.action}>
+                              <TextInput
+                                style={styles.textInput}
+                                defaultValue={infoEvent.maxcapacity.toString()}
+                                placeholder="number"
+                                keyboardType = 'numeric'
+                                placeholderTextColor={COLORS.lightBlue}
+                                //onChangeText={onChangeParticipants}
+                              />
+                            </View>      
+                              
                               <TouchableOpacity activeOpacity={0.7} 
                                     style={[styles.button, 
                                             {backgroundColor: COLORS.green, 
-                                            marginLeft:10,alignSelf:"center"}]} 
-                                    onPress={()=>{deleteFetch(); navigation.navigate("EventScreen", {eventId:eventId})}}>
+                                            marginLeft:10,alignSelf:"center", marginTop:20                                          }]} 
+                                    onPress={()=>{
+                                      //validateModif();
+                                      console.log(infoEvent);
+                                      navigation.navigate("EventScreen", {eventId:eventId})}}>
                               <Text style={[styles.text_button, {color: COLORS.white}]}>Validate</Text>
                               </TouchableOpacity>
                       </View>
@@ -1024,6 +569,9 @@ export default function EventScreen({route, navigation}) {
       }
 
 }
+
+const windowHeight = Dimensions.get("window").height;
+const windowWidth = Dimensions.get("window").width;
 
 const styles = StyleSheet.create({
   container: {
@@ -1065,6 +613,20 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10
   },
+  text_footer: {
+    marginTop: Platform.OS === "ios" ? 5 : 6,
+    marginHorizontal : 10,
+    color: "#05375a",
+    fontSize: 18,
+  },
+    checkbox: {
+    alignSelf: "center",
+    height: 22,
+    width: 22,
+  },
+  titleTextInput : {
+    color: COLORS.lightBlue,
+  },
   star:{
     width: 30,
     height: 30,
@@ -1079,7 +641,9 @@ const styles = StyleSheet.create({
   title_info_event: {
     color: COLORS.lightBlue,
     fontFamily: "Montserrat_600SemiBold",
-    fontSize: 23
+    fontSize: 15,
+    padding:1,
+    
   },
   text_info_event:{
     color: COLORS.lightBlue,
@@ -1090,6 +654,10 @@ const styles = StyleSheet.create({
   infoView: {
     flexDirection: "column",
     alignItems: "center",
+  },
+  content_info:{
+    marginHorizontal:30,
+    marginTop:20
   },
   locationView: {
     flexDirection: "row",
@@ -1117,8 +685,15 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
   },
   contentContainer:{
-    flexDirection: "column",
-    height: "100%",
+    flex: 1,
+    //flexDirection: "column",
+    //height: "100%",
+  },
+  title_address: {
+    marginTop: Platform.OS === "ios" ? 5 : 6,
+    marginHorizontal : 10,
+    color: "#05375a",
+    fontSize: 20,
   },
   title_body: {
     color: COLORS.lightBlue,
@@ -1157,6 +732,24 @@ const styles = StyleSheet.create({
   image : {
     paddingTop : 20,
     paddingBottom : 20
+  },
+  action: {
+    flexDirection: "row",
+    marginTop: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.lightBlue,
+    paddingBottom: 5,
+    width: (windowWidth - 60),
+    alignItems: 'center',
+  },
+  textInput: {
+    flex: 1,
+    marginTop: Platform.OS === "ios" ? 5: -12,
+    paddingLeft: 10,
+    color: COLORS.lightBlue,
+    marginHorizontal: 1,
+    backgroundColor:COLORS.greyBlue,
+    height: 40,
   },
   profilImage: {
     width: 40,
@@ -1316,5 +909,6 @@ const styles = StyleSheet.create({
   label: {
     margin: 8,
     color: COLORS.lightBlue,
+    fontSize: 23,
   },
 });
