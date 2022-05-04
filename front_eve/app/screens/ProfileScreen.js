@@ -56,6 +56,7 @@ export default function ProfileScreen({route,navigation}) {
   const [userToken, setUserToken] = React.useState("");
   const [isLoading, setLoading] = React.useState(true);
   const [userInfo, setuserInfo] = React.useState(null);
+  const [profileInfo, setProfileInfo] = React.useState(null);
   const [participantRating, setParticipantRating]= React.useState(0);
   const [creatorRating, setCreatorRating]= React.useState(0);
   const [review, setReviewUser] = React.useState(null);
@@ -70,6 +71,7 @@ export default function ProfileScreen({route,navigation}) {
  const socketRef = useRef();
  const isFocused = useIsFocused();
 
+ console.log("///////////////////FRESH START///////////////")
   const fetchReport = async ()=>{
     setCauseVisible(false)
     fetch("https://eve-back.herokuapp.com/createReport",{
@@ -163,6 +165,12 @@ export default function ProfileScreen({route,navigation}) {
 
       if(retreive){      
         Promise.all([
+          fetch('http://192.168.1.66:3000/getUserAdmin',{
+            method: "POST",
+            headers: {'content-type': 'application/json'},
+            body: JSON.stringify({
+              "id":userId,
+            })}),
           fetch('https://eve-back.herokuapp.com/getMyAccountInfo',{
             method: "POST",
             headers: {'content-type': 'application/json'},
@@ -186,7 +194,11 @@ export default function ProfileScreen({route,navigation}) {
           // You would do something with both sets of data here
           data.map((item,index)=>{
             if(index===0){
-              setuserInfo(item.global_infos[0])
+              console.log(item)
+              setuserInfo(item[0])
+            }
+            else if(index===1){
+              setProfileInfo(item.global_infos[0])
               if(item.global_infos[0].reported!=-1){
                 setReported(true)
               }else{
@@ -195,9 +207,9 @@ export default function ProfileScreen({route,navigation}) {
               console.log(item)
               setCreatorRating(item.creator_rating[0].score)
               setParticipantRating(item.participant_rating[0].score)
-            }else if(index===1){
-              setReviewUser(item)
             }else if(index===2){
+              setReviewUser(item)
+            }else if(index===3){
               setReportTypes(item)
             }
           });
@@ -213,6 +225,8 @@ export default function ProfileScreen({route,navigation}) {
   if(!fontsLoaded){
     return(<AppLoading/>)
   }else{
+
+    //console.log(userInfo.admin)
     return (
 
       <SafeAreaView style={StyleSheet.container}>
@@ -241,29 +255,29 @@ export default function ProfileScreen({route,navigation}) {
               <View style={{paddingTop: 40,justifyContent: "center",alignItems: "center"}}>
               
               <Image
-                source={{ uri: (userInfo.photo)? userInfo.photo : 'https://cdn-icons-png.flaticon.com/128/1946/1946429.png'}}
+                source={{ uri: (profileInfo.photo)? profileInfo.photo : 'https://cdn-icons-png.flaticon.com/128/1946/1946429.png'}}
                 style={styles.profilImage}/>
               </View>
 
               <View style= {styles.content_info_name}>
                   <Text style={[styles.text_footer]}>
-                  {userInfo.name} {userInfo.surname}
+                  {profileInfo.name} {profileInfo.surname}
                   </Text>
                   <Text style={[styles.subtext_footer]}>
-                  {userInfo.mail}
+                  {profileInfo.mail}
                   </Text>
                   <Text style={[styles.subtext_footer]}>
-                  {userInfo.phone}
+                  {profileInfo.phone}
                   </Text>
               </View>            
 
               <View style= {styles.content_info}>  
                   <View style={styles.events}>
                     <View style={[{flexDirection: "row"}]}>
-                      <Text style={styles.text_body}><Text style={{fontWeight: "bold"}}>Birthdate :  </Text> {formatageDate(userInfo.date_birth)}</Text>
+                      <Text style={styles.text_body}><Text style={{fontWeight: "bold"}}>Birthdate :  </Text> {formatageDate(profileInfo.date_birth)}</Text>
                     </View>
                     <View style={[{flexDirection: "row"}]}>
-                      <Text style={styles.text_body}><Text style={{fontWeight: "bold"}}>School :  </Text> {userInfo.school_name}</Text>
+                      <Text style={styles.text_body}><Text style={{fontWeight: "bold"}}>School :  </Text> {profileInfo.school_name}</Text>
                     </View>
                     <View style={[{flexDirection: "row"}]}>
                     <Text style={styles.text_body}><Text style={{fontWeight: "bold"}}>Participation : </Text></Text>
@@ -286,8 +300,14 @@ export default function ProfileScreen({route,navigation}) {
 
                   <View style= {[styles.content_report,{ display: (!isRported)? "flex" : "none"}]}>
                         <TouchableOpacity style={styles.button_report} onPress={()=>{setCauseVisible(true)}}>
-                         <Text style={styles.text_report}>Report {userInfo.name} {userInfo.surname}</Text>
+                         <Text style={styles.text_report}>Report {profileInfo.name} {profileInfo.surname}</Text>
                         </TouchableOpacity>
+                        
+                  </View>
+                  <View style= {[styles.content_report,{display:(userInfo.admin===1)? "flex" : "none"}]}>
+                      <TouchableOpacity style={[styles.button_report]}>
+                            <Text style={styles.text_report}>Block {profileInfo.name} {profileInfo.surname}</Text>
+                      </TouchableOpacity>
                   </View>
                   <View style={[styles.reportCause,{ display: (causeVisible)? "flex" : "none"}]}>
                     <Text style={styles.text_cause}>Select a cause for the report</Text>
