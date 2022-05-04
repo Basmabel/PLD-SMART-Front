@@ -44,16 +44,17 @@ const tmp = [
 ];
 
 const getCurrentDate = () => {
-  var date = new Date().getDate();
-  var month = new Date().getMonth() + 1;
-  var year = new Date().getFullYear();
+  var date_ob = new Date();
+  var day = ("0" + date_ob.getDate()).slice(-2);
+  var month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+  var year = date_ob.getFullYear();
 
   //Alert.alert(date + '-' + month + '-' + year);
   // You can turn it in to your desired format
-  return date + "-" + month + "-" + year; //format: dd-mm-yyyy;
+  return day + "/" + month + "/" + year; //format: dd-mm-yyyy;
 };
 
-const CreateEventScreen = ({ navigation }) => {
+const CreateEventScreen = ({ navigation}) => {
   //TODO : put a link with the admin view event page
   //const goToEvent = () => navigation.navigate("Create");
   const [title, onChangeTitle] = React.useState("");
@@ -174,7 +175,7 @@ const CreateEventScreen = ({ navigation }) => {
   }
 
   const fetchImage = async () =>{
-
+      console.log(image, imageName,img)
      fetch("https://eve-back.herokuapp.com/upload", {
       method: 'POST',
       headers: {
@@ -191,7 +192,7 @@ const CreateEventScreen = ({ navigation }) => {
 
   const fetchCreateEventVal = async (res) => {
     var status = 0;
-    console.log(selectedActivity)
+    console.log(date)
     const splitted = date.split("/");
     const newDate = `${splitted[2]}-${splitted[1]}-${splitted[0]} 00:00:00`;
     console.log(newDate)
@@ -228,7 +229,7 @@ const CreateEventScreen = ({ navigation }) => {
             alert(json);
           } else {
             alert("Event has been created")
-            navigation.navigate("Home");
+            navigation.navigate("My events", {state: "create"});
           }
         })
         .catch((error) => console.error(error));
@@ -308,6 +309,7 @@ const CreateEventScreen = ({ navigation }) => {
     .then((res) => {
       //console.log(res)
       fetchCreateEventVal(res)
+      console.log("lalalal")
       fetchImage()
       
     }).catch(e => console.log(e))

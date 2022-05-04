@@ -29,8 +29,11 @@ if(light==="light"){
   colorText=COLORS.greyBlue
 }
 
-export default function MyEventsScreen({navigation}) {
+export default function MyEventsScreen({navigation,route}) {
   const tabBarHeight = useBottomTabBarHeight() * 2;
+  console.log(route)
+  var state = route.params.state
+  
 
    const [userInfo, setUserInfo] = React.useState(null);
    const [isLoading, setLoading] = React.useState(true);
@@ -119,6 +122,9 @@ export default function MyEventsScreen({navigation}) {
     //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
     retreiveData();
     
+    if(state==="create") {
+      setLoading(true)
+    }
 
     if(retreive){      
       Promise.all([
@@ -196,7 +202,7 @@ export default function MyEventsScreen({navigation}) {
       
       
 
-  }, [retreive]);
+  }, [retreive,state]);
 
     
     if(!fontsLoaded){
