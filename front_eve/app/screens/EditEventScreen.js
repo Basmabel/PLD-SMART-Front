@@ -552,7 +552,7 @@ export default function EventScreen({route, navigation}) {
                                     onPress={()=>{
                                       //validateModif();
                                       console.log(infoEvent);
-                                      navigation.navigate("Event", {eventId:eventId})}}>
+                                      navigation.navigate("Event", {event_id:eventId})}}>
                               <Text style={[styles.text_button, {color: COLORS.white}]}>Validate</Text>
                               </TouchableOpacity>
                       </View>
