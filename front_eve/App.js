@@ -77,7 +77,7 @@ export default function App() {
           name="ChangePasswordScreen"
           component={ChangePasswordScreen}
         />
-        <Stack.Screen name="NavigatorBar" component={NavigatorBar} />
+        <Stack.Screen name="NavigatorBar" component={NavigatorBar} options={{ headerShown: false }}/>
         <Stack.Screen name="CategorieCard" component={CategorieCard} />
         <Stack.Screen
           name="EventPerCategoryScreen"

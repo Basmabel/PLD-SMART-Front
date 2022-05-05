@@ -884,7 +884,7 @@ export default function EventScreen({route, navigation}) {
       ) :
           ( <View>
               <View style={styles.header}>
-                    <Text style={styles.title_header}>Home</Text>
+                    <Text style={styles.title_header}>Event</Text>
                     <View style={styles.infoView}>
                         <Image style={styles.profilImage} source={{uri: userInfo.photo}}/>
                     </View>

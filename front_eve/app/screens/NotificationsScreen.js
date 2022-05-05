@@ -290,7 +290,7 @@ export default function HomePageScreen({navigation}) {
           ) :
             ( <View>
             <View style={styles.header}>
-                  <Text style={styles.title_header}>Home</Text>
+                  <Text style={styles.title_header}>Notifications</Text>
                   <View style={styles.infoView}>
                   <Image style={styles.profilImage} source={{uri: userInfo[0].photo ? userInfo[0].photo : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}}/>
                   </View>
