@@ -103,7 +103,7 @@ export default function SignUpScreen({ navigation }) {
           } else {
             navigation.navigate("ValidationCode", {
               idUser: userId,
-              email: data.email,
+              email: email,
               isReset: false,
             });
           }
@@ -120,7 +120,7 @@ export default function SignUpScreen({ navigation }) {
         alert("You didn't fill every mandatory field");
       } else if (!validPhone()) {
         alert("Phone number has to contain 10 digits");
-      } 
+      }
     }
   };
 
@@ -186,8 +186,6 @@ export default function SignUpScreen({ navigation }) {
     }
     return true;
   };
-
-  
 
   //(in)compatible passwords
   const confirmPasswordChange = (val, pswd) => {
@@ -464,7 +462,7 @@ export default function SignUpScreen({ navigation }) {
                 },
               }}
               onDateChange={(date) => {
-                onChangeBirthDate(date)
+                onChangeBirthDate(date);
               }}
             />
           </View>
@@ -585,7 +583,8 @@ const styles = StyleSheet.create({
     marginTop: Platform.OS === "ios" ? 0 : -12,
     paddingLeft: 10,
     color: COLORS.lightBlue,
-  },drop: {
+  },
+  drop: {
     flexDirection: "row",
     marginTop: 10,
     borderBottomWidth: 1,
