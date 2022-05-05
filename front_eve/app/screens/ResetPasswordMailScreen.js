@@ -16,6 +16,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Feather from "react-native-vector-icons/Feather";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "react-native-paper";
+import API_URL from "../config";
 
 const ResetPasswordMailScreen = ({ navigation }) => {
   const [email, onChangeEmail] = React.useState("");
@@ -28,7 +29,7 @@ const ResetPasswordMailScreen = ({ navigation }) => {
   var status = 0;
   const loginData = async () => {
     if (data.isValidUser && data.email != "") {
-      fetch("http://eve-back.herokuapp.com/resetPassword", {
+      fetch(API_URL + "/resetPassword", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: data.email }),

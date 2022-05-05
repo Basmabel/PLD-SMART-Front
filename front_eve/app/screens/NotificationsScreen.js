@@ -1,50 +1,62 @@
-import React, {useEffect,useRef} from "react";
-import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView, Pressable, Alert} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {COLORS} from '../config/colors.js';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import {useFonts} from "@expo-google-fonts/dev";
+import React, { useEffect, useRef } from "react";
+import {
+  StyleSheet,
+  Dimensions,
+  Text,
+  View,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  Pressable,
+  Alert,
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { COLORS } from "../config/colors.js";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useFonts } from "@expo-google-fonts/dev";
 import AppLoading from "expo-app-loading";
-import { 
+import {
   Montserrat_400Regular,
   Montserrat_500Medium,
-  Montserrat_600SemiBold
-} from '@expo-google-fonts/dev';
-import Spinner from 'react-native-loading-spinner-overlay';
-import formatageDate from '../utils/date_formatage';
-import {io} from "socket.io-client"
-import { Ionicons } from '@expo/vector-icons';  
+  Montserrat_600SemiBold,
+} from "@expo-google-fonts/dev";
+import Spinner from "react-native-loading-spinner-overlay";
+import formatageDate from "../utils/date_formatage";
+import { io } from "socket.io-client";
+import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import API_URL from "../config.js";
 
+var light = "dark";
+var colorBack = COLORS.greyBlue;
+var colorText = COLORS.lightBlue;
 
-var light = "dark"
-var colorBack= COLORS.greyBlue
-var colorText=COLORS.lightBlue
-
-if(light==="light"){
-  colorBack=COLORS.white
-  colorText=COLORS.greyBlue
+if (light === "light") {
+  colorBack = COLORS.white;
+  colorText = COLORS.greyBlue;
 }
 
-export default function HomePageScreen({navigation}) {
+export default function HomePageScreen({ navigation }) {
+  const [userInfo, setUserInfo] = React.useState(null);
+  const [isLoading, setLoading] = React.useState(true);
+  const [categories, setCategories] = React.useState(null);
+  const [retreive, setRetreive] = React.useState(false);
+  const [userId, setUserId] = React.useState("");
+  const [userToken, setUserToken] = React.useState("");
+  const [image, setImage] = React.useState("");
+  const [notifContent, setNotifContent] = React.useState(null);
+  const [selectedNotif, setSelectedNotif] = React.useState({
+    id: "",
+    type: "",
+  });
+  const isFocused = useIsFocused();
 
-   const [userInfo, setUserInfo] = React.useState(null);
-   const [isLoading, setLoading] = React.useState(true);
-   const [categories,setCategories] = React.useState(null)
-   const [retreive, setRetreive] = React.useState(false);
-   const [userId, setUserId] = React.useState("")
-   const [userToken, setUserToken] = React.useState("")
-   const [image,setImage] = React.useState("")
-   const [notifContent, setNotifContent] =React.useState(null)
-   const [selectedNotif, setSelectedNotif] = React.useState({id:"",type:""})
-   const isFocused = useIsFocused();
-  
-   const socketRef = useRef();
+  const socketRef = useRef();
 
-   var [fontsLoaded] = useFonts({
+  var [fontsLoaded] = useFonts({
     Montserrat_400Regular,
     Montserrat_500Medium,
-    Montserrat_600SemiBold
+    Montserrat_600SemiBold,
   });
 
   const startLoading = () => {
@@ -54,267 +66,317 @@ export default function HomePageScreen({navigation}) {
     }, 1000);
   };
 
-   const returnImg = (type, photoUser, photoEvent) =>{
-    if(type===1 || type===5 || type===8 || type===9 || type===11){
-        if(photoUser==="0"){
-            return "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"
-        }else{
-            return photoUser
-        }
-    }else if(type===6 || type===7){
-        return "https://thumbs.dreamstime.com/b/generic-warning-20896820.jpg"
-    }else{
-        if(photoEvent==="0"){
-            return "data:image/png;base64,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"
-        }else{
-            return photoEvent
-        }
+  const returnImg = (type, photoUser, photoEvent) => {
+    if (type === 1 || type === 5 || type === 8 || type === 9 || type === 11) {
+      if (photoUser === "0") {
+        return "https://cdn-icons-png.flaticon.com/128/1946/1946429.png";
+      } else {
+        return photoUser;
+      }
+    } else if (type === 6 || type === 7) {
+      return "https://thumbs.dreamstime.com/b/generic-warning-20896820.jpg";
+    } else {
+      if (photoEvent === "0") {
+        return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAeFBMVEX///8AAABhYWGlpaXc3Nyrq6vu7u7j4+NmZmbo6Og/Pz9sbGyNjY3x8fGAgID5+fnU1NTExMQZGRlbW1tMTExycnK2trZ4eHhERERWVlY0NDS6urrKysqPj4+qqqoYGBiEhISZmZklJSUuLi5JSUkgICA5OTkRERFHattpAAAFiklEQVR4nO2d22LaMAxAk6WBjmsC9AK0A7Z2+/8/XNeuGxApsSIJy63Os9B0OpLYsomzjMfVZLXId0+HK2YeJPNi9SifmUI1yt8ZPahlrkQzkzjkx+zVMh8EM5O4y0+5Ucs8E8tMosjPkfpbNzMXQplJfG2UkedfjWemcQ3U8UUt81gkM4kpUEaeD9QyTwUy07gF67g1nZnGDKxD4qanl5nGF7AOiQsRznwtkFmiDj1DmZuYjTrc8FK4ocXMVupww0vhhhYzW6nDDZWYD+vbsvhPOQLrGB3H9CMkc3lbD+eCdoPy7jv4r8bl+10pMR3NpgX8N7XBfcGdGVdQR8EWY07LeLiOXX4Qy95tKniybZF9L7+H2GVT2PXo/O9jF03kkSqYxhV4DK2RM/8Ru94ejAiCU4sP+G42wcOc+XPsWnuyCTW0PIhpZx0meL54lxKTEEF42SAVAtbaB7FrZNJ9t1nFLpFJ50JjHbtCNl3jt1QfFP+5bxdM+zbzRvvNJs3BzCmrNsGkZkwobZN++z2LEPa44Lztc5PqpLMF/zEk1qIDMg+qSVupeO4t/qHyPDZ6R7jEi8UfGDfYRzbNnl10w2yATmLx+f4C+QT0iIlviE+C0EciOiTl1aFniN43sMEpNmKrrRqiN44hkrq56fGVJ24deobZT7jkLZIa6QDD4TYMkRvqNyQ18ryHv9Q2DJFbBzbVX4LRP/h16BlmsOEdyXBp2vAJDMaGVqTURgxpZZCix2CwxGZlUmZFwwMYLLFbn5RZ0bACgyV+3kLKrGgIDmKfBQRpmTUNoYetzHZzKHNj9tarZuLtsTli+sm3e6U5Z0BXzlQNm+MJke0ttMyqhtnwLBIb0dMJz6xrmM2PlwCWktuwTjKvWjIrG2bZw/t6/73sDyyPMq9bM6sbZtm0LotiK3UFnmcu645dXRcwjIwbcqJt4IacaBu4ISfaBm7IibaBG3KibeCGnGgbuCEn2gZuyIm2gRtyom3ghpxoG0gYXv61KRTgvQc0wxRxw/Rxw/Rxw/Rxw/Rxw/Rxw/Rxw/Rxw/Rxw/Rxw/Rxw1MEXqOnB/KCPu8Iu6El3JATbQM35ETbwA050TZwQ060DdyQE20DN+RE28ANOdE2cENOtA3ckBNtAzfkRL9RTVreq3xdSv6+W6BmuuHVPa73hvYxsMqGj11+LzzrniCqaxh4OoSqoqoh8nq3JkpyPWqmRUNn2sJgb96SQNMQfp0TiOL3VNEQPtMWJuhd8P1QNGx5m2uDX2qCmoakY3Y0XgyibkhaMOYcyeSGbuiGbuiGbuiGbuiGbuiGbuiGbuiGbuiGbuiGbuiGkQ0/fs+bctrlTk3Q155Y0YTTINNcP/wEa8DB6/iKq4faezECjyhPdy9G2H6aRcr7aT7BnqgXqj1yBOEfPsC+tvi4ISfaBm7IibaBG3KibeCGnGgbuCEn2gYShsh5wEaAzzCmGUodTKkDPO4n7ty+aMVU4JKxY4mRFqjECbhawCfr5nskHGm8YOEWQP5TsNPjsc3pHYcsRgRr2tZI/Pn5pu9IHLatA7Z4gvaGkHihg4zl+YbUi/cv18gnjCpCZz+/gg9S8B6v4spDb/DVL+xGg1+ILywK9bYZiXnxCy+2pUW7wT+V5+vZIfYr9v5ymK3aCkUP8c4IPyk0Df4lpS0K2qX1egpcbDHNvk2QsChol44h2D52fWwe2wWzeewC2XQI0vZYWAQbdB8B9wVSIWSWkPb3NEAQnTcnQeD2MsrPtG0RcBG+gc27rFOGCqY6Pm0bj36IL+qWIpji7Ybc9Jw+xS6ZxKrPBD2li7Ho4ffCgLDBMirj/nuQK7T7Zoglbxf50Pp0ajJk+b2yHbe0taKyuwkexHQxqA+z9WYX2+gfu81ydqjDrr7fDO56cQMbj/EAAAAASUVORK5CYII=";
+      } else {
+        return photoEvent;
+      }
     }
-   }
+  };
 
-   const returnText = (type, userName, eventName, content,review)=>{
-        if(type===1 || type===8 || type===9){
-            return userName+" "+content+ " "+eventName
-        }else if(type===2 || type===3 || type===4){
-            return content +" "+eventName
-        }else if(type===5){
-            return content + " " + userName
-        }else if(type===6 || type===7){
-            return content
-        }else if(type===10 || type===12){
-            return eventName + " "+content
-        }else if(type===11){
-            return userName + " " + content
-        }
-   }
+  const returnText = (type, userName, eventName, content, review) => {
+    if (type === 1 || type === 8 || type === 9) {
+      return userName + " " + content + " " + eventName;
+    } else if (type === 2 || type === 3 || type === 4) {
+      return content + " " + eventName;
+    } else if (type === 5) {
+      return content + " " + userName;
+    } else if (type === 6 || type === 7) {
+      return content;
+    } else if (type === 10 || type === 12) {
+      return eventName + " " + content;
+    } else if (type === 11) {
+      return userName + " " + content;
+    }
+  };
 
-   const ReturnReview = ({review})=>{
-       if(review!="0"){
-           return (<View style={{flexDirection:"row", width:"90%"}}>
-                        <Text style={[styles.text_notif , {flex:1}]} numberOfLines={1} ellipsizeMode='tail'> {review}</Text>
-                    </View>)
-       }else{
-           return(<View></View>)
-       }
-   }
+  const ReturnReview = ({ review }) => {
+    if (review != "0") {
+      return (
+        <View style={{ flexDirection: "row", width: "90%" }}>
+          <Text
+            style={[styles.text_notif, { flex: 1 }]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {" "}
+            {review}
+          </Text>
+        </View>
+      );
+    } else {
+      return <View></View>;
+    }
+  };
 
-   const redirection = (id,type,user_id) =>{
-     if(type===1){
-        var out = 0
-       // var id = selectedNotif.id
-        navigation.navigate("Demand",{notif_id:id,out:out});
-     }else if(type===8){
-       var out=1
+  const redirection = (id, type, user_id) => {
+    if (type === 1) {
+      var out = 0;
       // var id = selectedNotif.id
-       navigation.navigate("Demand",{notif_id:id,out:out})
-     }else if(type===5){
-       navigation.navigate("Profile")
-     }else if(type===9 || type===10 || type===11 || type===12){
-       navigation.navigate("Profile user",{profile_id:user_id})
-     }
-   }
+      navigation.navigate("Demand", { notif_id: id, out: out });
+    } else if (type === 8) {
+      var out = 1;
+      // var id = selectedNotif.id
+      navigation.navigate("Demand", { notif_id: id, out: out });
+    } else if (type === 5) {
+      navigation.navigate("Profile");
+    } else if (type === 9 || type === 10 || type === 11 || type === 12) {
+      navigation.navigate("Profile user", { profile_id: user_id });
+    }
+  };
 
-   const askForsure = (id) =>{
+  const askForsure = (id) => {
     Alert.alert(
       "Do you really want to mark as viewed notification?",
       ``,
       [
         {
           text: "Yes",
-          onPress: () => {deleteNotifFetch(id)}
+          onPress: () => {
+            deleteNotifFetch(id);
+          },
         },
         {
           text: "Cancel",
           onPress: () => {},
-          style: "cancel"
-        }
+          style: "cancel",
+        },
       ],
       { cancelable: false }
     );
-   }
+  };
 
-   const deleteNotifFetch = async(id)=>{
-    fetch("http://169.254.3.246:3000/setNotifDone",{
+  const deleteNotifFetch = async (id) => {
+    fetch(API_URL + "/setNotifDone", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ id: id }),
-    }).catch((error)=>console.error(error));
-   }
-   
-   const fetchNotif = async ()=>{
-    console.log("fetch")
-    fetch('http://169.254.3.246:3000/getNotifications',{
+    }).catch((error) => console.error(error));
+  };
+
+  const fetchNotif = async () => {
+    console.log("fetch");
+    fetch(API_URL + "/getNotifications", {
       method: "POST",
-      headers: {'content-type': 'application/json'},
+      headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        "id":userId
-      })}).then((response)=>{
-          return response.json();
+        id: userId,
+      }),
     })
-    .then(async (json)=>{
-      setNotifContent(json)
-    })
-    .catch((error)=>console.error(error))
-   }
-  
-   useFocusEffect(
+      .then((response) => {
+        return response.json();
+      })
+      .then(async (json) => {
+        setNotifContent(json);
+      })
+      .catch((error) => console.error(error));
+  };
+
+  useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
       socketRef.current = io("http://169.254.3.246:3000");
-      socketRef.current.emit('userId',(userId))
+      socketRef.current.emit("userId", userId);
       return () => {
-          socketRef.current.disconnect();
+        socketRef.current.disconnect();
       };
     }, [])
   );
-  
-  useEffect(() => {
 
-    const retreiveData = async ()=>{
+  useEffect(() => {
+    const retreiveData = async () => {
       try {
-        const valueString = await AsyncStorage.getItem('key');
+        const valueString = await AsyncStorage.getItem("key");
         const value = JSON.parse(valueString);
 
-        const tokenString = await AsyncStorage.getItem('token');
+        const tokenString = await AsyncStorage.getItem("token");
         const token = JSON.parse(tokenString);
-        
-        setUserId(value)
-        setUserToken(token)
-        setRetreive(true)
+
+        setUserId(value);
+        setUserToken(token);
+        setRetreive(true);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
+    };
     //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
     retreiveData();
-    
-    
-     socketRef.current.on('message', (message)=>{
-       console.log("You received a notification")
-     })
-     
-    if(isFocused) {
+
+    socketRef.current.on("message", (message) => {
+      console.log("You received a notification");
+    });
+
+    if (isFocused) {
       //setLoading(true)
     }
 
-    if(retreive){    
+    if (retreive) {
       Promise.all([
-        fetch('http://169.254.3.246:3000/getUserInfo',{
+        fetch(API_URL + "/getUserInfo", {
           method: "POST",
-          headers: {'content-type': 'application/json',Authorization: 'bearer '+ userToken},
+          headers: {
+            "content-type": "application/json",
+            Authorization: "bearer " + userToken,
+          },
           body: JSON.stringify({
-            "id":userId
-          })}),
-          fetch('http://169.254.3.246:3000/getNotifications',{
+            id: userId,
+          }),
+        }),
+        fetch(API_URL + "/getNotifications", {
           method: "POST",
-          headers: {'content-type': 'application/json'},
+          headers: { "content-type": "application/json" },
           body: JSON.stringify({
-            "id":userId
-          })}),
-      ]).then(function (responses) {
-        // Get a JSON object from each of the responses
-        return Promise.all(responses.map(function (response) {
-          return response.json();
-        }));
-      }).then(function (data) {
-        // Log the data to the console
-        // You would do something with both sets of data here
-        data.map((item,index)=>{
-          if(index==0){
-            setUserInfo(item)
-            console.log(item)
-          }else if(index==1){
-            setNotifContent(item)
-          }
-            
-        });
-      }).catch(function (error) {
-        // if there's an error, log it
-        console.log(error);
-      }).finally(()=> setLoading(false));
+            id: userId,
+          }),
+        }),
+      ])
+        .then(function (responses) {
+          // Get a JSON object from each of the responses
+          return Promise.all(
+            responses.map(function (response) {
+              return response.json();
+            })
+          );
+        })
+        .then(function (data) {
+          // Log the data to the console
+          // You would do something with both sets of data here
+          data.map((item, index) => {
+            if (index == 0) {
+              setUserInfo(item);
+              console.log(item);
+            } else if (index == 1) {
+              setNotifContent(item);
+            }
+          });
+        })
+        .catch(function (error) {
+          // if there's an error, log it
+          console.log(error);
+        })
+        .finally(() => setLoading(false));
     }
-      
+  }, [retreive, isFocused]);
 
-  }, [retreive,isFocused]);
+  const DisplayNotif = () => {
+    const listNotif = notifContent.map((item) => (
+      <View style={styles.notification}>
+        <Image
+          source={{
+            uri: returnImg(item.type_id, item.userPhoto, item.event_photo),
+          }}
+          style={styles.profil}
+        />
+        <Pressable
+          style={styles.contentNotif}
+          onPress={() => {
+            setSelectedNotif({
+              ...selectedNotif,
+              id: item.id,
+              type: item.type_id,
+            });
+            redirection(item.id, item.type_id, item.user_targeted_id);
+          }}
+        >
+          <View style={{ flexDirection: "row", width: "90%" }}>
+            <Text
+              style={[styles.text_notif]}
+              numberOfLines={2}
+              ellipsizeMode="middle"
+            >
+              {returnText(
+                item.type_id,
+                item.surname,
+                item.event_name,
+                item.type
+              )}
+            </Text>
+          </View>
+          <ReturnReview review={item.review} />
 
-  const DisplayNotif=()=>{
-    const listNotif = notifContent.map((item)=>
-        
-        <View style={styles.notification}>
-                <Image source={{uri: returnImg(item.type_id,item.userPhoto,item.event_photo)}} style={styles.profil}/>
-                <Pressable style={styles.contentNotif} onPress={()=>{setSelectedNotif(
-                  {...selectedNotif,
-                    id: item.id,
-                    type: item.type_id}); redirection(item.id,item.type_id,item.user_targeted_id)}}>
-                    <View style={{flexDirection:"row", width:"90%"}}>
-                        <Text style={[styles.text_notif]} numberOfLines={2} ellipsizeMode="middle">{returnText(item.type_id, item.surname, item.event_name, item.type)}</Text>
-                    </View>
-                    <ReturnReview review={item.review}/>                
-                    
-                    <Text style={styles.date}>{formatageDate(item.date)}</Text>
-                </Pressable>
-                <Pressable  style={{marginLeft:-20}} onPress={()=>{askForsure(item.id)} }>
-                 <Ionicons name="checkmark-circle" size={24} color="black"/>
-                </Pressable>
-
-        </View>
-    );
-    if(!fontsLoaded){
-      return(<AppLoading/>)
-    }else{
-      return(
-        <View>{listNotif}</View>
-      );
+          <Text style={styles.date}>{formatageDate(item.date)}</Text>
+        </Pressable>
+        <Pressable
+          style={{ marginLeft: -20 }}
+          onPress={() => {
+            askForsure(item.id);
+          }}
+        >
+          <Ionicons name="checkmark-circle" size={24} color="black" />
+        </Pressable>
+      </View>
+    ));
+    if (!fontsLoaded) {
+      return <AppLoading />;
+    } else {
+      return <View>{listNotif}</View>;
     }
-    
-  }
-    
-    if(!fontsLoaded){
-      return(<AppLoading/>)
-    }else{
-      return(
-        
-        <SafeAreaView style={StyleSheet.container}>
+  };
 
-          {isLoading ? (
-            <Spinner
-              //visibility of Overlay Loading Spinner
-              visible={isLoading}
-              //Text with the Spinner
-              textContent={'Loading...'}
-              //Text style of the Spinner Text
-              textStyle={styles.spinnerTextStyle}
-            />
-          ) :
-            ( <View>
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  } else {
+    return (
+      <SafeAreaView style={StyleSheet.container}>
+        {isLoading ? (
+          <Spinner
+            //visibility of Overlay Loading Spinner
+            visible={isLoading}
+            //Text with the Spinner
+            textContent={"Loading..."}
+            //Text style of the Spinner Text
+            textStyle={styles.spinnerTextStyle}
+          />
+        ) : (
+          <View>
             <View style={styles.header}>
-                  <Text style={styles.title_header}>Home</Text>
-                  <View style={styles.infoView}>
-                  <Image style={styles.profilImage} source={{uri: userInfo[0].photo ? userInfo[0].photo : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png"}}/>
-                  </View>
+              <Text style={styles.title_header}>Home</Text>
+              <View style={styles.infoView}>
+                <Image
+                  style={styles.profilImage}
+                  source={{
+                    uri: userInfo[0].photo
+                      ? userInfo[0].photo
+                      : "https://cdn-icons-png.flaticon.com/128/1946/1946429.png",
+                  }}
+                />
+              </View>
             </View>
             <View style={styles.body}>
-              <ScrollView style={[{marginBottom:200}]}>
-                  <View style={styles.locationView}>
-                        <Text style={styles.text_header}> Lyon </Text>
-                        <MaterialCommunityIcons name="map-marker" color={colorText} size={24}/>
-                  </View>
-                  <View style={styles.contentContainer}>
-                   <DisplayNotif style={{display: isFocused? "flex":"none"}}/>   
+              <ScrollView style={[{ marginBottom: 200 }]}>
+                <View style={styles.locationView}>
+                  <Text style={styles.text_header}> Lyon </Text>
+                  <MaterialCommunityIcons
+                    name="map-marker"
+                    color={colorText}
+                    size={24}
+                  />
+                </View>
+                <View style={styles.contentContainer}>
+                  <DisplayNotif
+                    style={{ display: isFocused ? "flex" : "none" }}
+                  />
                 </View>
               </ScrollView>
             </View>
-            
-            </View>)}           
-        </SafeAreaView>
-    );}
-
-    
+          </View>
+        )}
+      </SafeAreaView>
+    );
+  }
 }
 
-
 const windowHeight = Dimensions.get("window").height;
-
 
 const styles = StyleSheet.create({
   container: {
@@ -331,12 +393,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.9,
     shadowRadius: 7,
     borderRadius: 10,
-   // flex:1
+    // flex:1
   },
   title_header: {
     color: COLORS.greyBlue,
-    fontSize:25,
-    fontFamily: 'Montserrat_600SemiBold'
+    fontSize: 25,
+    fontFamily: "Montserrat_600SemiBold",
   },
   infoView: {
     flexDirection: "column",
@@ -348,15 +410,15 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   locationView: {
-    width:'100%',
+    width: "100%",
     flexDirection: "row",
     justifyContent: "flex-end",
-    paddingRight: 10
+    paddingRight: 10,
   },
   text_header: {
     fontSize: 20,
-    fontFamily: 'Montserrat_400Regular',
-    color: colorText
+    fontFamily: "Montserrat_400Regular",
+    color: colorText,
   },
   body: {
     backgroundColor: colorBack,
@@ -364,41 +426,38 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     paddingHorizontal: 20,
     paddingVertical: 20,
-    
   },
-  contentContainer:{
+  contentContainer: {
     flexDirection: "column",
-    paddingTop:5,
+    paddingTop: 5,
     height: "100%",
   },
-  notification:{
-    flexDirection: 'row',
+  notification: {
+    flexDirection: "row",
     backgroundColor: COLORS.white,
-    borderRadius:10,
+    borderRadius: 10,
     padding: 10,
     marginTop: 10,
-    height:75,
-    alignItems: 'center'
+    height: 75,
+    alignItems: "center",
   },
-  profil:{
-    width:40,
-    height:40,
-    borderRadius:20,
-    marginRight: 20
+  profil: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 20,
   },
-  contentNotif:{
-      flexDirection: "column"
+  contentNotif: {
+    flexDirection: "column",
   },
-  text_notif:{
-      fontFamily: "Montserrat_600SemiBold",
-      fontSize: 12,
-      width:'90%'
+  text_notif: {
+    fontFamily: "Montserrat_600SemiBold",
+    fontSize: 12,
+    width: "90%",
   },
-  date:{
-      fontFamily: "Montserrat_600SemiBold",
-      fontSize: 10,
-      color: COLORS.grey
-  }
+  date: {
+    fontFamily: "Montserrat_600SemiBold",
+    fontSize: 10,
+    color: COLORS.grey,
+  },
 });
-
- 

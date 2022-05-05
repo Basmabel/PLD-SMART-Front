@@ -23,6 +23,7 @@ import {
   Montserrat_500Medium,
   Montserrat_600SemiBold,
 } from "@expo-google-fonts/dev";
+import API_URL from "../config.js";
 
 export default function ValidationCode({ navigation, route }) {
   const { idUser, email, isReset } = route.params;
@@ -50,7 +51,7 @@ export default function ValidationCode({ navigation, route }) {
         alert("the code is valid");
         const payload = { id: idUser, token: code };
         console.log("USer id:", idUser);
-        fetch("https://eve-back.herokuapp.com/resetPasswordVerifyToken", {
+        fetch(API_URL + "/resetPasswordVerifyToken", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ id: idUser, token: code }),
@@ -62,7 +63,7 @@ export default function ValidationCode({ navigation, route }) {
           .catch((error) => console.error(error));
       } else {
         alert("the code is valid");
-        fetch("https://eve-back.herokuapp.com/verifyAccount", {
+        fetch(API_URL + "/verifyAccount", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ userId: idUser, verificationToken: code }),

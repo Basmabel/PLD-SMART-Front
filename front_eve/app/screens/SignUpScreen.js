@@ -28,6 +28,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Feather from "react-native-vector-icons/Feather";
 //import RNPickerSelect from 'react-native-picker-select';
 import { Picker } from "@react-native-picker/picker";
+import API_URL from "../config";
 
 export default function SignUpScreen({ navigation }) {
   const [name, onChangeName] = React.useState("");
@@ -84,7 +85,7 @@ export default function SignUpScreen({ navigation }) {
       validPhone() &&
       ((validZip() && zip_code != "") || zip_code === "")
     ) {
-      fetch("http://eve-back.herokuapp.com/signup", {
+      fetch(API_URL + "/signup", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({

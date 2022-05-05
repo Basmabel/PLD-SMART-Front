@@ -15,6 +15,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Feather from "react-native-vector-icons/Feather";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "react-native-paper";
+import API_URL from "../config";
 
 const SignInScreen = ({ navigation }) => {
   const [email, onChangeEmail] = React.useState("");
@@ -39,7 +40,7 @@ const SignInScreen = ({ navigation }) => {
       data.password != "" &&
       data.email != ""
     ) {
-      fetch("https://eve-back.herokuapp.com/login", {
+      fetch(API_URL + "/login", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: data.email, password: data.password }),

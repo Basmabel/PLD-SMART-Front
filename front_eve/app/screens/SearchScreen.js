@@ -1,4 +1,4 @@
-import React, { useEffect,useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -12,7 +12,7 @@ import {
   SafeAreaView,
   Platform,
 } from "react-native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { mapDarkMode } from "../model/Map";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import StarRating from "../components/StarRating";
@@ -21,7 +21,8 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { COLORS } from "../config/colors";
 import { useFocusEffect, useTheme } from "@react-navigation/native";
 import NotifBuble from "../components/NotifBuble.js";
-import {io} from "socket.io-client"
+import { io } from "socket.io-client";
+import API_URL from "../config";
 
 const { width, height } = Dimensions.get("window");
 const CARD_HEIGHT = 220;
@@ -90,10 +91,10 @@ const SearchScreen = ({ navigation, route }) => {
   const [popularEvents, setPopularEvents] = React.useState([]);
   const [isLoading, setLoading] = React.useState(true);
   const [state, setState] = React.useState(initialMapState);
-  const [notifVisible, setNotifVisible] = React.useState(false)
+  const [notifVisible, setNotifVisible] = React.useState(false);
   const socketRef = useRef();
-  const [userId, setUserId] = React.useState("")
-  const [userToken, setUserToken] = React.useState("")
+  const [userId, setUserId] = React.useState("");
+  const [userToken, setUserToken] = React.useState("");
 
   let mapIndex = 0;
   let mapAnimation = new Animated.Value(0);
@@ -102,9 +103,9 @@ const SearchScreen = ({ navigation, route }) => {
     React.useCallback(() => {
       // Do something when the screen is focused
       socketRef.current = io("http://169.254.3.246:3000");
-      socketRef.current.emit('userId',(userId))
+      socketRef.current.emit("userId", userId);
       return () => {
-          socketRef.current.disconnect();
+        socketRef.current.disconnect();
       };
     }, [])
   );
@@ -136,32 +137,32 @@ const SearchScreen = ({ navigation, route }) => {
         }
       }, 10);
     });
-    
-    const retreiveData = async ()=>{
+
+    const retreiveData = async () => {
       try {
-        const valueString = await AsyncStorage.getItem('key');
+        const valueString = await AsyncStorage.getItem("key");
         const value = JSON.parse(valueString);
 
-        const tokenString = await AsyncStorage.getItem('token');
+        const tokenString = await AsyncStorage.getItem("token");
         const token = JSON.parse(tokenString);
-        
-        setUserId(value)
-        setUserToken(token)
-        setRetreive(true)
+
+        setUserId(value);
+        setUserToken(token);
+        setRetreive(true);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
+    };
     retreiveData();
-    
-     socketRef.current.on('message', (message)=>{
-       console.log("You received a notification")
-       setNotifVisible(true)
-     })
+
+    socketRef.current.on("message", (message) => {
+      console.log("You received a notification");
+      setNotifVisible(true);
+    });
     if (retreive) {
       Promise.all([
         //fetch("http://192.168.56.1:3000/getMapEvents"),
-        fetch("http://169.254.3.246:3000/getMapEvents"),
+        fetch(API_URL + "/getMapEvents"),
       ])
         .then(function (responses) {
           // Get a JSON object from each of the responses
@@ -187,7 +188,7 @@ const SearchScreen = ({ navigation, route }) => {
         })
         .finally(() => setLoading(false));
     }
-  }, [retreive]);      
+  }, [retreive]);
 
   var result = null;
 
@@ -229,8 +230,13 @@ const SearchScreen = ({ navigation, route }) => {
         ) : (
           <View>
             <View style={styles.body}>
-              <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
-                  <NotifBuble navigation={navigation}/>
+              <View
+                style={[
+                  styles.notif_buble,
+                  { display: notifVisible ? "flex" : "none" },
+                ]}
+              >
+                <NotifBuble navigation={navigation} />
               </View>
               <MapView
                 ref={_map}
@@ -668,11 +674,11 @@ const styles = StyleSheet.create({
     padding: 10,
     flex: 1,
   },
-  notif_buble:{
-    width:'100%', 
-    flexDirection: 'row',
-    justifyContent: 'flex-end', 
-    marginBottom: -40, 
-    zIndex: 100
-  }
+  notif_buble: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginBottom: -40,
+    zIndex: 100,
+  },
 });

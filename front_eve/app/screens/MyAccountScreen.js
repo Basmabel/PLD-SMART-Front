@@ -34,6 +34,7 @@ import Spinner from "react-native-loading-spinner-overlay";
 import NotifBuble from "../components/NotifBuble.js";
 import { io } from "socket.io-client";
 import { useFocusEffect } from "@react-navigation/native";
+import API_URL from "../config.js";
 
 export default function MyAccountScreen({ navigation }) {
   const tabBarHeight = useBottomTabBarHeight() * 2;
@@ -93,7 +94,7 @@ export default function MyAccountScreen({ navigation }) {
   useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
-      socketRef.current = io("http://169.254.3.246:3000");
+      socketRef.current = io(API_URL);
       socketRef.current.emit("userId", userId);
       return () => {
         socketRef.current.disconnect();
@@ -127,14 +128,14 @@ export default function MyAccountScreen({ navigation }) {
 
     if (retreive) {
       Promise.all([
-        fetch("http://169.254.3.246:3000/getMyAccountInfo", {
+        fetch(API_URL + "/getMyAccountInfo", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
             id: userId,
           }),
         }),
-        fetch("http://169.254.3.246:3000/getReviewUser", {
+        fetch(API_URL + "/getReviewUser", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
@@ -219,7 +220,7 @@ export default function MyAccountScreen({ navigation }) {
       }
     });
 
-    fetch("http://169.254.3.246:3000/editProfile", {
+    fetch(API_URL + "/editProfile", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
