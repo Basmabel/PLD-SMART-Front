@@ -34,12 +34,9 @@ import Spinner from "react-native-loading-spinner-overlay";
 import NotifBuble from "../components/NotifBuble.js";
 import { io } from "socket.io-client";
 import { useFocusEffect } from "@react-navigation/native";
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
 
-
-
-
-export default function MyAccountScreen({navigation}) {
+export default function MyAccountScreen({ navigation }) {
   const tabBarHeight = useBottomTabBarHeight() * 2;
   const [notifVisible, setNotifVisible] = React.useState(false);
   const socketRef = useRef();
@@ -96,42 +93,37 @@ export default function MyAccountScreen({navigation}) {
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log("connected")
-      socketRef.current=io("https://eve-back.herokuapp.com")
-     
+      console.log("connected");
+      socketRef.current = io("https://eve-back.herokuapp.com");
+
       return () => {
         socketRef.current?.disconnect();
       };
     }, [])
   );
 
-  useEffect(()=>{
-    if(userId!=''){
-      socketRef.current?.emit('userId',(userId))
+  useEffect(() => {
+    if (userId != "") {
+      socketRef.current?.emit("userId", userId);
     }
-    
-    console.log("in use effect"+userId)
-    
-  },[userId])
 
-  useEffect(()=>{
-    if(userId!=''){
-      socketRef.current?.emit('userId',(userId))
+    console.log("in use effect" + userId);
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId != "") {
+      socketRef.current?.emit("userId", userId);
     }
-    console.log("in use effect"+userId)
-    
-  },[socketRef.current])
+    console.log("in use effect" + userId);
+  }, [socketRef.current]);
 
-  useEffect(()=>{
+  useEffect(() => {
+    socketRef.current?.on("message", (message) => {
+      console.log("You received a notification");
+      setNotifVisible(true);
+    });
+  }, [socketRef.current]);
 
-    socketRef.current?.on('message', (message)=>{
-      console.log("You received a notification")
-      setNotifVisible(true)
-    })
-
-  },[socketRef.current])
-
-  
   //Recuperation des données
   useEffect(() => {
     const retreiveData = async () => {
@@ -151,23 +143,24 @@ export default function MyAccountScreen({navigation}) {
     };
     retreiveData();
 
-     
-
-      if(retreive){      
-        Promise.all([
-          fetch('https://eve-back.herokuapp.com/getMyAccountInfo',{
-            method: "POST",
-            headers: {'content-type': 'application/json'},
-            body: JSON.stringify({
-              "id":userId,
-            })}),
-          fetch('https://eve-back.herokuapp.com/getReviewUser',{
-            method: "POST",
-            headers: {'content-type': 'application/json'},
-            body: JSON.stringify({
-              "id":userId,
-            })}),
-        ]).then(function (responses) {
+    if (retreive) {
+      Promise.all([
+        fetch("https://eve-back.herokuapp.com/getMyAccountInfo", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            id: userId,
+          }),
+        }),
+        fetch("https://eve-back.herokuapp.com/getReviewUser", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            id: userId,
+          }),
+        }),
+      ])
+        .then(function (responses) {
           // Get a JSON object from each of the responses
           return Promise.all(
             responses.map(function (response) {
@@ -183,7 +176,7 @@ export default function MyAccountScreen({navigation}) {
               setuserInfo(item.global_infos[0]);
               setCreatorRating(item.creator_rating[0].score);
               setParticipantRating(item.participant_rating[0].score);
-              console.log(item)
+              console.log(item);
             }
             if (index === 1) {
               setReviewUser(item);
@@ -245,8 +238,7 @@ export default function MyAccountScreen({navigation}) {
       }
     });
 
-    
-    fetch('https://eve-back.herokuapp.com/editProfile',{
+    fetch("https://eve-back.herokuapp.com/editProfile", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -302,30 +294,41 @@ export default function MyAccountScreen({navigation}) {
   } else {
     return (
       <SafeAreaView style={StyleSheet.container}>
-      {isLoading ? (
-            <Spinner
-              //visibility of Overlay Loading Spinner
-              visible={isLoading}
-              //Text with the Spinner
-              textContent={'Loading...'}
-              //Text style of the Spinner Text
-              textStyle={styles.spinnerTextStyle}
-            />
-      ) :
-         (<View>
-          <View style={styles.header}>
-                    <Text style={styles.title_header}>Profile</Text>
-          </View>
-          <View style={styles.body}>
-            <ScrollView  style={{marginBottom: tabBarHeight*2}}>
-                <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
-                  <TouchableOpacity style={styles.container_icon} onPress={()=>{navigation.navigate("Notifications"); setNotifVisible(false)}}>
-                          <Ionicons
-                            name="notifications"
-                            size={30}
-                            color={COLORS.white}
-                          />
-                    </TouchableOpacity>
+        {isLoading ? (
+          <Spinner
+            //visibility of Overlay Loading Spinner
+            visible={isLoading}
+            //Text with the Spinner
+            textContent={"Loading..."}
+            //Text style of the Spinner Text
+            textStyle={styles.spinnerTextStyle}
+          />
+        ) : (
+          <View>
+            <View style={styles.header}>
+              <Text style={styles.title_header}>Profile</Text>
+            </View>
+            <View style={styles.body}>
+              <ScrollView style={{ marginBottom: tabBarHeight * 1 }}>
+                <View
+                  style={[
+                    styles.notif_buble,
+                    { display: notifVisible ? "flex" : "none" },
+                  ]}
+                >
+                  <TouchableOpacity
+                    style={styles.container_icon}
+                    onPress={() => {
+                      navigation.navigate("Notifications");
+                      setNotifVisible(false);
+                    }}
+                  >
+                    <Ionicons
+                      name="notifications"
+                      size={30}
+                      color={COLORS.white}
+                    />
+                  </TouchableOpacity>
                 </View>
 
                 <View
@@ -337,7 +340,6 @@ export default function MyAccountScreen({navigation}) {
                 >
                   <UploadImage imgProfil={userInfo.photo} id={userId} />
                 </View>
-               
 
                 <View style={styles.content_info}>
                   <Text style={[styles.text_footer, styles.titleTextInput]}>
@@ -571,23 +573,33 @@ export default function MyAccountScreen({navigation}) {
                       navigation={navigation}
                     />
                   </View>
-                  </View>
-                  <View style={{width:'100%', flexDirection: 'row', justifyContent:'center'}}>
-                    <TouchableOpacity activeOpacity={0.7} 
-                                      style={[styles.button, 
-                                              {backgroundColor: COLORS.lightBlue, 
-                                              marginLeft:10
-                                            }]} 
-                                      onPress={()=>{navigation.navigate("SignInScreen")}}>
-                        <Text style={[styles.text_button, {color: COLORS.greyBlue}]}>Log out</Text>
-                    </TouchableOpacity>   
-                  </View>
-            </ScrollView>
-                                 
-
-          </View>
-            
-
+                </View>
+                <View
+                  style={{
+                    width: "100%",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                  }}
+                >
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    style={[
+                      styles.button,
+                      { backgroundColor: COLORS.lightBlue, marginLeft: 10 },
+                    ]}
+                    onPress={() => {
+                      navigation.navigate("SignInScreen");
+                    }}
+                  >
+                    <Text
+                      style={[styles.text_button, { color: COLORS.greyBlue }]}
+                    >
+                      Log out
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </ScrollView>
+            </View>
           </View>
         )}
       </SafeAreaView>
@@ -609,10 +621,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: COLORS.beige,
-    shadowColor: "#000",
-    shadowOpacity: 0.9,
-    shadowRadius: 7,
-    borderRadius: 10,
+    //shadowColor: "#000",
+    //shadowOpacity: 0.9,
+    //shadowRadius: 7,
+    //borderRadius: 10,
     // flex:1
   },
   content_info: {
@@ -701,35 +713,34 @@ const styles = StyleSheet.create({
     marginBottom: -40,
     zIndex: 100,
   },
-  notif_buble:{
-    width:'100%', 
-    flexDirection: 'row',
-    justifyContent: 'flex-end', 
-    marginBottom: -40, 
-    zIndex: 100
+  notif_buble: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginBottom: -40,
+    zIndex: 100,
   },
   container_icon: {
     backgroundColor: COLORS.red,
-    width:40,
-    height:40,
-    borderRadius:20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     borderColor: COLORS.black,
-    borderWidth:2,
-    alignItems:'center',
-    justifyContent:'center'
+    borderWidth: 2,
+    alignItems: "center",
+    justifyContent: "center",
   },
   button: {
-    borderRadius : 10,
-    backgroundColor : COLORS.lightBlue,
-    width : 140,
+    borderRadius: 10,
+    backgroundColor: COLORS.lightBlue,
+    width: 140,
     height: 40,
     justifyContent: "center",
-    alignItems: 'center'
+    alignItems: "center",
   },
   text_button: {
     color: COLORS.purple,
     fontSize: 15,
-    fontFamily: 'Montserrat_600SemiBold',
-  }
-  
+    fontFamily: "Montserrat_600SemiBold",
+  },
 });

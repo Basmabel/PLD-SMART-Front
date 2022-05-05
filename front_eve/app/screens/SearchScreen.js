@@ -1,4 +1,4 @@
-import React, { useEffect,useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -12,7 +12,7 @@ import {
   SafeAreaView,
   Platform,
 } from "react-native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { mapDarkMode } from "../model/Map";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import StarRating from "../components/StarRating";
@@ -21,7 +21,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { COLORS } from "../config/colors";
 import { useFocusEffect, useTheme } from "@react-navigation/native";
 import NotifBuble from "../components/NotifBuble.js";
-import {io} from "socket.io-client"
+import { io } from "socket.io-client";
 
 const { width, height } = Dimensions.get("window");
 const CARD_HEIGHT = 220;
@@ -90,51 +90,47 @@ const SearchScreen = ({ navigation, route }) => {
   const [popularEvents, setPopularEvents] = React.useState([]);
   const [isLoading, setLoading] = React.useState(true);
   const [state, setState] = React.useState(initialMapState);
-  const [notifVisible, setNotifVisible] = React.useState(false)
+  const [notifVisible, setNotifVisible] = React.useState(false);
   const socketRef = useRef();
-  const [userId, setUserId] = React.useState("")
-  const [userToken, setUserToken] = React.useState("")
+  const [userId, setUserId] = React.useState("");
+  const [userToken, setUserToken] = React.useState("");
 
   let mapIndex = 0;
   let mapAnimation = new Animated.Value(0);
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log("connected")
-      socketRef.current=io("https://eve-back.herokuapp.com")
-     
+      console.log("connected");
+      socketRef.current = io("https://eve-back.herokuapp.com");
+
       return () => {
         socketRef.current?.disconnect();
       };
     }, [])
   );
 
-  useEffect(()=>{
-    if(userId!=''){
-      socketRef.current?.emit('userId',(userId))
+  useEffect(() => {
+    if (userId != "") {
+      socketRef.current?.emit("userId", userId);
     }
-    
-    console.log("in use effect"+userId)
-    
-  },[userId])
 
-  useEffect(()=>{
-    if(userId!=''){
-      socketRef.current?.emit('userId',(userId))
+    console.log("in use effect" + userId);
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId != "") {
+      socketRef.current?.emit("userId", userId);
     }
-    
-    console.log("in use effect"+userId)
-    
-  },[socketRef.current])
 
-  useEffect(()=>{
+    console.log("in use effect" + userId);
+  }, [socketRef.current]);
 
-    socketRef.current?.on('message', (message)=>{
-      console.log("You received a notification")
-      setNotifVisible(true)
-    })
-
-  },[socketRef.current])
+  useEffect(() => {
+    socketRef.current?.on("message", (message) => {
+      console.log("You received a notification");
+      setNotifVisible(true);
+    });
+  }, [socketRef.current]);
 
   useEffect(() => {
     mapAnimation.addListener(({ value }) => {
@@ -163,25 +159,24 @@ const SearchScreen = ({ navigation, route }) => {
         }
       }, 10);
     });
-    
-    const retreiveData = async ()=>{
+
+    const retreiveData = async () => {
       try {
-        const valueString = await AsyncStorage.getItem('key');
+        const valueString = await AsyncStorage.getItem("key");
         const value = JSON.parse(valueString);
 
-        const tokenString = await AsyncStorage.getItem('token');
+        const tokenString = await AsyncStorage.getItem("token");
         const token = JSON.parse(tokenString);
-        
-        setUserId(value)
-        setUserToken(token)
-        setRetreive(true)
+
+        setUserId(value);
+        setUserToken(token);
+        setRetreive(true);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
+    };
     retreiveData();
-    
-     
+
     if (retreive) {
       Promise.all([
         //fetch("https://eve-back.herokuapp.com/getMapEvents"),
@@ -211,7 +206,7 @@ const SearchScreen = ({ navigation, route }) => {
         })
         .finally(() => setLoading(false));
     }
-  }, [retreive]);      
+  }, [retreive]);
 
   var result = null;
 
@@ -253,14 +248,25 @@ const SearchScreen = ({ navigation, route }) => {
         ) : (
           <View>
             <View style={styles.body}>
-              <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
-                <TouchableOpacity style={styles.container_icon} onPress={()=>{navigation.navigate("Notifications"); setNotifVisible(false)}}>
-                          <Ionicons
-                            name="notifications"
-                            size={30}
-                            color={COLORS.white}
-                          />
-                    </TouchableOpacity>
+              <View
+                style={[
+                  styles.notif_buble,
+                  { display: notifVisible ? "flex" : "none" },
+                ]}
+              >
+                <TouchableOpacity
+                  style={styles.container_icon}
+                  onPress={() => {
+                    navigation.navigate("Notifications");
+                    setNotifVisible(false);
+                  }}
+                >
+                  <Ionicons
+                    name="notifications"
+                    size={30}
+                    color={COLORS.white}
+                  />
+                </TouchableOpacity>
               </View>
               <MapView
                 ref={_map}
@@ -358,7 +364,12 @@ const SearchScreen = ({ navigation, route }) => {
                       </Text>
                       <View style={styles.button}>
                         <TouchableOpacity
-                          onPress={() => {}}
+                          onPress={() => {
+                            navigation.navigate("Event", {
+                              event_id: marker.event_id,
+                            });
+                            console.log(marker.event_id);
+                          }}
                           style={[
                             styles.signIn,
                             {
@@ -535,7 +546,12 @@ const SearchScreen = ({ navigation, route }) => {
                       </Text>
                       <View style={styles.button}>
                         <TouchableOpacity
-                          onPress={() => {}}
+                          onPress={() => {
+                            navigation.navigate("Event", {
+                              event_id: marker.event_id,
+                            });
+                            console.log(marker.event_id);
+                          }}
                           style={[
                             styles.signIn,
                             {
@@ -698,21 +714,21 @@ const styles = StyleSheet.create({
     padding: 10,
     flex: 1,
   },
-  notif_buble:{
-    width:'100%', 
-    flexDirection: 'row',
-    justifyContent: 'flex-end', 
-    marginBottom: -40, 
-    zIndex: 100
+  notif_buble: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginBottom: -40,
+    zIndex: 100,
   },
   container_icon: {
     backgroundColor: COLORS.red,
-    width:40,
-    height:40,
-    borderRadius:20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     borderColor: COLORS.black,
-    borderWidth:2,
-    alignItems:'center',
-    justifyContent:'center'
-  }
+    borderWidth: 2,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });

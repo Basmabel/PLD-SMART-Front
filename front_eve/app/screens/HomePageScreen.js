@@ -1,87 +1,98 @@
-import React, {useEffect, useRef} from "react";
-import{ StyleSheet, Dimensions, Text, View, Image,SafeAreaView, ScrollView} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {COLORS} from '../config/colors.js';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import MyCarousel from '../components/MyCarousel';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import {useFonts} from "@expo-google-fonts/dev";
+import React, { useEffect, useRef } from "react";
+import {
+  StyleSheet,
+  Dimensions,
+  Text,
+  View,
+  Image,
+  SafeAreaView,
+  ScrollView,
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { COLORS } from "../config/colors.js";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import MyCarousel from "../components/MyCarousel";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useFonts } from "@expo-google-fonts/dev";
 import AppLoading from "expo-app-loading";
 import {
   Montserrat_400Regular,
   Montserrat_500Medium,
-  Montserrat_600SemiBold
-} from '@expo-google-fonts/dev'
-import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
-import Spinner from 'react-native-loading-spinner-overlay';
-import {io} from "socket.io-client"
+  Montserrat_600SemiBold,
+} from "@expo-google-fonts/dev";
+import {
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+} from "@react-navigation/native";
+import Spinner from "react-native-loading-spinner-overlay";
+import { io } from "socket.io-client";
 import NotifBuble from "../components/NotifBuble.js";
-import { Ionicons } from '@expo/vector-icons'; 
-import { TouchableOpacity} from "react-native";
-import * as TaskManager from "expo-task-manager"
-import * as Location from "expo-location"
+import { Ionicons } from "@expo/vector-icons";
+import { TouchableOpacity } from "react-native";
+import * as TaskManager from "expo-task-manager";
+import * as Location from "expo-location";
 
-var light = "dark"
-var colorBack= COLORS.greyBlue
-var colorText=COLORS.lightBlue
+var light = "dark";
+var colorBack = COLORS.greyBlue;
+var colorText = COLORS.lightBlue;
 
 if (light === "light") {
   colorBack = COLORS.white;
   colorText = COLORS.greyBlue;
 }
 
-export default function HomePageScreen({route}) {
+export default function HomePageScreen({ route }) {
   const tabBarHeight = useBottomTabBarHeight();
   const navigation = useNavigation();
- 
-  var state = ""
-  if(route.params!=undefined){
-    state=route.params.state
+
+  var state = "";
+  if (route.params != undefined) {
+    state = route.params.state;
   }
- 
-   const [popularEvents,setPopularEvents] = React.useState([]);
-   const [userInfo, setUserInfo] = React.useState(null);
-   const [isLoading, setLoading] = React.useState(true);
-   const [categories,setCategories] = React.useState(null)
-   const [eventPerCat, setEventPerCat] = React.useState([]);
-   const [retreive, setRetreive] = React.useState(false);
-   const [userId, setUserId] = React.useState("")
-   const [userToken, setUserToken] = React.useState("")
-   const [notifVisible, setNotifVisible] = React.useState(false)
-    const [message, setMessage] = React.useState("")
+
+  const [popularEvents, setPopularEvents] = React.useState([]);
+  const [userInfo, setUserInfo] = React.useState(null);
+  const [isLoading, setLoading] = React.useState(true);
+  const [categories, setCategories] = React.useState(null);
+  const [eventPerCat, setEventPerCat] = React.useState([]);
+  const [retreive, setRetreive] = React.useState(false);
+  const [userId, setUserId] = React.useState("");
+  const [userToken, setUserToken] = React.useState("");
+  const [notifVisible, setNotifVisible] = React.useState(false);
+  const [message, setMessage] = React.useState("");
   const socketRef = useRef();
-  const isFocused = useIsFocused()
-  const [position, setPosition] = React.useState("")
-  const [isPosition, setIsPosition] = React.useState("false")
+  const isFocused = useIsFocused();
+  const [position, setPosition] = React.useState("");
+  const [isPosition, setIsPosition] = React.useState("false");
   //const [socketRef.current, setSocket]= React.useState(null);
 
-//   const LOCATION_TASK_NAME = "LOCATION_TASK_NAME"
-// let foregroundSubscription = null
+  //   const LOCATION_TASK_NAME = "LOCATION_TASK_NAME"
+  // let foregroundSubscription = null
 
-// // Define the background task for location tracking
-// TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
-//   if (error) {
-//     console.error(error)
-//     return
-//   }
-//   if (data) {
-//     // Extract location coordinates from data
-//     const { locations } = data
-//     const location = locations[0]
-//     if (location) {
-//       console.log("Location in background", location.coords)
-//     }
-//   }
-// })
+  // // Define the background task for location tracking
+  // TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
+  //   if (error) {
+  //     console.error(error)
+  //     return
+  //   }
+  //   if (data) {
+  //     // Extract location coordinates from data
+  //     const { locations } = data
+  //     const location = locations[0]
+  //     if (location) {
+  //       console.log("Location in background", location.coords)
+  //     }
+  //   }
+  // })
 
-
-   var [fontsLoaded] = useFonts({
+  var [fontsLoaded] = useFonts({
     Montserrat_400Regular,
     Montserrat_500Medium,
     Montserrat_600SemiBold,
   });
 
- const startLoading = () => {
+  const startLoading = () => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
@@ -90,42 +101,38 @@ export default function HomePageScreen({route}) {
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log(notifVisible)
-      console.log("connected")
-      socketRef.current=io("https://eve-back.herokuapp.com")
-     
+      console.log(notifVisible);
+      console.log("connected");
+      socketRef.current = io("https://eve-back.herokuapp.com");
+
       return () => {
         socketRef.current?.disconnect();
       };
     }, [])
   );
 
-  useEffect(()=>{
-    if(userId!=''){
-      socketRef.current?.emit('userId',(userId))
+  useEffect(() => {
+    if (userId != "") {
+      socketRef.current?.emit("userId", userId);
     }
-    
-    console.log("in use effect"+userId)
-    
-  },[userId])
 
-  useEffect(()=>{
-    if(userId!=''){
-      socketRef.current?.emit('userId',(userId))
+    console.log("in use effect" + userId);
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId != "") {
+      socketRef.current?.emit("userId", userId);
     }
-    
-    console.log("in use effect"+userId)
-    
-  },[socketRef.current])
 
-  useEffect(()=>{
+    console.log("in use effect" + userId);
+  }, [socketRef.current]);
 
-    socketRef.current?.on('message', (message)=>{
-      console.log("You received a notification")
-      setNotifVisible(true)
-    })
-
-  },[socketRef.current])
+  useEffect(() => {
+    socketRef.current?.on("message", (message) => {
+      console.log("You received a notification");
+      setNotifVisible(true);
+    });
+  }, [socketRef.current]);
 
   //Request permissions right after starting the app
   // useEffect(() => {
@@ -133,7 +140,7 @@ export default function HomePageScreen({route}) {
   //     const foreground = await Location.requestForegroundPermissionsAsync()
   //     if (foreground.granted){
   //         setPosition(null)
-  //     } 
+  //     }
   //   }
   //   requestPermissions()
   // }, [])
@@ -151,7 +158,7 @@ export default function HomePageScreen({route}) {
   //     );
   //   }
   //   console.log("la")
-    
+
   //   Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Balanced , maximumAge: 10000})
   //   .then((res) => {
   //     var {coords} = res
@@ -165,8 +172,6 @@ export default function HomePageScreen({route}) {
   //     })
   //   })
   //   .catch(e => console.log(e))
-
-    
 
   // }
 
@@ -186,16 +191,12 @@ export default function HomePageScreen({route}) {
   //       setPosition(address);
   //     }
   //   }
-  
 
   // useEffect (()=>{
   //   getLocation()
   // },[])
 
   useEffect(() => {
-
-    
-
     const retreiveData = async () => {
       try {
         const valueString = await AsyncStorage.getItem("key");
@@ -203,7 +204,7 @@ export default function HomePageScreen({route}) {
 
         const tokenString = await AsyncStorage.getItem("token");
         const token = JSON.parse(tokenString);
-        console.log(value)
+        console.log(value);
         setUserId(value);
         setUserToken(token);
         setRetreive(true);
@@ -213,60 +214,65 @@ export default function HomePageScreen({route}) {
     };
     //'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImlhdCI6MTY1MDA1MDU1NiwiZXhwIjoxNjUwMDYxMzU2fQ.WGMvctVy10fkxjI74xpTGil7DPH52pSHmmcNWuqj-dU'
     retreiveData();
-   
+
     /*socketRef.current?.emit('userId',(userId))
     console.log("co")
     console.log(socketRef.current?.id)*/
-    if(route.params!=undefined){
-      state=route.params.state
+    if (route.params != undefined) {
+      state = route.params.state;
     }
 
-    if(state==="event update" && isFocused) {
-      setLoading(true)
+    if (state === "event update" && isFocused) {
+      setLoading(true);
     }
-    
-    if(retreive){   
-      console.log(position)   
+
+    if (retreive) {
+      console.log(position);
       Promise.all([
-        fetch('https://eve-back.herokuapp.com/getPopular'),
-        fetch('https://eve-back.herokuapp.com/getUserInfo',{
+        fetch("https://eve-back.herokuapp.com/getPopular"),
+        fetch("https://eve-back.herokuapp.com/getUserInfo", {
           method: "POST",
           headers: {
             "content-type": "application/json",
             Authorization: "bearer " + userToken,
           },
           body: JSON.stringify({
-            "id":userId
-          })}),
-        fetch('https://eve-back.herokuapp.com/getCategories'),
-        fetch('https://eve-back.herokuapp.com/getEventsByCategory')
-      ]).then(function (responses) {
-        // Get a JSON object from each of the responses
-        return Promise.all(responses.map(function (response) {
-          return response.json();
-        }));
-      }).then(function (data) {
-        // Log the data to the console
-        // You would do something with both sets of data here
-        data.map((item,index)=>{
-          console.log(index,item)
-          if(index==0){
-            setPopularEvents(item);
-          }else if(index==1){
-            setUserInfo(item)
-          }else if(index==2){
-            setCategories(item)
-          }else if(index==3){
-            var cat_id=item[0].category_id;
-            var nexEv =[];
-            var iter = 0;
-            var stockEvent = []
-            item.map((eve,i)=>{
-                if(cat_id===eve.category_id){
-                    nexEv = [...nexEv];
-                    nexEv[iter]=eve;
-                    iter++;
-                   // console.log(nexEv)
+            id: userId,
+          }),
+        }),
+        fetch("https://eve-back.herokuapp.com/getCategories"),
+        fetch("https://eve-back.herokuapp.com/getEventsByCategory"),
+      ])
+        .then(function (responses) {
+          // Get a JSON object from each of the responses
+          return Promise.all(
+            responses.map(function (response) {
+              return response.json();
+            })
+          );
+        })
+        .then(function (data) {
+          // Log the data to the console
+          // You would do something with both sets of data here
+          data.map((item, index) => {
+            console.log(index, item);
+            if (index == 0) {
+              setPopularEvents(item);
+            } else if (index == 1) {
+              setUserInfo(item);
+            } else if (index == 2) {
+              setCategories(item);
+            } else if (index == 3) {
+              var cat_id = item[0].category_id;
+              var nexEv = [];
+              var iter = 0;
+              var stockEvent = [];
+              item.map((eve, i) => {
+                if (cat_id === eve.category_id) {
+                  nexEv = [...nexEv];
+                  nexEv[iter] = eve;
+                  iter++;
+                  // console.log(nexEv)
                 }
                 if (iter != 0 && cat_id != eve.category_id) {
                   stockEvent = [...stockEvent, nexEv];
@@ -298,30 +304,27 @@ export default function HomePageScreen({route}) {
         })
         .finally(() => setLoading(false));
     }
-  }, [retreive,isFocused]);
+  }, [retreive, isFocused]);
 
-  
-
-   const DisplayEvents=()=>{
-      const listEvents = eventPerCat.map((item)=>
-      
-          <View style={styles.events} key={item[0].category_id}>
-                          <View style={styles.categorieEvents}>
-                              <Text style={[styles.title_body]}>{item[0].description}</Text>
-                          </View>  
-                          <MyCarousel data={item} type={{"event":"oui"}} navigation={navigation}/>                  
-          </View>
-      );
-      if(!fontsLoaded){
-        return(<AppLoading/>)
-      }else{
-        return(
-          <View>{listEvents}</View>
-        );
-      }
-      
+  const DisplayEvents = () => {
+    const listEvents = eventPerCat.map((item) => (
+      <View style={styles.events} key={item[0].category_id}>
+        <View style={styles.categorieEvents}>
+          <Text style={[styles.title_body]}>{item[0].description}</Text>
+        </View>
+        <MyCarousel
+          data={item}
+          type={{ event: "oui" }}
+          navigation={navigation}
+        />
+      </View>
+    ));
+    if (!fontsLoaded) {
+      return <AppLoading />;
+    } else {
+      return <View>{listEvents}</View>;
     }
-  
+  };
 
   if (!fontsLoaded) {
     return <AppLoading />;
@@ -352,40 +355,62 @@ export default function HomePageScreen({route}) {
                 />
               </View>
             </View>
-            
+
             <View style={styles.body}>
-              <ScrollView  style={{marginBottom: tabBarHeight*3}}>
-              
-                  <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
-                    <TouchableOpacity style={styles.container_icon} onPress={()=>{navigation.navigate("Notifications"); setNotifVisible(false)}}>
-                          <Ionicons
-                            name="notifications"
-                            size={30}
-                            color={COLORS.white}
-                          />
-                    </TouchableOpacity>
+              <ScrollView style={{ marginBottom: tabBarHeight * 2 }}>
+                <View
+                  style={[
+                    styles.notif_buble,
+                    { display: notifVisible ? "flex" : "none" },
+                  ]}
+                >
+                  <TouchableOpacity
+                    style={styles.container_icon}
+                    onPress={() => {
+                      navigation.navigate("Notifications");
+                      setNotifVisible(false);
+                    }}
+                  >
+                    <Ionicons
+                      name="notifications"
+                      size={30}
+                      color={COLORS.white}
+                    />
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.locationView}>
+                  <Text style={styles.text_header}> Lyon </Text>
+                  <MaterialCommunityIcons
+                    name="map-marker"
+                    color={colorText}
+                    size={24}
+                  />
+                </View>
+                <View style={styles.contentContainer}>
+                  <View style={styles.events}>
+                    <View style={styles.categorieEvents}>
+                      <Text style={[styles.title_body]}>Categories</Text>
+                    </View>
+                    <MyCarousel
+                      data={categories}
+                      type={{ event: "non" }}
+                      navigation={navigation}
+                    />
+                  </View>
+                  <View style={styles.events}>
+                    <View style={styles.categorieEvents}>
+                      <Text style={[styles.title_body]}>Popular</Text>
+                    </View>
+                    <MyCarousel
+                      data={popularEvents}
+                      type={{ event: "oui" }}
+                      navigation={navigation}
+                    />
                   </View>
 
-                  <View style={styles.locationView}>
-                        <Text style={styles.text_header}> Lyon </Text>
-                        <MaterialCommunityIcons name="map-marker" color={colorText} size={24}/>
-                  </View>
-                  <View style={styles.contentContainer}>
-                            <View style={styles.events}>
-                                <View style={styles.categorieEvents}>
-                                    <Text style={[styles.title_body]}>Categories</Text>
-                                </View>  
-                                <MyCarousel data={categories} type={{"event":"non"}} navigation={navigation}/>                  
-                            </View>
-                            <View style={styles.events}>
-                                <View style={styles.categorieEvents}>
-                                    <Text style={[styles.title_body]}>Popular</Text>
-                                </View>  
-                                <MyCarousel data={popularEvents} type={{"event":"oui"}} navigation={navigation}/>             
-                            </View>
-                           
-                            <DisplayEvents/>
-                  </View>
+                  <DisplayEvents />
+                </View>
               </ScrollView>
             </View>
           </View>
@@ -394,7 +419,6 @@ export default function HomePageScreen({route}) {
     );
   }
 }
-
 
 /*
 
@@ -419,10 +443,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: COLORS.beige,
-    shadowColor: "#000",
-    shadowOpacity: 0.9,
-    shadowRadius: 7,
-    borderRadius: 10,
+    //shadowColor: "#000",
+    //shadowOpacity: 0.9,
+    //shadowRadius: 7,
+    //borderRadius: 10,
     // flex:1
   },
   title_header: {
@@ -476,22 +500,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 15,
   },
-  notif_buble:{
-    width:'100%', 
-    flexDirection: 'row',
-    justifyContent: 'flex-end', 
-    marginBottom: -40, 
-    zIndex: 100
+  notif_buble: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginBottom: -40,
+    zIndex: 100,
   },
   container_icon: {
     backgroundColor: COLORS.red,
-    width:40,
-    height:40,
-    borderRadius:20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     borderColor: COLORS.black,
-    borderWidth:2,
-    alignItems:'center',
-    justifyContent:'center'
-  }
-  
+    borderWidth: 2,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });

@@ -12,27 +12,24 @@ import { createStackNavigator } from "@react-navigation/stack";
 import SearchScreen from "./app/screens/SearchScreen.js";
 import ValidationCode from "./app/screens/ValidationCode";
 import FilterScreen from "./app/screens/FilterScreen.js";
-import CategorieCard from './app/components/CategorieCard.js';
-import CarouselCard from './app/components/CarouselCard';
-import ParticipationDemandScreen from './app/screens/ParticipationDemandScreen.js';
-import NotificationsScreen from './app/screens/NotificationsScreen.js'
-import MyAccountScreen from './app/screens/MyAccountScreen.js';
-import MyEventsScreen from './app/screens/MyEventsScreen'
-import NotifBuble from './app/components/NotifBuble.js';
+import CategorieCard from "./app/components/CategorieCard.js";
+import CarouselCard from "./app/components/CarouselCard";
+import ParticipationDemandScreen from "./app/screens/ParticipationDemandScreen.js";
+import NotificationsScreen from "./app/screens/NotificationsScreen.js";
+import MyAccountScreen from "./app/screens/MyAccountScreen.js";
+import MyEventsScreen from "./app/screens/MyEventsScreen";
+import NotifBuble from "./app/components/NotifBuble.js";
 import CreateEventScreen from "./app/screens/CreateEventScreen";
 import ResetPasswordMailScreen from "./app/screens/ResetPasswordMailScreen.js";
 import ChangePasswordScreen from "./app/screens/ChangePasswordScreen.js";
 import EditEventScreen from "./app/screens/EditEventScreen";
-import { LogBox } from 'react-native';
-
+import { LogBox } from "react-native";
 
 const Stack = createStackNavigator();
 
 export default function App() {
-
-  
-LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
-LogBox.ignoreAllLogs();//Ignore all log notifications
+  LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
+  LogBox.ignoreAllLogs(); //Ignore all log notifications
 
   return (
     //<SignUpScreen/>
@@ -71,19 +68,47 @@ LogBox.ignoreAllLogs();//Ignore all log notifications
     // <ValidationCode />
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Landing" component={LandingScreen} />
-        <Stack.Screen name="SignInScreen" component={SignInScreen} />
-        <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+        <Stack.Screen
+          name="Landing"
+          component={LandingScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="SignInScreen"
+          component={SignInScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="SignUpScreen"
+          component={SignUpScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
         <Stack.Screen
           name="ResetPasswordMailScreen"
           component={ResetPasswordMailScreen}
         />
-        <Stack.Screen name="ValidationCode" component={ValidationCode} />
+        <Stack.Screen
+          name="ValidationCode"
+          component={ValidationCode}
+          options={{
+            headerShown: false,
+          }}
+        />
         <Stack.Screen
           name="ChangePasswordScreen"
           component={ChangePasswordScreen}
         />
-        <Stack.Screen name="NavigatorBar" component={NavigatorBar} options={{ headerShown: false }}/>
+        <Stack.Screen
+          name="NavigatorBar"
+          component={NavigatorBar}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen name="CategorieCard" component={CategorieCard} />
         <Stack.Screen
           name="EventPerCategoryScreen"

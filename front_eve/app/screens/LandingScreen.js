@@ -29,58 +29,61 @@ const LandingScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor={COLORS.lightWhite} barStyle="light-content" />
+      <StatusBar backgroundColor={COLORS.beige} barStyle="light-content" />
 
       <View style={styles.header}>
-            <Image style={styles.logo} source={require("../assets/images/eVe.png")} />
+        <Image
+          style={styles.logo}
+          source={require("../assets/images/eVe.png")}
+        />
       </View>
-        <View style={styles.button}> 
+      <View style={styles.button}>
         <TouchableOpacity
-            onPress={goToInscription}
+          onPress={goToInscription}
+          style={[
+            styles.signUp,
+            {
+              borderColor: COLORS.pink,
+              borderWidth: 1,
+              marginTop: 15,
+            },
+          ]}
+        >
+          <Text
             style={[
-              styles.signUp,
+              styles.textSign,
               {
-                borderColor: COLORS.pink,
-                borderWidth: 1,
-                marginTop: 15,
+                color: COLORS.lightWhite,
               },
             ]}
           >
-            <Text
-              style={[
-                styles.textSign,
-                {
-                  color: COLORS.lightWhite,
-                },
-              ]}
-            >
-              Inscription
-            </Text>
-          </TouchableOpacity>
-              
-          <TouchableOpacity
-            onPress={goToConnexion}
+            Inscription
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={goToConnexion}
+          style={[
+            styles.signIn,
+            {
+              borderColor: COLORS.nightBlue,
+              borderWidth: 1,
+              marginTop: 15,
+            },
+          ]}
+        >
+          <Text
             style={[
-              styles.signIn,
+              styles.textSign,
               {
-                borderColor: COLORS.nightBlue,
-                borderWidth: 1,
-                marginTop: 15,
+                color: COLORS.lightWhite,
               },
             ]}
           >
-            <Text
-              style={[
-                styles.textSign,
-                {
-                  color: COLORS.lightWhite,
-                },
-              ]}
-            >
-              Connexion
-            </Text>
-          </TouchableOpacity>
-        </View>
+            Connexion
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -90,7 +93,7 @@ export default LandingScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.lightWhite,
+    backgroundColor: COLORS.beige,
   },
   header: {
     flex: 2.25,
