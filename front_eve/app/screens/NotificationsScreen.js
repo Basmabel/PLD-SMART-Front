@@ -83,7 +83,7 @@ export default function HomePageScreen({navigation}) {
             return content + " " + userName
         }else if(type===6 || type===7 || type===15){
             return content
-        }else if(type===10 || type===12){
+        }else if(type===10 || type===12 || type===13){
             return eventName + " "+content
         }else if(type===11){
             return userName + " " + content

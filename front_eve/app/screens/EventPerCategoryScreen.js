@@ -41,6 +41,7 @@ export default function EventPerCategoryScreen({route, navigation}) {
    const socketRef = useRef();
    const isFocused = useIsFocused();
    const [message, setMessage] = React.useState("")
+   const tabBarHeight=useBottomTabBarHeight()
   
 
    var [fontsLoaded] = useFonts({
