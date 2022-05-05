@@ -40,7 +40,7 @@ export default function SignUpScreen({ navigation }) {
   const [phone, onChangePhone] = React.useState("");
   const [address_complement, onChangeAddressComplement] = React.useState("");
   const [gender, onChangeGender] = React.useState("");
-  const [birthDate, onChangeBirthDate] = React.useState("");
+  const [birthDate, onChangeBirthDate] = React.useState("01/01/2000");
   const [description, onChangeDescription] = React.useState("");
   const [data, setData] = React.useState({
     password: "",
@@ -432,12 +432,12 @@ export default function SignUpScreen({ navigation }) {
               style={{ width: "90%" }}
               date={birthDate}
               mode="date"
-              placeholder="select date"
+              placeholder={birthDate}
               placeholderStyle={styles.placeholderStyle}
               showIcon={false}
               format="DD/MM/YYYY"
-              minDate="01/01/2016"
-              maxDate="01/01/2026"
+              minDate="01/01/1996"
+              maxDate="01/01/2004"
               confirmBtnText="Confirm"
               cancelBtnText="Cancel"
               customStyles={{

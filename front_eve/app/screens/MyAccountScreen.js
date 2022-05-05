@@ -571,7 +571,6 @@ export default function MyAccountScreen({navigation}) {
                       navigation={navigation}
                     />
                   </View>
-                  <MyCarousel data={review} type={{ event: "review" }} navigation={navigation}/>
                   </View>
                   <View style={{width:'100%', flexDirection: 'row', justifyContent:'center'}}>
                     <TouchableOpacity activeOpacity={0.7} 
