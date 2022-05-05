@@ -32,6 +32,7 @@ import NotifBuble from "../components/NotifBuble.js";
 import {io} from "socket.io-client"
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { Ionicons } from '@expo/vector-icons'; 
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 export default function ProfileScreen({route,navigation}) {
   const profile_id=route.params.profile_id;
@@ -71,6 +72,7 @@ export default function ProfileScreen({route,navigation}) {
   const [notifVisible, setNotifVisible] = React.useState(false)
  const socketRef = useRef();
  const isFocused = useIsFocused();
+ const tabBarHeight = useBottomTabBarHeight()
 
  console.log("///////////////////FRESH START///////////////")
 
@@ -315,7 +317,7 @@ export default function ProfileScreen({route,navigation}) {
                     <Text style={styles.title_header}>Profile</Text>
           </View>
           <View style={styles.body}>
-            <ScrollView style={{marginBottom: '40%'}}>
+            <ScrollView style={{marginBottom: (Platform.OS==='ios')? 0 : tabBarHeight*3}}>
             <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
               <TouchableOpacity style={styles.container_icon} onPress={()=>{navigation.navigate("Notifications"); setNotifVisible(false)}}>
                           <Ionicons
@@ -376,7 +378,10 @@ export default function ProfileScreen({route,navigation}) {
                          <Text style={styles.text_report}>Report {profileInfo.name} {profileInfo.surname}</Text>
                         </TouchableOpacity>
                         
-                  </View>
+                  </View >
+                  <Text style={{ display: (isRported)? "flex" : "none",
+                                color : COLORS.red}}>
+                                User has been reported</Text>
                   <View style= {[styles.content_report,{display:(userInfo.admin===1 && isRported)? "flex" : "none"}]}>
                       <TouchableOpacity style={[styles.button_report]} onPress={()=>{blockUser(!isBlocked)}}>
                             <Text style={[styles.text_report,{display:(!isBlocked)? "flex" : "none"}]}> Block {profileInfo.name} {profileInfo.surname}</Text>

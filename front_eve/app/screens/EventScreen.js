@@ -23,7 +23,7 @@ import AddressComponent from "../components/AddressComponent.js";
 import { Ionicons } from '@expo/vector-icons'; 
 import Spinner from 'react-native-loading-spinner-overlay';
 import Feather from "react-native-vector-icons/Feather";
-
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 //Retreive Data of the Event
 
@@ -46,7 +46,8 @@ export default function EventScreen({route, navigation}) {
   const [reviewedParticipant, setReviewedParticipant] = React.useState("hello")
   const [reviewedParticipantID, setReviewedParticipantID] = React.useState(-1)
   const [reviewIdParti,setReviewIdParti] = React.useState(false)
-  const eventId = route.params.eventId
+  console.log(route)
+  const eventId = route.params.event_id
   const [notifVisible, setNotifVisible] = React.useState(false)
   const socketRef = useRef();
   const isFocused = useIsFocused();
@@ -61,6 +62,7 @@ export default function EventScreen({route, navigation}) {
   const [nbParticipant, setnbParticipant] = React.useState(false)
   const [nb_registered, setnbRegistered] = React.useState(0)
   const [adminId,setAdminId]= React.useState(0)
+  const tabBarHeight = useBottomTabBarHeight()
 
 
   const starImgFilled = 'https://raw.githubusercontent.com/tranhonghan/images/main/star_filled.png'
@@ -464,7 +466,7 @@ export default function EventScreen({route, navigation}) {
 
     retreiveData();
 
-    
+    console.log(eventId)
     
     if(isFocused) {
       setLoading(true)
@@ -523,6 +525,7 @@ export default function EventScreen({route, navigation}) {
             //console.log(item[0])
           }else if(index==1){
             setInfoEvent(item[0])
+            console.log(item)
             //console.log(item)
             fetch('https://eve-back.herokuapp.com/getReviewId',{
               method: "POST",
@@ -890,7 +893,7 @@ export default function EventScreen({route, navigation}) {
                     </View>
               </View>
               <View style={styles.body}>
-                <ScrollView style={[{marginBottom:200}]}>
+                <ScrollView  style={{marginBottom: (Platform.OS==='ios')? 0 : tabBarHeight*4}}>
                 <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
                   <TouchableOpacity style={styles.container_icon} onPress={()=>{navigation.navigate("Notifications"); setNotifVisible(false)}}>
                           <Ionicons

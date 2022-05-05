@@ -88,7 +88,8 @@ export default function ParticipationDemandScreen({route,navigation}) {
     const user_targeted_id = null
     const participation_demand_id = null
     socketRef.current.emit('message',{message,type,event_id,user_id,review_id,user_targeted_id,participation_demand_id})
-    navigation.navigate("Event",{event_id:demandInfo.event_id})
+    console.log(event_id)
+    navigation.navigate("Event",{event_id:event_id})
     alert("A notification has been sent")
   }
 
@@ -272,7 +273,7 @@ export default function ParticipationDemandScreen({route,navigation}) {
                   </View>
             </View>
             <View style={styles.body}>
-              <ScrollView style={[{marginBottom:100, flexGrow: 1}]}>
+              <ScrollView  style={{marginBottom: (Platform.OS==='ios')? 0 : 110, flexGrow: 1}}>
                   <View style={styles.locationView}>
                         <Text style={styles.text_header}> Lyon </Text>
                         <MaterialCommunityIcons name="map-marker" color={colorText} size={24}/>

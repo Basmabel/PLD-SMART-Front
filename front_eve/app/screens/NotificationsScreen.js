@@ -15,6 +15,7 @@ import formatageDate from '../utils/date_formatage';
 import {io} from "socket.io-client"
 import { Ionicons } from '@expo/vector-icons';  
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 
 var light = "dark"
@@ -38,6 +39,7 @@ export default function HomePageScreen({navigation}) {
    const [notifContent, setNotifContent] =React.useState(null)
    const [selectedNotif, setSelectedNotif] = React.useState({id:"",type:""})
    const isFocused = useIsFocused();
+   const tabBarHeight =useBottomTabBarHeight()
   
    const socketRef = useRef();
 
@@ -296,7 +298,7 @@ export default function HomePageScreen({navigation}) {
                   </View>
             </View>
             <View style={styles.body}>
-              <ScrollView style={[{marginBottom:200}]}>
+              <ScrollView  style={{marginBottom: (Platform.OS==='ios')? 0 : tabBarHeight*3}}>
                   <View style={styles.locationView}>
                         <Text style={styles.text_header}> Lyon </Text>
                         <MaterialCommunityIcons name="map-marker" color={colorText} size={24}/>
@@ -366,7 +368,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     paddingHorizontal: 20,
     paddingVertical: 20,
-    
+    height: '100%'    
   },
   contentContainer:{
     flexDirection: "column",

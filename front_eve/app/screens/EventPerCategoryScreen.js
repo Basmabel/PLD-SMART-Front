@@ -202,7 +202,7 @@ export default function EventPerCategoryScreen({route, navigation}) {
                   </View>
             </View>
             <View style={styles.body}>
-              <ScrollView style={{marginBottom:110}}>
+              <ScrollView  style={{marginBottom: (Platform.OS==='ios')? 0 : tabBarHeight*3}}>
                 <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
                   <TouchableOpacity style={styles.container_icon} onPress={()=>{navigation.navigate("Notifications"); setNotifVisible(false)}}>
                         <Ionicons
