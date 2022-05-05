@@ -294,7 +294,7 @@ const CreateEventScreen = ({ navigation}) => {
 
   const getLocation = async (adress) => {
     // Check if foreground permission is granted
-    /*let { status } = await Location.requestForegroundPermissionsAsync();
+    let { status } = await Location.requestForegroundPermissionsAsync();
     
     if (status !== 'granted') {
       Alert.alert(
@@ -304,7 +304,7 @@ const CreateEventScreen = ({ navigation}) => {
         { cancelable: false }
       );
     }
-    console.log("la")*/
+    console.log("la")
     Location.geocodeAsync(adress)
     .then((res) => {
       //console.log(res)
