@@ -470,6 +470,7 @@ export default function EventScreen({route, navigation}) {
     
     if(isFocused) {
       setLoading(true)
+      setDefaultRating(0)
     }
 
     if(retreive){

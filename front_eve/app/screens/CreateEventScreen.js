@@ -339,6 +339,16 @@ const CreateEventScreen = ({ navigation}) => {
 
     if(isFocused) {
       setLoading(true)
+      onChangeTitle("")
+      onChangeDescription("")
+      onChangeCity("")
+      onChangeStreet("")
+      onChangeParticipants("")
+      onChangeParticipants("")
+      onChangePlace("")
+      onChangeRegion("")
+      onChangeStreetNumber("");
+      onChangeZipCode("")
     }
     
     if(retreive){ 
