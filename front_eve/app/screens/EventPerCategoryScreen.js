@@ -50,8 +50,8 @@ export default function EventPerCategoryScreen({ route, navigation }) {
   const socketRef = useRef();
   const isFocused = useIsFocused();
   const [message, setMessage] = React.useState("");
-
   const tabBarHeight = useBottomTabBarHeight();
+
   var [fontsLoaded] = useFonts({
     Montserrat_400Regular,
     Montserrat_500Medium,
