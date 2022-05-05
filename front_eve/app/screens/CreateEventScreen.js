@@ -357,6 +357,7 @@ const CreateEventScreen = ({ navigation}) => {
         })
         .then(function (data) {
           setCategories(data[0]);
+          console.log(data)
         })
         .catch(function (error) {
           // if there's an error, log it

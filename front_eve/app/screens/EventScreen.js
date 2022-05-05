@@ -793,18 +793,18 @@ export default function EventScreen({route, navigation}) {
                                   )}
                                 />
                   <TextInput
-                    style={[styles.input,{display: (reviewedParticipantID==-1)? "flex":"none"}]}
+                    style={[styles.input]}
                     placeholder="Post a review"
                     placeholderTextColor={COLORS.black}
                     onChangeText={(value) => {setNew_Review(value);setTextIn(true)}}
                     onEndEditing={() =>{setTextIn(false)}}                    
                   />
-                  <CustomRatingBar style={{display: (reviewedParticipantID==-1)? "flex":"none"}}/>
+                  <CustomRatingBar/>
                   <View style={{justifyContent:"space-around",
                            flexDirection:'row', marginTop : 10, 
                            marginBottom: 20}}>
                   <TouchableOpacity activeOpacity={0.7} 
-                                    style={[styles.button, {marginRight: 10, display: (reviewedParticipantID==-1)? "flex":"none"}]} 
+                                    style={[styles.button, {marginRight: 10}]} 
                                     onPress={()=>{reviewEvent(reviewedParticipantID)}}>
                      <Text style={styles.text_button}> Post !</Text> 
                   </TouchableOpacity>

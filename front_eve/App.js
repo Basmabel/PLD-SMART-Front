@@ -23,11 +23,17 @@ import CreateEventScreen from "./app/screens/CreateEventScreen";
 import ResetPasswordMailScreen from "./app/screens/ResetPasswordMailScreen.js";
 import ChangePasswordScreen from "./app/screens/ChangePasswordScreen.js";
 import EditEventScreen from "./app/screens/EditEventScreen";
+import { LogBox } from 'react-native';
 
 
 const Stack = createStackNavigator();
 
 export default function App() {
+
+  
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
+
   return (
     //<SignUpScreen/>
     //<NavigatorBar/>

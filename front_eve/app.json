@@ -31,12 +31,20 @@
         "backgroundColor": "#FFFFFF"
       },
       "permissions": [
-	      "ACCESS_BACKGROUND_LOCATION"
-	    ]
+        "ACCESS_BACKGROUND_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./app/assets/icons/favicon.png"
     },
-    "packagerOpts": { "config": "metro.config.js", "sourceExts": ["js", "ts", "svg"] }
+    "packagerOpts": {
+      "config": "metro.config.js",
+      "sourceExts": [
+        "js",
+        "ts",
+        "svg"
+      ]
+    },
+    "description": ""
   }
 }
