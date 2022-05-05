@@ -61,16 +61,18 @@ export default function ValidationCode({ navigation, route }) {
 
           .catch((error) => console.error(error));
       } else {
+        console.log("Email: ", email);
         alert("the code is valid");
         fetch("https://eve-back.herokuapp.com/verifyAccount", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ userId: idUser, verificationToken: code }),
+          body: JSON.stringify({ email: email, verificationToken: code }),
         })
-          .then((response) => {
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
             navigation.navigate("SignInScreen");
           })
-
           .catch((error) => console.error(error));
       }
     } else {
