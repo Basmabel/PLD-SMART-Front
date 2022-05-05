@@ -183,6 +183,7 @@ export default function MyAccountScreen({navigation}) {
               setuserInfo(item.global_infos[0]);
               setCreatorRating(item.creator_rating[0].score);
               setParticipantRating(item.participant_rating[0].score);
+              console.log(item)
             }
             if (index === 1) {
               setReviewUser(item);

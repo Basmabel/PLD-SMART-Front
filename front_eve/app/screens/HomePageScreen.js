@@ -33,7 +33,7 @@ if (light === "light") {
 export default function HomePageScreen({route}) {
   const tabBarHeight = useBottomTabBarHeight() * 2;
   const navigation = useNavigation();
-  console.log("errrr ",route)
+ 
   var state = ""
   if(route.params!=undefined){
     state=route.params.state

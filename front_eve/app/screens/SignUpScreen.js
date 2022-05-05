@@ -28,6 +28,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Feather from "react-native-vector-icons/Feather";
 //import RNPickerSelect from 'react-native-picker-select';
 import { Picker } from "@react-native-picker/picker";
+import DatePicker from "react-native-datepicker";
 
 export default function SignUpScreen({ navigation }) {
   const [name, onChangeName] = React.useState("");
@@ -427,16 +428,46 @@ export default function SignUpScreen({ navigation }) {
             Birthdate *
           </Text>
 
-          <View style={styles.action}>
-            <Feather name="calendar" color={COLORS.lightBlue} size={20} />
-            <TextInput
-              style={styles.textInput}
-              placeholder="dd/mm/yyyy"
-              placeholderTextColor={COLORS.lightBlue}
-              onChangeText={onChangeBirthDate}
+          <View style={styles.drop}>
+            <Feather name="calendar" color={COLORS.lightBlue} size={30} />
+            <DatePicker
+              style={{ width: "90%" }}
+              date={birthDate}
+              mode="date"
+              placeholder="select date"
+              placeholderStyle={styles.placeholderStyle}
+              showIcon={false}
+              format="DD/MM/YYYY"
+              minDate="01/01/2016"
+              maxDate="01/01/2026"
+              confirmBtnText="Confirm"
+              cancelBtnText="Cancel"
+              customStyles={{
+                dateIcon: {
+                  position: "absolute",
+                  left: 0,
+                  top: 4,
+                  marginLeft: 0,
+                },
+                dateText: {
+                  fontSize: 14,
+                  color: COLORS.lightBlue,
+                },
+                dateInput: {
+                  marginLeft: 36,
+                  height: 30,
+                },
+                datePickerCon: { backgroundColor: COLORS.beige },
+                placeholderText: {
+                  fontSize: 18,
+                  color: COLORS.lightBlue,
+                },
+              }}
+              onDateChange={(date) => {
+                onChangeBirthDate(date)
+              }}
             />
           </View>
-
           <View style={styles.button}>
             <TouchableOpacity style={styles.validate} onPress={fetchSignUpVal}>
               <View style={styles.validate}>
@@ -554,5 +585,11 @@ const styles = StyleSheet.create({
     marginTop: Platform.OS === "ios" ? 0 : -12,
     paddingLeft: 10,
     color: COLORS.lightBlue,
+  },drop: {
+    flexDirection: "row",
+    marginTop: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "transparent",
+    paddingBottom: 5,
   },
 });
