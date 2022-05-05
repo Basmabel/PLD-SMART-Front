@@ -298,7 +298,7 @@ export default function HomePageScreen({navigation}) {
                   </View>
             </View>
             <View style={styles.body}>
-              <ScrollView  style={{marginBottom: (Platform.OS==='ios')? 0 : tabBarHeight*3}}>
+              <ScrollView  style={{marginBottom: tabBarHeight*3}}>
                   <View style={styles.locationView}>
                         <Text style={styles.text_header}> Lyon </Text>
                         <MaterialCommunityIcons name="map-marker" color={colorText} size={24}/>

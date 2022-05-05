@@ -624,7 +624,7 @@ const CreateEventScreen = ({ navigation}) => {
           </View>
           
           
-          <Text style={{color:COLORS.red, marginTop:10}}>Users won't know the address till they become participants. They will only see the place you enter bellow</Text>
+          <Text style={{color:COLORS.red, marginTop:10}}>Users won't know the address till they become participants. They will only see the place you enter below</Text>
           <Text
             style={[
               styles.text_footer,

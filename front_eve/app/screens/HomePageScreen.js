@@ -354,7 +354,7 @@ export default function HomePageScreen({route}) {
             </View>
             
             <View style={styles.body}>
-              <ScrollView  style={{marginBottom: (Platform.OS==='ios')? 0 : tabBarHeight*3}}>
+              <ScrollView  style={{marginBottom: tabBarHeight*3}}>
               
                   <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
                     <TouchableOpacity style={styles.container_icon} onPress={()=>{navigation.navigate("Notifications"); setNotifVisible(false)}}>

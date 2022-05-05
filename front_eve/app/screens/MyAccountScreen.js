@@ -317,7 +317,7 @@ export default function MyAccountScreen({navigation}) {
                     <Text style={styles.title_header}>Profile</Text>
           </View>
           <View style={styles.body}>
-            <ScrollView  style={{marginBottom: (Platform.OS==='ios')? 0 : tabBarHeight*2}}>
+            <ScrollView  style={{marginBottom: tabBarHeight*2}}>
                 <View style={[styles.notif_buble, {display: notifVisible? "flex": "none"}]}>
                   <TouchableOpacity style={styles.container_icon} onPress={()=>{navigation.navigate("Notifications"); setNotifVisible(false)}}>
                           <Ionicons
