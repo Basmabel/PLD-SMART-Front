@@ -65,6 +65,7 @@ export default function App() {
     // <ValidationCode />
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen name="Landing" component={LandingScreen} />
         <Stack.Screen name="SignInScreen" component={SignInScreen} />
         <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
         <Stack.Screen

@@ -203,7 +203,7 @@ export default function HomePageScreen({route}) {
 
         const tokenString = await AsyncStorage.getItem("token");
         const token = JSON.parse(tokenString);
-
+        console.log(value)
         setUserId(value);
         setUserToken(token);
         setRetreive(true);
@@ -249,6 +249,7 @@ export default function HomePageScreen({route}) {
         // Log the data to the console
         // You would do something with both sets of data here
         data.map((item,index)=>{
+          console.log(index,item)
           if(index==0){
             setPopularEvents(item);
           }else if(index==1){
