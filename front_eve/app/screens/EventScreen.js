@@ -983,7 +983,7 @@ export default function EventScreen({ route, navigation }) {
             >
               <Text style={styles.text_button}>Cancel Event</Text>
             </TouchableOpacity>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               activeOpacity={0.7}
               style={styles.button}
               onPress={() =>
@@ -991,7 +991,7 @@ export default function EventScreen({ route, navigation }) {
               }
             >
               <Text style={styles.text_button}>Edit</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
           <CustomLike />
         </View>
@@ -1116,7 +1116,7 @@ export default function EventScreen({ route, navigation }) {
               >
                 <Text style={styles.text_button}> Post !</Text>
               </TouchableOpacity>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 activeOpacity={0.7}
                 style={[
                   styles.button,
@@ -1130,9 +1130,7 @@ export default function EventScreen({ route, navigation }) {
                   Edit Event
                   <Feather name="edit-2" color={COLORS.white} size={20} />
                 </Text>
-              </TouchableOpacity>
-            </View>
-            <View>
+              </TouchableOpacity> */}
               <TouchableOpacity
                 activeOpacity={0.7}
                 style={[
@@ -1152,6 +1150,9 @@ export default function EventScreen({ route, navigation }) {
                   Delete Event
                 </Text>
               </TouchableOpacity>
+            </View>
+            <View>
+              
             </View>
           </View>
           <CustomLike />
