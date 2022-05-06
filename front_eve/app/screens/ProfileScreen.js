@@ -341,7 +341,7 @@ export default function ProfileScreen({ route, navigation }) {
               <Text style={styles.title_header}>Profile</Text>
             </View>
             <View style={styles.body}>
-              <ScrollView style={{ marginBottom: tabBarHeight * 2 }}>
+              <ScrollView style={{marginBottom:  Dimensions.get("window").height*0.2 }}>
                 <View
                   style={[
                     styles.notif_buble,

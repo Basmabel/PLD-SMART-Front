@@ -327,7 +327,7 @@ export default function EventScreen({ route, navigation }) {
               </View>
             </View>
             <View style={styles.body}>
-              <ScrollView style={{ marginBottom: tabBarHeight * 2 }}>
+              <ScrollView style={{marginBottom: (Platform.OS==='ios')? 0 : tabBarHeight * 2 }}>
                 <View
                   style={[
                     styles.notif_buble,

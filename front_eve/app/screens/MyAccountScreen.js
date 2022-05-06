@@ -309,7 +309,7 @@ export default function MyAccountScreen({ navigation }) {
               <Text style={styles.title_header}>Profile</Text>
             </View>
             <View style={styles.body}>
-              <ScrollView style={{ marginBottom: tabBarHeight * 1 }}>
+              <ScrollView style={{marginBottom: Dimensions.get("window").height*0.23 }}>
                 <View
                   style={[
                     styles.notif_buble,

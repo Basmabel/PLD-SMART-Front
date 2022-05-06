@@ -368,7 +368,7 @@ export default function HomePageScreen({ navigation }) {
               </View>
             </View>
             <View style={styles.body}>
-              <ScrollView style={{ marginBottom: tabBarHeight * 3 }}>
+              <ScrollView style={{marginBottom:  Dimensions.get("window").height*0.23 }}>
                 <View style={styles.locationView}>
                   <Text style={styles.text_header}> Lyon </Text>
                   <MaterialCommunityIcons

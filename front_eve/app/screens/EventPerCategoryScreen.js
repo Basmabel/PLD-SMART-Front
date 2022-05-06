@@ -219,7 +219,7 @@ export default function EventPerCategoryScreen({ route, navigation }) {
               </View>
             </View>
             <View style={styles.body}>
-              <ScrollView style={{ marginBottom: tabBarHeight * 3 }}>
+              <ScrollView style={{marginBottom: Dimensions.get("window").height*0.18 }}>
                 <View
                   style={[
                     styles.notif_buble,

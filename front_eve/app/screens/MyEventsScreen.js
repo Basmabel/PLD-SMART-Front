@@ -244,7 +244,7 @@ export default function MyEventsScreen({ navigation, route }) {
               </View>
             </View>
             <View style={styles.body}>
-              <ScrollView style={{ marginBottom: tabBarHeight }}>
+              <ScrollView style={{marginBottom: Dimensions.get("window").height*0.23}}>
                 <View
                   style={[
                     styles.notif_buble,
@@ -412,6 +412,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     paddingHorizontal: 20,
     paddingVertical: 20,
+    height: "100%",
   },
   contentContainer: {
     flexDirection: "column",

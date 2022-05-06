@@ -357,7 +357,7 @@ export default function HomePageScreen({ route }) {
             </View>
 
             <View style={styles.body}>
-              <ScrollView style={{ marginBottom: tabBarHeight * 2 }}>
+              <ScrollView style={{marginBottom: Dimensions.get("window").height*0.23 }}>
                 <View
                   style={[
                     styles.notif_buble,

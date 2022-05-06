@@ -310,7 +310,7 @@ export default function ParticipationDemandScreen({ route, navigation }) {
               </View>
             </View>
             <View style={styles.body}>
-              <ScrollView style={{ marginBottom: 110, flexGrow: 1 }}>
+              <ScrollView style={{ marginBottom:  Dimensions.get("window").height*0.23, flexGrow: 1 }}>
                 <View style={styles.locationView}>
                   <Text style={styles.text_header}> Lyon </Text>
                   <MaterialCommunityIcons
