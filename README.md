@@ -3,9 +3,8 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
     <img src="front_eve/app/assets/images/eVe.png" alt="Logo" width="80" height="80">
-  </a>
+
 
   <h3 align="center">eVe your best life!</h3>
 
@@ -110,9 +109,8 @@ _Below is an example of how you can instruct your audience on installing and set
 
 Sign up will require to have an insa-lyon email. A verification code will be sent to you to your email so you can proove your affiliation to the school.
 
-<a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="app_pres/images/langing.jpg" >
-  </a>
+ <img src="app_pres/images/langing.jpg" >
+
   
 Menu : 
 
