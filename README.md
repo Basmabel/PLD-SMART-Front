@@ -99,20 +99,20 @@ ios (https://devstory.net/10571/installer-xcode#a1828810)
 
 - Landing, login and signup screens
 
-Sign up will require to have an insa-lyon email. A verification code will be sent to you to your email so you can proove your affiliation to the school.
+Sign up will require to have an insa-lyon email. A verification code will be sent to you by email so you can prove your affiliation to the school.
 
   
 Menu : 
 
 - Home : Find the most popular upcoming events
-- Search : Locate and filter events by categories and dates 
-- My events : Consult your upcoming and passed events as an organizer or participant
-- Notifications : Consult your notifications
-- Account : Consult your infos, ratings and reviews
+- Search : Locate and filter events by categories and date 
+- My events : Visit your upcoming and passed events as an organizer or participant
+- Notifications : Check your notifications
+- Account : View your informations, ratings and reviews
 
 Other screens:
-- Consult an event
-- Consult an other user's profile
+- View an event
+- View another user's profile
 - Create an event
 - Edit event (only for organizers)...
 
