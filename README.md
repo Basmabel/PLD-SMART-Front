@@ -109,16 +109,14 @@ _Below is an example of how you can instruct your audience on installing and set
 
 Sign up will require to have an insa-lyon email. A verification code will be sent to you to your email so you can proove your affiliation to the school.
 
- <img src="app_pres/langing.jpg" >
-
   
 Menu : 
 
-- Home 
-- Search 
-- My events
-- Notifications
-- Account
+- Home : Find the most popular upcoming events
+- Search : Locate and filter events by categories and dates 
+- My events : Consult your upcoming and passed events as an organizer or participant
+- Notifications : Consult your notifications
+- Account : Consult your infos, ratings and reviews
 
 Other screens:
 - Consult an event
