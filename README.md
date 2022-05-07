@@ -41,29 +41,15 @@
 
 ## About The Project
 
-Pendant les vacances et les périodes creuses, plusieurs étudiants qui restent sur le campus se retrouvent seuls dans leur chambre de résidence de 9 m2. Ces derniers succombent rapidement à la solitude et à l’ennui par manque d’activités mais surtout, plus que tout, le contact humain. Le but de cette application est de rassembler ces personnes en leur permettant d’organiser et de participer à des évènements pour les étudiants de l'INSA Lyon:
+During the holidays and off-peak periods, some students who stay on the campus find themselves alone in their rooms of 9m2. They quickly succumb to loneliness and boredom due to lack of activities but most of all human contacts. The app goal is to gather these people allowing them to organize and participate to events reserved for INSA students:
 
-- soirées privées : grosse soirée, soirée relax, soirée
-film/série, soirée jeu, soirée à thème
-- sorties à Lyon (ou autre ville) : restaurant,
-bowling, laser Game, cinéma, escape Game, bar,
-paintball, accrobranche
-- sorties aux alentours de Lyon : randonnées, sortie
-ski, via ferrata
-
-La plateforme permettra à l’organisateur de l’événement de préciser : le lieu général, la date, l’heure, le prix de participation (si besoin), le nombre de participants, le type de l’évènement...
-
-Dans un deuxième temps, l’utilisateur participe à un événement créé. Pour ce faire, il doit s’inscrire, effectuer le paiement sur l’application (si besoin) et
-contacter l’organisateur par messagerie. L’utilisateur peut également se renseigner sur l’organisateur de l’évènement, mais aussi sur les autres participants en consultant les avis et les notes(rating).
-
-Une fois l’événement fini, le créateur et les participants peuvent donner leur reviews et leurs notes. Il est aussi possible de signaler un utilisateur
-perturbateur.
+- Private events : big parties, chill ones, netflix and chill, game nights...
+- Trips in Lyon : restaurents, bowling, laser games, cinema, pubs...
+- Trips outside Lyon: Hiking...
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ### Built With
-
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
 
 - [ReactNative] (https://reactnative.dev/)
 - [NodeJs] (https://nodejs.org)
@@ -90,21 +76,26 @@ ios (https://devstory.net/10571/installer-xcode#a1828810)
 
 ### Installation
 
+1.
 _Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+
+1. Clone the repo
    ```sh
-   git clone https://github.com/your_username_/Project-Name.git
+   git clone 
    ```
 3. Install NPM packages
    ```sh
    npm install
    ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = "ENTER YOUR API";
+4. Start the project
+ ```sh
+   npm start --reset-cache
    ```
+5. Scan the QR code on your phone to run the app on your mobile
+6. Launch on android emulator (tutorial : https://docs.expo.dev/workflow/android-studio-emulator/)
+7. Launch on ios emulator (tutorial: https://docs.expo.dev/workflow/ios-simulator/)
+
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
