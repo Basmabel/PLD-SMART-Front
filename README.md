@@ -41,19 +41,23 @@
 
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+Pendant les vacances et les périodes creuses, plusieurs étudiants qui restent sur le campus se retrouvent seuls dans leur chambre de résidence de 9 m2. Ces derniers succombent rapidement à la solitude et à l’ennui par manque d’activités mais surtout, plus que tout, le contact humain. Le but de cette application est de rassembler ces personnes en leur permettant d’organiser et de participer à des évènements pour les étudiants de l'INSA Lyon:
 
-There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
+- soirées privées : grosse soirée, soirée relax, soirée
+film/série, soirée jeu, soirée à thème
+- sorties à Lyon (ou autre ville) : restaurant,
+bowling, laser Game, cinéma, escape Game, bar,
+paintball, accrobranche
+- sorties aux alentours de Lyon : randonnées, sortie
+ski, via ferrata
 
-Here's why:
+La plateforme permettra à l’organisateur de l’événement de préciser : le lieu général, la date, l’heure, le prix de participation (si besoin), le nombre de participants, le type de l’évènement...
 
-- Your time should be focused on creating something amazing. A project that solves a problem and helps others
-- You shouldn't be doing the same tasks over and over like creating a README from scratch
-- You should implement DRY principles to the rest of your life :smile:
+Dans un deuxième temps, l’utilisateur participe à un événement créé. Pour ce faire, il doit s’inscrire, effectuer le paiement sur l’application (si besoin) et
+contacter l’organisateur par messagerie. L’utilisateur peut également se renseigner sur l’organisateur de l’évènement, mais aussi sur les autres participants en consultant les avis et les notes(rating).
 
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue. Thanks to all the people have contributed to expanding this template!
-
-Use the `BLANK_README.md` to get started.
+Une fois l’événement fini, le créateur et les participants peuvent donner leur reviews et leurs notes. Il est aussi possible de signaler un utilisateur
+perturbateur.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -61,14 +65,9 @@ Use the `BLANK_README.md` to get started.
 
 This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
 
-- [Next.js](https://nextjs.org/)
-- [React.js](https://reactjs.org/)
-- [Vue.js](https://vuejs.org/)
-- [Angular](https://angular.io/)
-- [Svelte](https://svelte.dev/)
-- [Laravel](https://laravel.com)
-- [Bootstrap](https://getbootstrap.com)
-- [JQuery](https://jquery.com)
+- [ReactNative] (https://reactnative.dev/)
+- [NodeJs] (https://nodejs.org)
+- [ExpressJs] (https://expressjs.com)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -76,17 +75,18 @@ This section should list any major frameworks/libraries used to bootstrap your p
 
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
-
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
+- Install Node js for your OS (https://nodejs.org/en/download/)
+- Install expo
+```sh
+npm install --global expo-cli
+```
+- To emulate the app : install either android studio or xcode (ios)
+android (https://developer.android.com/studio?gclid=Cj0KCQjwsdiTBhD5ARIsAIpW8CLPpsVBAQlA20EgDMw4iV2SLSzzq4HEyoGJ1N_uefR5HddzJSUQOzgaAtpXEALw_wcB&gclsrc=aw.ds)
+ios (https://devstory.net/10571/installer-xcode#a1828810)
+- To have the app on your phone, install Expo Go (availaible in the App store and Google play)
 
-- npm
-  ```sh
-  npm install npm@latest -g
-  ```
 
 ### Installation
 
