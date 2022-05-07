@@ -71,6 +71,7 @@ npm install --global expo-cli
 - To emulate the app : install either android studio or xcode (ios)
 
 android (https://developer.android.com/studio?gclid=Cj0KCQjwsdiTBhD5ARIsAIpW8CLPpsVBAQlA20EgDMw4iV2SLSzzq4HEyoGJ1N_uefR5HddzJSUQOzgaAtpXEALw_wcB&gclsrc=aw.ds)
+
 ios (https://devstory.net/10571/installer-xcode#a1828810)
 
 - To have the app on your phone, install Expo Go (availaible in the App store and Google play)
