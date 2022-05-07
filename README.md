@@ -68,7 +68,7 @@ android (https://developer.android.com/studio?gclid=Cj0KCQjwsdiTBhD5ARIsAIpW8CLP
 
 ios (https://devstory.net/10571/installer-xcode#a1828810)
 
-- To have the app on your phone, install Expo Go (availaible in the App store and Google play)
+- To have the app on your phone, install Expo Go (available on App store and Google play)
 
 
 ### Installation
