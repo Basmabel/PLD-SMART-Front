@@ -73,9 +73,6 @@ ios (https://devstory.net/10571/installer-xcode#a1828810)
 
 ### Installation
 
-1.
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
-
 
 1. Clone the repo
    ```sh
