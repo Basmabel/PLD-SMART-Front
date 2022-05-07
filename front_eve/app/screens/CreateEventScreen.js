@@ -196,6 +196,7 @@ const CreateEventScreen = ({ navigation}) => {
     const splitted = date.split("/");
     const newDate = `${splitted[2]}-${splitted[1]}-${splitted[0]} 00:00:00`;
     console.log(newDate)
+    var isPaying = isSelected? "1":"0";
     if (data.isValidTitle && data.isValidDate && valuesNotNul()) {
       fetch("https://eve-back.herokuapp.com/createevent", {
         method: "POST",
@@ -214,7 +215,7 @@ const CreateEventScreen = ({ navigation}) => {
           latitude: res[0].latitude,
           longitude: res[0].longitude,
           numberPersonMax: participants,
-          paying:isSelected,
+          paying:isPaying,
           photo: img,
           place: place,
           status_id: 1
